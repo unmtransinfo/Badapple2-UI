@@ -1,7 +1,7 @@
-# HierSAPI
+# HierS-UI
 ### (React + TypeScript + Vite)
 
-User interface for [HierSAPI](https://github.com/Jack-42/HierSAPI)
+User interface for [HierS-API](https://github.com/Jack-42/HierS-API)
 
 ## Installation
 
