@@ -1,7 +1,7 @@
-# CFChemUI
+# HierSAPI
 ### (React + TypeScript + Vite)
 
-User interface for [CFChemAPI](https://github.com/unmtransinfo/CFChemAPI)
+User interface for [HierSAPI](https://github.com/Jack-42/HierSAPI)
 
 ## Installation
 
