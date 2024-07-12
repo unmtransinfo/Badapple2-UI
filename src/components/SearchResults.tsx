@@ -5,12 +5,12 @@ import {faCircleNodes, faCircleNotch} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import SearchResultsTable from "./SearchResultsTable.tsx";
 
-async function fetchSearchResults(inputVal: string) {
+async function fetchScaffolds(inputSMILES: string) {
     const apiUrl = import.meta.env.VITE_API_HOST;
-
+    console.log("")
     return await axios.get(apiUrl, {
         params: {
-            query: inputVal
+            query: inputSMILES
         }
     })
         .then(promise => {
@@ -33,7 +33,7 @@ export default function SearchResults({ setChem }: { setChem: Dispatch<SetStateA
             if (searchInput && searchInput.length) {
                 setLoader(true);
 
-                const data = await fetchSearchResults(searchInput);
+                const data = await fetchScaffolds(searchInput);
 
                 if (data.length) {
                     setSearchResults(data);
@@ -46,13 +46,14 @@ export default function SearchResults({ setChem }: { setChem: Dispatch<SetStateA
         fetchData();
     }, [ searchInput ]);
 
-    const onSearchInput = (e) => {
-        setSearchResults([]);
-        setSearchInput(e);
+
+    // TODO: use search table when given > 1 mol
+    const onKeyUpTable = (e) => {
+        setShowResultsTable(e.keyCode == 27);
     }
 
-    const onKeyUp = (e) => {
-        setShowResultsTable(e.keyCode == 13);
+    const onKeyUpResultPage = (e) => {
+        setShowResultsTable(e.keyCode == 13)
     }
 
     return (
@@ -64,11 +65,10 @@ export default function SearchResults({ setChem }: { setChem: Dispatch<SetStateA
                         key="default"
                         color="default"
                         size="lg"
-                        label="Search"
-                        placeholder="Start typing"
+                        label="Input"
+                        placeholder="Enter SMILES"
                         defaultValue=""
-                        onValueChange={onSearchInput}
-                        onKeyUp={onKeyUp}
+                        onKeyUp={onKeyUpResultPage}
                         isClearable
                         onClear={() => setSearchResults([])}
                         classNames={{
