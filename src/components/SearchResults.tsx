@@ -3,7 +3,6 @@ import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNotch} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import SearchResultsTable from "./SearchResultsTable.tsx";
 
 async function fetchScaffolds(inputSMILES: string) {
     const apiUrl = import.meta.env.VITE_API_HOST;

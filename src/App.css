@@ -61,28 +61,6 @@ main::after {
         font-weight: bold;
         margin-bottom: 10px;
     }
-
-    table.chem-details-table {
-        border: solid 1px #ccc;
-        border-radius: 8px;
-        width: 100%;
-        tr {
-            border-bottom: solid 1px #ccc;
-        }
-
-        td, th {
-            padding: 10px;
-        }
-
-        th {
-            text-align: right;
-            background: white;
-            color: black;
-            border: 1px solid #ccc;
-            width: 180px;
-        }
-
-    }
 }
 
 .molecule-structure-wrapper {
