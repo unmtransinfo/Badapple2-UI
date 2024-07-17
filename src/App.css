@@ -32,7 +32,7 @@ main::after {
 }
 
 .glass-container {
-    @apply relative z-10 flex-col max-h-[80vh] dark:bg-gray-600/30 dark:text-white light:bg-gray-50/30 light:text-black backdrop-blur-md shadow-lg rounded-2xl border dark:border-gray-600/40 break-all opacity-0;
+    @apply relative z-10 flex-col max-h-[80vh] dark:bg-gray-600/30 dark:text-white light:bg-gray-50/30 light:text-black backdrop-blur-md shadow-lg rounded-2xl break-all opacity-0;
 }
 
 .glass-container.active {
@@ -88,9 +88,7 @@ main::after {
 .molecule-structure-wrapper {
     position: relative;
     .download-link {
-        position:absolute;
-        bottom: 5px;
-        right: 5px;
+        margin-top: 10px;
     }
 }
 

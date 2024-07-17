@@ -4,7 +4,6 @@ import SiteHeader from "./components/SiteHeader";
 import ChemPage from "./components/ChemPage.tsx";
 import SearchResults from "./components/SearchResults.tsx";
 import {createTheme, ThemeProvider} from "@mui/material";
-import SearchResultsTable from "./components/SearchResultsTable.tsx";
 
 function App() {
     const [chem, setChem] = useState();

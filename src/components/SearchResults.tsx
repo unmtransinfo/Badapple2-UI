@@ -1,16 +1,16 @@
-import {Input, Listbox, ListboxItem, ScrollShadow} from "@nextui-org/react";
+import {Input} from "@nextui-org/react";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleNodes, faCircleNotch} from "@fortawesome/free-solid-svg-icons";
+import {faCircleNotch} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import SearchResultsTable from "./SearchResultsTable.tsx";
 
 async function fetchScaffolds(inputSMILES: string) {
     const apiUrl = import.meta.env.VITE_API_HOST;
-    console.log("")
+    console.log("Input SMILES: %s", inputSMILES);
     return await axios.get(apiUrl, {
         params: {
-            query: inputSMILES
+            smiles: inputSMILES
         }
     })
         .then(promise => {
@@ -23,38 +23,48 @@ async function fetchScaffolds(inputSMILES: string) {
 
 export default function SearchResults({ setChem }: { setChem: Dispatch<SetStateAction<object>> }) {
     const [searchInput, setSearchInput] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
-    const [showResultsTable, setShowResultsTable] = useState(false);
-    const searchResultBullet = <FontAwesomeIcon icon={faCircleNodes} className="text-primary mr-2" />;
+    const [searchResults, setSearchResults] = useState({});
     const [loader, setLoader] = useState(false);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (searchInput && searchInput.length) {
-                setLoader(true);
+    // TODO: remove console.log statements
+    const fetchData = async (query: string) => {
+        if (query && query.length) {
+            setLoader(true);
 
-                const data = await fetchScaffolds(searchInput);
-
-                if (data.length) {
-                    setSearchResults(data);
-                }
+            const data = await fetchScaffolds(query);
+            
+            if (data) {
+                setSearchResults(data);
             }
 
             setLoader(false);
         }
+    };
+    
+    useEffect(() => {
+        // this code will run every time searchResults changes
+        console.log("Search results (in effect):");
+        console.log(searchResults);
+        if (searchResults && Object.keys(searchResults).length > 0) {
+            setChem(searchResults);
+        }
+    }, [searchResults]);
 
-        fetchData();
-    }, [ searchInput ]);
-
-
-    // TODO: use search table when given > 1 mol
-    const onKeyUpTable = (e) => {
-        setShowResultsTable(e.keyCode == 27);
+    const onSearchInput = (e) => {
+        setSearchInput(e);
     }
 
-    const onKeyUpResultPage = (e) => {
-        setShowResultsTable(e.keyCode == 13)
-    }
+    const onSMILESInput = () => {
+        //setSearchResults([]);
+        fetchData(searchInput);
+    };
+    
+    const handleKeyUp = (e) => {
+        if (e.key === 'Enter') {
+            console.log("Enter key pressed");
+            onSMILESInput();
+        }
+    };
 
     return (
         <div>
@@ -68,9 +78,10 @@ export default function SearchResults({ setChem }: { setChem: Dispatch<SetStateA
                         label="Input"
                         placeholder="Enter SMILES"
                         defaultValue=""
-                        onKeyUp={onKeyUpResultPage}
                         isClearable
                         onClear={() => setSearchResults([])}
+                        onKeyUp={handleKeyUp}
+                        onValueChange={onSearchInput}
                         classNames={{
                             inputWrapper: [
                                 "border",
@@ -90,44 +101,9 @@ export default function SearchResults({ setChem }: { setChem: Dispatch<SetStateA
                     <div className={'loader ' + (loader ? 'active' : '')}>
                         <FontAwesomeIcon icon={faCircleNotch} className="text-primary animate-spin"/>
                     </div>
-
-                    {!showResultsTable &&
-                        <ScrollShadow size={100} className="scroll-shadow">
-                            <Listbox id="search-results-list" variant="flat" aria-label="Search Results">
-                                {
-                                    searchResults.map((result, index) => (
-                                        <ListboxItem
-                                            key={index}
-                                            description={(result.pert_name + ' - ' + result.moa)}
-                                            startContent={searchResultBullet}
-                                            className="search-result"
-                                            color="primary"
-                                            classNames={{
-                                                base: "text-xl",
-                                                title: "text-lg transition-colors",
-                                                description: "text-sm transition-colors"
-                                            }}
-                                            onClick={() => {
-                                                setChem(result)
-                                            }}
-                                        >
-                                            {result.pert_name}
-                                        </ListboxItem>
-                                    ))
-                                }
-                            </Listbox>
-                        </ScrollShadow>
-                    }
                 </section>
 
             </div>
-
-            <section className="w-100">
-                {showResultsTable &&
-                    <SearchResultsTable searchResults={searchResults}
-                                        setChem={setChem}  />
-                }
-            </section>
         </div>
     )
 }
