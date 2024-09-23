@@ -1,5 +1,5 @@
 FROM node:18-alpine
-ARG ASSET_ROOT='\/hiers'
+ARG ASSET_ROOT='\/Badapple2'
 ENV ASSET_ROOT=$ASSET_ROOT
 WORKDIR /app
 COPY . .

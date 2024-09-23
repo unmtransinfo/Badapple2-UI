@@ -9,7 +9,7 @@ async function fetchScaffolds(inputSMILES: string) {
     console.log("Input SMILES: %s", inputSMILES);
     return await axios.get(apiUrl, {
         params: {
-            smiles: inputSMILES
+            SMILES: inputSMILES
         }
     })
         .then(promise => {
