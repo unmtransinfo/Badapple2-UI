@@ -1,7 +1,7 @@
-# HierS-UI
+# Badapple2-UI
 ### (React + TypeScript + Vite)
 
-User interface for [HierS-API](https://github.com/Jack-42/HierS-API)
+User interface for [Badapple2-API](https://github.com/unmtransinfo/Badapple2-API).
 
 ## Installation
 
