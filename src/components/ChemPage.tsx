@@ -4,21 +4,17 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import MoleculeStructure from "./MoleculeStructure.tsx";
 
 // define interfaces
-interface Scaffold {
+interface ScaffoldInfo {
     scafsmi: string;
+    id: number;
     pscore: number;
     in_db: boolean;
     in_drug: boolean;
 }
 
-interface ScaffoldInfo {
-    molecule_smiles: string;
-    scaffolds: Scaffold[];
-}
-
 interface ChemPageProps {
     result: {
-        scaffolds_info: ScaffoldInfo[];
+        [molecule_smiles: string]: ScaffoldInfo[];
     };
     setChem: Dispatch<SetStateAction<any>>;
 }
@@ -34,11 +30,11 @@ const getRowClassName = (pscore: number) => {
 };
 
 
-const getInfoRows = (scaffoldInfo: ScaffoldInfo, index: number): ReactNode => {
+const getInfoRows = (molecule_smiles: string, scaffoldInfos: ScaffoldInfo[], index: number): ReactNode => {
     const moleculeStructure = (
         <MoleculeStructure
             id={`mol-smile-svg-${index}`}
-            structure={scaffoldInfo.molecule_smiles}
+            structure={molecule_smiles}
             width={350}
             height={300}
             svgMode={true}
@@ -47,7 +43,7 @@ const getInfoRows = (scaffoldInfo: ScaffoldInfo, index: number): ReactNode => {
     );
 
     // Sort the scaffolds array by pscore in descending order
-    const sortedScaffolds = scaffoldInfo.scaffolds.sort((a, b) => b.pscore - a.pscore);
+    const sortedScaffolds = scaffoldInfos.sort((a, b) => b.pscore - a.pscore);
 
     // Get the highest pscore and its corresponding row class name (for molecule column color)
     const highestPscore = sortedScaffolds.length > 0 ? sortedScaffolds[0].pscore : -1;
@@ -69,9 +65,10 @@ const getInfoRows = (scaffoldInfo: ScaffoldInfo, index: number): ReactNode => {
                         const { scafsmi, pscore, in_db, in_drug } = scaffold;
                         const inDrugString = !in_db ? "NULL" : (in_drug ? "True" : "False");
                         const pscoreString = !in_db ? "NULL" : pscore;
-                        const rowClassName = getRowClassName(pscore);
+                        const weightedScore = !in_db ? -1 : pscore; // make score -1 to show colors correctly
+                        const rowClassName = getRowClassName(weightedScore);
                         return (
-                            <tr key={scaffoldIndex} className={rowClassName}>
+                            <tr key={`${index}-${scaffoldIndex}`} className={rowClassName}>
                                 <td className={`px-6 py-4 whitespace-nowrap border-r border-gray-200 ${highestPscoreRowClassName}`}>
                                     {moleculeStructure}
                                 </td>
@@ -106,7 +103,11 @@ export default function ChemPage(props: ChemPageProps) {
                 <span>Back</span>
             </button>
             <div className="glass-container active p-3">
-                {props.result.scaffolds_info.map((scaffoldInfo, index) => getInfoRows(scaffoldInfo, index))}
+                {Object.entries(props.result).map(([molecule_smiles, scaffoldInfos], keyIndex) => (
+                    <div key={keyIndex}>
+                        {getInfoRows(molecule_smiles, scaffoldInfos, keyIndex)}
+                    </div>
+                ))}
             </div>
         </div>
     );
