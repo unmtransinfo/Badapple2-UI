@@ -10,6 +10,12 @@ interface ScaffoldInfo {
     pscore: number;
     in_db: boolean;
     in_drug: boolean;
+    nsub_tested: number,
+    nsub_active: number,
+    nass_tested: number,
+    nass_active: number,
+    nsam_tested: number,
+    nsam_active: number
 }
 
 interface ChemPageProps {
@@ -30,6 +36,27 @@ const getRowClassName = (pscore: number) => {
 };
 
 
+const buildDetailsArray = (scaffold: ScaffoldInfo): string[] => {
+    const {
+        nsub_tested,
+        nsub_active,
+        nass_tested,
+        nass_active,
+        nsam_tested,
+        nsam_active
+    } = scaffold;
+
+    return [
+        `substances tested: ${nsub_tested}`,
+        `substances active: ${nsub_active}`,
+        `assays tested: ${nass_tested}`,
+        `assays active: ${nass_active}`,
+        `samples tested: ${nsam_tested}`,
+        `samples active: ${nsam_active}`
+    ];
+};
+
+
 const getInfoRows = (molecule_smiles: string, scaffoldInfos: ScaffoldInfo[], index: number): ReactNode => {
     const moleculeStructure = (
         <MoleculeStructure
@@ -43,7 +70,11 @@ const getInfoRows = (molecule_smiles: string, scaffoldInfos: ScaffoldInfo[], ind
     );
 
     // Sort the scaffolds array by pscore in descending order
-    const sortedScaffolds = scaffoldInfos.sort((a, b) => b.pscore - a.pscore);
+    const sortedScaffolds = scaffoldInfos.sort((a, b) => {
+        if (b.pscore === undefined) return -1;
+        if (a.pscore === undefined) return 1;
+        return b.pscore - a.pscore;
+    });
 
     // Get the highest pscore and its corresponding row class name (for molecule column color)
     const highestPscore = sortedScaffolds.length > 0 ? sortedScaffolds[0].pscore : -1;
@@ -57,14 +88,16 @@ const getInfoRows = (molecule_smiles: string, scaffoldInfos: ScaffoldInfo[], ind
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">Molecule</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">Scaffold</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">InDrug</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pscore</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">Pscore</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                     {sortedScaffolds.map((scaffold, scaffoldIndex) => {
-                        const { scafsmi, pscore, in_db, in_drug } = scaffold;
+                        const { scafsmi, pscore, in_db, in_drug} = scaffold;
                         const inDrugString = !in_db ? "NULL" : (in_drug ? "True" : "False");
                         const pscoreString = !in_db ? "NULL" : pscore;
+                        const detailsArray = buildDetailsArray(scaffold);
                         const weightedScore = !in_db ? -1 : pscore; // make score -1 to show colors correctly
                         const rowClassName = getRowClassName(weightedScore);
                         return (
@@ -83,7 +116,12 @@ const getInfoRows = (molecule_smiles: string, scaffoldInfos: ScaffoldInfo[], ind
                                     />
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200">{inDrugString}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{pscoreString}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200">{pscoreString}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {detailsArray.map((detail, detailIndex) => (
+                                            <div key={detailIndex}>{detail}</div>
+                                        ))}
+                                </td>
                             </tr>
                         );
                     })}
