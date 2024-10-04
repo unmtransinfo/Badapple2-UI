@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './tooltip.css';
 import './optionsTable.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
-const UserOptions = () => {
-    const [format, setFormat] = useState('SMILES');
-    const [delimiter, setDelimiter] = useState(' ');
-    const [smilesCol, setSmilesCol] = useState(0);
-    const [nameCol, setNameCol] = useState(1);
-    const [hasHeader, setHasHeader] = useState(false);
+export interface UserOptions {
+    format: string;
+    delimiter: string;
+    smilesCol: number;
+    nameCol: number;
+    hasHeader: boolean;
+}
+
+export interface UserOptionsProps {
+    userOptions: UserOptions;
+    updateUserOptions: (key: keyof UserOptionsProps['userOptions'], value: any) => void;
+}
+
+
+const UserOptionsTable: React.FC<UserOptionsProps> = ({ userOptions, updateUserOptions }) => {
+    console.log(userOptions);
+    const { format, delimiter, smilesCol, nameCol, hasHeader } = userOptions;
 
     return (
         <div id="user-options-container">
@@ -22,14 +33,15 @@ const UserOptions = () => {
                 </thead>
                 <tbody>
                     <tr>
-                        <td>    
+                        <td>
                             Format
                             <span data-tooltip="Input format. 'SMILES' for inputs with delimiter-separated values (e.g., TSV). Currently only SMILES inputs are supported.">
                                 <FontAwesomeIcon icon={faQuestionCircle} className="ml-2" />
                             </span>
                         </td>
                         <td>
-                            <select name="molfmt" id="molFmt" value={format} onChange={(e) => setFormat(e.target.value)}>
+                            <select name="molfmt" id="molFmt" value={format} onChange={(e) => updateUserOptions('format', e.target.value)}>
+                                <option value="MOLFILE">Molfile</option>
                                 <option value="SMILES" id="molFmtDefault">SMILES</option>
                             </select>
                         </td>
@@ -42,7 +54,7 @@ const UserOptions = () => {
                             </span>
                         </td>
                         <td>
-                            <select name="delimiter" id="delimChoice" value={delimiter} onChange={(e) => setDelimiter(e.target.value)}>
+                            <select name="delimiter" id="delimChoice" value={delimiter} onChange={(e) => updateUserOptions('delimiter', e.target.value)}>
                                 <option value=" " id="delimChoiceDefault">" " - space</option>
                                 <option value=",">"," - comma</option>
                                 <option value="\t">"\t" - tab</option>
@@ -57,7 +69,7 @@ const UserOptions = () => {
                             </span>
                         </td>
                         <td>
-                            <input type="number" name="smiles_col" id="smiles_column" min={0} size={4} value={smilesCol} onChange={(e) => setSmilesCol(Number(e.target.value))} />
+                            <input type="number" name="smiles_col" id="smiles_column" min={0} size={4} value={smilesCol} onChange={(e) => updateUserOptions('smilesCol', Number(e.target.value))} />
                         </td>
                     </tr>
                     <tr>
@@ -68,7 +80,7 @@ const UserOptions = () => {
                             </span>
                         </td>
                         <td>
-                            <input type="number" name="name_col" id="name_column" min={0} size={4} value={nameCol} onChange={(e) => setNameCol(Number(e.target.value))} />
+                            <input type="number" name="name_col" id="name_column" min={0} size={4} value={nameCol} onChange={(e) => updateUserOptions('nameCol', Number(e.target.value))} />
                         </td>
                     </tr>
                     <tr>
@@ -79,7 +91,7 @@ const UserOptions = () => {
                             </span>
                         </td>
                         <td>
-                            <input type="checkbox" name="has_header" id="header_checkbox" checked={hasHeader} onChange={(e) => setHasHeader(e.target.checked)} />
+                            <input type="checkbox" name="has_header" id="header_checkbox" checked={hasHeader} onChange={(e) => updateUserOptions('hasHeader', e.target.checked)} />
                         </td>
                     </tr>
                 </tbody>
@@ -88,4 +100,4 @@ const UserOptions = () => {
     );
 };
 
-export default UserOptions;
+export default UserOptionsTable;

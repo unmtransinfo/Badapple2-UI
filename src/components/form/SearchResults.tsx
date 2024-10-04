@@ -1,14 +1,28 @@
-import { Dispatch,SetStateAction, useState, useEffect, useRef } from 'react';
+import { SetStateAction, useState, useEffect, useRef } from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faCircleNotch, faUpload } from '@fortawesome/free-solid-svg-icons';
 import axios from "axios";
-import UserOptions from './UserOptions';
+import UserOptionsTable, { UserOptions } from './UserOptions';
 import './SearchResults.css';
 
+interface SearchResultsProps {
+    setChem: (chem: any) => void;
+}
+
+const parseQuery = (rawText: string, delimiter: string, smilesCol: number, hasHeader: boolean): string => {
+    console.log("Query pre-parse: %s ", rawText);
+    const lines = rawText.split('\n');
+    const smilesList = lines
+        .slice(hasHeader ? 1 : 0) // Skip the header if hasHeader is true
+        .map(line => line.split(delimiter)[smilesCol]) // Extract the SMILES string based on smilesCol
+        .filter(smiles => smiles) // Filter out any empty strings
+        .join(','); // Join the SMILES strings with commas
+    console.log("Post-parse: %s ", smilesList);
+    return smilesList;
+};
 
 async function fetchScaffolds(inputSMILES: string) {
     const apiUrl = import.meta.env.VITE_API_HOST;
-    console.log("Input SMILES: %s", inputSMILES);
     return await axios.get(apiUrl, {
         params: {
             SMILES: inputSMILES
@@ -21,17 +35,37 @@ async function fetchScaffolds(inputSMILES: string) {
             console.error(e);
         })
 }
-export default function SearchResults({ setChem }: { setChem: Dispatch<SetStateAction<object>> }) {
+
+// TODO: refactor some of this, right now its a mess
+const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
     const [searchInput, setSearchInput] = useState('');
     const [searchResults, setSearchResults] = useState({});
     const [loader, setLoader] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [userOptions, setUserOptions] = useState<UserOptions>({
+        format: 'SMILES',
+        delimiter: ' ',
+        smilesCol: 0,
+        nameCol: 1,
+        hasHeader: false
+    });
+    
+
+    const updateUserOptions = (key: keyof UserOptions, value: any) => {
+        setUserOptions((prevOptions: any) => ({
+            ...prevOptions,
+            [key]: value
+        }));
+    };
     const supportedFileExtensions = ['.txt', '.smi', '.tsv', '.csv', '.smiles'];
 
-    const fetchData = async (query: string) => {
+    const fetchData = async (query: string, delimiter: string, smilesCol: number, hasHeader: boolean) => {
         if (query && query.length) {
             setLoader(true);
-            const data = await fetchScaffolds(query);
+            console.log("Input: %s", query);
+            const inputSMILES = parseQuery(query, delimiter, smilesCol, hasHeader);
+            console.log("Parsed SMILES: %s", inputSMILES);
+            const data = await fetchScaffolds(inputSMILES);
             
             if (data) {
                 setSearchResults(data);
@@ -51,7 +85,7 @@ export default function SearchResults({ setChem }: { setChem: Dispatch<SetStateA
     }
 
     const onSubmit = () => {
-        fetchData(searchInput);
+        fetchData(searchInput, userOptions.delimiter, userOptions.smilesCol, userOptions.hasHeader);
     };
     
     const handleKeyDown = (e: { key: string; shiftKey: any; preventDefault: () => void; }) => {
@@ -116,7 +150,7 @@ export default function SearchResults({ setChem }: { setChem: Dispatch<SetStateA
                             onKeyDown={handleKeyDown}                 
                             className="w-full h-40 p-2 mb-4 border dark:border-gray-600/40 backdrop-blur-md dark:bg-gray-600/30 dark:hover:bg-gray-600/50 dark:focus:bg-gray-600/50 dark:active:bg-gray-600/50 resize-y"
                         />
-                        <UserOptions />
+                        <UserOptionsTable userOptions={userOptions} updateUserOptions={updateUserOptions} />
                     </div>
                     <br />
                     <button
@@ -135,3 +169,5 @@ export default function SearchResults({ setChem }: { setChem: Dispatch<SetStateA
         </div>
     );
 };
+
+export default SearchResults;
