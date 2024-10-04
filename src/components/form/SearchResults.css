@@ -1,0 +1,21 @@
+/*
+@author Jack Ringer
+Date: 10/4/2024
+Description:
+CSS related to SearchResults.tsx
+*/
+
+.flex-container {
+    display: flex;
+    gap: 20px; /* Adjust the gap between the textarea and UserOptions as needed */
+    width: 100%;
+    position: relative;
+}
+
+#search-input {
+    flex: 1; /* Allow the textarea to take up the remaining space */
+}
+
+#user-options-container {
+    flex: 0 0 400px; 
+} 

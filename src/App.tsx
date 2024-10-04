@@ -2,7 +2,7 @@ import {useState} from 'react'
 import './App.css'
 import SiteHeader from "./components/SiteHeader";
 import ChemPage from "./components/ChemPage.tsx";
-import SearchResults from "./components/SearchResults.tsx";
+import SearchResults from "./components/form/SearchResults.tsx";
 import {createTheme, ThemeProvider} from "@mui/material";
 
 function App() {

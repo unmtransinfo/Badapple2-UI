@@ -2,6 +2,9 @@ import { Dispatch,SetStateAction, useState, useEffect, useRef } from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faCircleNotch, faUpload } from '@fortawesome/free-solid-svg-icons';
 import axios from "axios";
+import UserOptions from './UserOptions';
+import './SearchResults.css';
+
 
 async function fetchScaffolds(inputSMILES: string) {
     const apiUrl = import.meta.env.VITE_API_HOST;
@@ -22,9 +25,10 @@ export default function SearchResults({ setChem }: { setChem: Dispatch<SetStateA
     const [searchInput, setSearchInput] = useState('');
     const [searchResults, setSearchResults] = useState({});
     const [loader, setLoader] = useState(false);
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const supportedFileExtensions = ['.txt', '.smi', '.tsv', '.csv', '.smiles'];
 
-    const fetchData = async (query) => {
+    const fetchData = async (query: string) => {
         if (query && query.length) {
             setLoader(true);
             const data = await fetchScaffolds(query);
@@ -42,7 +46,7 @@ export default function SearchResults({ setChem }: { setChem: Dispatch<SetStateA
         }
     }, [searchResults, setChem]);
 
-    const onSearchInput = (e) => {
+    const onSearchInput = (e: { target: { value: SetStateAction<string>; }; }) => {
         setSearchInput(e.target.value);
     }
 
@@ -50,31 +54,42 @@ export default function SearchResults({ setChem }: { setChem: Dispatch<SetStateA
         fetchData(searchInput);
     };
     
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: { key: string; shiftKey: any; preventDefault: () => void; }) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             onSubmit();
         }
     };
 
-    const handleFileUpload = (e) => {
-        const file = e.target.files[0];
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, supportedExtensions: string[]) => {
+        const file = e.target.files ? e.target.files[0] : null;
         if (file) {
+            const fileExtension = file.name.split('.').pop()?.toLowerCase();
+            
+            if (!fileExtension || !supportedExtensions.includes(`.${fileExtension}`)) {
+                alert(`Unsupported file type. Please upload a file with one of the following extensions: ${supportedExtensions.join(', ')}`);
+                return;
+            }
+
             const reader = new FileReader();
             reader.onload = (e) => {
-                setSearchInput(e.target.result);
+                if (e.target && typeof e.target.result === 'string') {
+                    setSearchInput(e.target.result);
+                }
             };
             reader.readAsText(file);
         }
     };
 
     const triggerFileInput = () => {
-        fileInputRef.current.click();
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
     };
 
     return (
         <div>
-            <div id="search-container" className="w-full max-w-3xl mx-auto">
+            <div id="search-container" className="w-full max-w-5xl mx-auto">
                 <section className="mb-4">
                     <div className="flex mb-2">
                         <button
@@ -87,19 +102,23 @@ export default function SearchResults({ setChem }: { setChem: Dispatch<SetStateA
                         <input
                             type="file"
                             ref={fileInputRef}
-                            onChange={handleFileUpload}
-                            accept=".txt"
+                            onChange={(e) => handleFileUpload(e, supportedFileExtensions)}
+                            accept=".txt,.smi,.tsv,.csv,.smiles"
                             style={{ display: 'none' }}
                         />
                     </div>
-                    <textarea
-                        id="search-input"
-                        placeholder="Enter SMILES (Press Shift+Enter for new line, Enter to submit)"
-                        value={searchInput}
-                        onChange={onSearchInput}
-                        onKeyDown={handleKeyDown}
-                        className="w-full h-40 p-2 mb-4 border dark:border-gray-600/40 backdrop-blur-md dark:bg-gray-600/30 dark:hover:bg-gray-600/50 dark:focus:bg-gray-600/50 dark:active:bg-gray-600/50 resize-y"
-                    />
+                    <div className="flex-container">
+                        <textarea
+                            id="search-input"
+                            placeholder="Enter SMILES (Press Shift+Enter for new line)"
+                            value={searchInput}
+                            onChange={onSearchInput}
+                            onKeyDown={handleKeyDown}                 
+                            className="w-full h-40 p-2 mb-4 border dark:border-gray-600/40 backdrop-blur-md dark:bg-gray-600/30 dark:hover:bg-gray-600/50 dark:focus:bg-gray-600/50 dark:active:bg-gray-600/50 resize-y"
+                        />
+                        <UserOptions />
+                    </div>
+                    <br />
                     <button
                         onClick={onSubmit}
                         className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
