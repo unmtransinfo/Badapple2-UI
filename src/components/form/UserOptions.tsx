@@ -19,7 +19,6 @@ export interface UserOptionsProps {
 
 
 const UserOptionsTable: React.FC<UserOptionsProps> = ({ userOptions, updateUserOptions }) => {
-    console.log(userOptions);
     const { format, delimiter, smilesCol, nameCol, hasHeader } = userOptions;
 
     return (

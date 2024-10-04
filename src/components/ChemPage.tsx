@@ -131,6 +131,7 @@ const getInfoRows = (molecule_smiles: string, scaffoldInfos: ScaffoldInfo[], ind
     );
 }
 
+// TODO: order props by molecule names, or change API call to make them ordered
 export default function ChemPage(props: ChemPageProps) {
     return (
         <div id="chem-page" className="relative z-10">

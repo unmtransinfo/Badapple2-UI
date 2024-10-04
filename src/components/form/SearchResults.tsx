@@ -9,19 +9,17 @@ interface SearchResultsProps {
     setChem: (chem: any) => void;
 }
 
-const parseQuery = (rawText: string, delimiter: string, smilesCol: number, hasHeader: boolean): string => {
-    console.log("Query pre-parse: %s ", rawText);
+const parseQuery = (rawText: string, delimiter: string, colIdx: number, hasHeader: boolean): string[] => {
     const lines = rawText.split('\n');
     const smilesList = lines
         .slice(hasHeader ? 1 : 0) // Skip the header if hasHeader is true
-        .map(line => line.split(delimiter)[smilesCol]) // Extract the SMILES string based on smilesCol
+        .map(line => line.split(delimiter)[colIdx]) // Extract the string based on smilesCol
         .filter(smiles => smiles) // Filter out any empty strings
-        .join(','); // Join the SMILES strings with commas
-    console.log("Post-parse: %s ", smilesList);
     return smilesList;
 };
 
-async function fetchScaffolds(inputSMILES: string) {
+async function fetchScaffolds(smilesList: string[]) {
+    const inputSMILES = smilesList.join(',');
     const apiUrl = import.meta.env.VITE_API_HOST;
     return await axios.get(apiUrl, {
         params: {
@@ -62,10 +60,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
     const fetchData = async (query: string, delimiter: string, smilesCol: number, hasHeader: boolean) => {
         if (query && query.length) {
             setLoader(true);
-            console.log("Input: %s", query);
-            const inputSMILES = parseQuery(query, delimiter, smilesCol, hasHeader);
-            console.log("Parsed SMILES: %s", inputSMILES);
-            const data = await fetchScaffolds(inputSMILES);
+            const smilesList = parseQuery(query, delimiter, smilesCol, hasHeader);
+            const data = await fetchScaffolds(smilesList);
             
             if (data) {
                 setSearchResults(data);
