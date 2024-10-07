@@ -93,9 +93,9 @@ const getRow = (moleculeStructure: React.JSX.Element, scaffold: ScaffoldInfo, in
                     className="mb-4"
                 />
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200">{inDrugString}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-200">{pscoreString}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <td className="px-6 py-4 whitespace-nowrap text-2xl text-gray-900 border-r border-gray-200">{inDrugString}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-2xl text-gray-900 border-r border-gray-200">{pscoreString}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-2xl text-gray-900">
                     {detailsArray.map((detail, detailIndex) => (
                         <div key={detailIndex}>{detail}</div>
                     ))}
@@ -113,7 +113,7 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                 if (molData.scaffolds !== undefined && molData.scaffolds !== null) {
                     const moleculeStructure = (
                         <div className="mb-4">
-                            <p className="whitespace-nowrap text-sm text-gray-900">Name: {molName}</p>
+                            <p className="whitespace-nowrap text-2xl text-gray-900">Name: {molName}</p>
                             <MoleculeStructure
                                 id={`mol-smile-svg-${index}`}
                                 structure={molData.molecule_smiles}
@@ -154,8 +154,8 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                     return (
                         <React.Fragment key={index}>
                             <td colSpan={5} className="py-4 text-center text-red-500">
-                                <p className="whitespace-nowrap text-sm text-gray-900">Name: {molName}</p>
-                                <p className="whitespace-nowrap text-sm text-gray-900">Given SMILES: {molSmilesStr}</p>
+                                <p className="whitespace-nowrap text-2xl text-gray-900">Name: {molName}</p>
+                                <p className="whitespace-nowrap text-2xl text-gray-900">Given SMILES: {molSmilesStr}</p>
                                 <p>{molData.error_msg}</p>
                             </td>
                             <tr>
