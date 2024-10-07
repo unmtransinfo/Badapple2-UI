@@ -47,6 +47,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
         nameCol: 1,
         hasHeader: false
     });
+    const maxInputSizeInBytes = 5 * 1024 * 1024; // 5 MB
+
     
 
     const updateUserOptions = (key: keyof UserOptions, value: any) => {
@@ -91,13 +93,26 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
         }
     };
 
+    const handlePaste = (e) => {
+        const paste = e.clipboardData.getData('text');
+        if (paste.length + searchInput.length > maxInputSizeInBytes) {
+            alert('Pasting this content would exceed the 5 MB limit. Please paste a smaller amount of text.');
+            e.preventDefault();
+        }
+    };
+
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, supportedExtensions: string[]) => {
         const file = e.target.files ? e.target.files[0] : null;
         if (file) {
             const fileExtension = file.name.split('.').pop()?.toLowerCase();
-            
+
             if (!fileExtension || !supportedExtensions.includes(`.${fileExtension}`)) {
                 alert(`Unsupported file type. Please upload a file with one of the following extensions: ${supportedExtensions.join(', ')}`);
+                return;
+            }
+
+            if (file.size > maxInputSizeInBytes) {
+                alert('File size exceeds the 5 MB limit. Please upload a smaller file.');
                 return;
             }
 
@@ -115,6 +130,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
         if (fileInputRef.current) {
             fileInputRef.current.click();
         }
+    };
+
+    const handleClear = () => {
+        setSearchInput('');
     };
 
     return (
@@ -136,6 +155,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
                             accept=".txt,.smi,.tsv,.csv,.smiles"
                             style={{ display: 'none' }}
                         />
+                        <button onClick={handleClear} className="ml-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center">
+                                Clear Input
+                        </button>
                     </div>
                     <div className="flex-container">
                         <textarea
@@ -143,7 +165,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
                             placeholder="Enter SMILES (Press Shift+Enter for new line)"
                             value={searchInput}
                             onChange={onSearchInput}
-                            onKeyDown={handleKeyDown}                 
+                            onKeyDown={handleKeyDown}  
+                            maxLength={5000000} // 5 million characters
+                            onPaste={handlePaste}               
                             className="w-full h-40 p-2 mb-4 border dark:border-gray-600/40 backdrop-blur-md dark:bg-gray-600/30 dark:hover:bg-gray-600/50 dark:focus:bg-gray-600/50 dark:active:bg-gray-600/50 resize-y"
                         />
                         <UserOptionsTable userOptions={userOptions} updateUserOptions={updateUserOptions} />
