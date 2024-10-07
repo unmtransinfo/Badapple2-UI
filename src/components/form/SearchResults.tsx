@@ -4,26 +4,34 @@ import { faCircleNotch, faUpload } from '@fortawesome/free-solid-svg-icons';
 import axios from "axios";
 import UserOptionsTable, { UserOptions } from './UserOptions';
 import './SearchResults.css';
+import Papa from 'papaparse';
 
 interface SearchResultsProps {
     setChem: (chem: any) => void;
 }
 
 const parseQuery = (rawText: string, delimiter: string, colIdx: number, hasHeader: boolean): string[] => {
-    const lines = rawText.split('\n');
-    const smilesList = lines
-        .slice(hasHeader ? 1 : 0) // Skip the header if hasHeader is true
-        .map(line => line.split(delimiter)[colIdx]) // Extract the string based on smilesCol
-        .filter(smiles => smiles) // Filter out any empty strings
-    return smilesList;
+    const results = Papa.parse(rawText, {
+        delimiter: delimiter,
+        header: hasHeader,
+        skipEmptyLines: true
+    });
+
+    if (hasHeader) {
+        return results.data.map((row: any) => row[Object.keys(row)[colIdx]]);
+    } else {
+        return results.data.map((row: any) => row[colIdx]);
+    }
 };
 
-async function fetchScaffolds(smilesList: string[]) {
+async function fetchScaffolds(smilesList: string[], nameList: string[]) {
     const inputSMILES = smilesList.join(',');
+    const inputNames = nameList.join(',');
     const apiUrl = import.meta.env.VITE_API_HOST;
     return await axios.get(apiUrl, {
         params: {
-            SMILES: inputSMILES
+            SMILES: inputSMILES,
+            Names: inputNames
         }
     })
         .then(promise => {
@@ -59,11 +67,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
     };
     const supportedFileExtensions = ['.txt', '.smi', '.tsv', '.csv', '.smiles'];
 
-    const fetchData = async (query: string, delimiter: string, smilesCol: number, hasHeader: boolean) => {
+    const fetchData = async (query: string, delimiter: string, smilesCol: number, nameCol: number, hasHeader: boolean) => {
         if (query && query.length) {
             setLoader(true);
+            delimiter = delimiter === "\\t" ? "\t" : delimiter; // html saves tab as "\\t" instead of "\t"
             const smilesList = parseQuery(query, delimiter, smilesCol, hasHeader);
-            const data = await fetchScaffolds(smilesList);
+            const nameList = parseQuery(query, delimiter, nameCol, hasHeader);
+            const data = await fetchScaffolds(smilesList, nameList);
             
             if (data) {
                 setSearchResults(data);
@@ -83,7 +93,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
     }
 
     const onSubmit = () => {
-        fetchData(searchInput, userOptions.delimiter, userOptions.smilesCol, userOptions.hasHeader);
+        fetchData(searchInput, userOptions.delimiter, userOptions.smilesCol, userOptions.nameCol, userOptions.hasHeader);
     };
     
     const handleKeyDown = (e: { key: string; shiftKey: any; preventDefault: () => void; }) => {
@@ -93,7 +103,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
         }
     };
 
-    const handlePaste = (e) => {
+    const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
         const paste = e.clipboardData.getData('text');
         if (paste.length + searchInput.length > maxInputSizeInBytes) {
             alert('Pasting this content would exceed the 5 MB limit. Please paste a smaller amount of text.');

@@ -18,10 +18,15 @@ interface ScaffoldInfo {
     nsam_active: number
 }
 
+// each input SMILES will return a dict with the following:
+interface MoleculeInfo {
+    molecule_smiles: string;
+    name: string;
+    scaffolds: ScaffoldInfo[];
+};
+
 interface ChemPageProps {
-    result: {
-        [molecule_smiles: string]: ScaffoldInfo[];
-    };
+    result:  MoleculeInfo[];
     setChem: Dispatch<SetStateAction<any>>;
 }
 
@@ -57,19 +62,31 @@ const buildDetailsArray = (scaffold: ScaffoldInfo): string[] => {
 };
 
 
-const getInfoRows = (molecule_smiles: string, scaffoldInfos: ScaffoldInfo[], index: number): ReactNode => {
+const truncateName = (name: string, maxLength: number) => {
+    if (name.length > maxLength) {
+        return name.substring(0, maxLength) + '...';
+    }
+    return name;
+};
+
+const getInfoRows = (mol_data: MoleculeInfo, index: number): ReactNode => {
+    const mol_name = truncateName(mol_data.name, 16);
     const moleculeStructure = (
-        <MoleculeStructure
-            id={`mol-smile-svg-${index}`}
-            structure={molecule_smiles}
-            width={350}
-            height={300}
-            svgMode={true}
-            className="mb-4"
-        />
+        <div className="mb-4">
+            <p className="text-center font-bold">{mol_name}</p>
+            <MoleculeStructure
+                id={`mol-smile-svg-${index}`}
+                structure={mol_data.molecule_smiles}
+                width={350}
+                height={300}
+                svgMode={true}
+                className="mb-4"
+            />
+        </div>
     );
 
     // Sort the scaffolds array by pscore in descending order
+    const scaffoldInfos = mol_data.scaffolds;
     const sortedScaffolds = scaffoldInfos.sort((a, b) => {
         if (b.pscore === undefined) return -1;
         if (a.pscore === undefined) return 1;
@@ -133,6 +150,7 @@ const getInfoRows = (molecule_smiles: string, scaffoldInfos: ScaffoldInfo[], ind
 
 // TODO: order props by molecule names, or change API call to make them ordered
 export default function ChemPage(props: ChemPageProps) {
+
     return (
         <div id="chem-page" className="relative z-10">
             <button onClick={() => {
@@ -142,9 +160,9 @@ export default function ChemPage(props: ChemPageProps) {
                 <span>Back</span>
             </button>
             <div className="glass-container active p-3">
-                {Object.entries(props.result).map(([molecule_smiles, scaffoldInfos], keyIndex) => (
-                    <div key={keyIndex}>
-                        {getInfoRows(molecule_smiles, scaffoldInfos, keyIndex)}
+                {props.result.map((item, index) => (
+                    <div key={index}>
+                        {getInfoRows(item, index)}
                     </div>
                 ))}
             </div>
