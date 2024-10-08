@@ -71,7 +71,7 @@ const truncateName = (name: string, maxLength: number) => {
 };
 
 
-const getRow = (moleculeStructure: React.JSX.Element, scaffold: ScaffoldInfo, index: number, scaffoldIndex: number, highestPscoreRowClassName: string): ReactNode => {
+const getRow = (molData: MoleculeInfo, scaffold: ScaffoldInfo, index: number, scaffoldIndex: number, highestPscoreRowClassName: string): ReactNode => {
     const { scafsmi, pscore, in_db, in_drug} = scaffold;
     const inDrugString = !in_db ? "NULL" : (in_drug ? "True" : "False");
     const pscoreString = !in_db ? "NULL" : pscore;
@@ -81,7 +81,18 @@ const getRow = (moleculeStructure: React.JSX.Element, scaffold: ScaffoldInfo, in
     return (
         <tr key={`${index}-${scaffoldIndex}`} className={rowClassName}>
             <td className={`px-6 py-4 whitespace-nowrap border-r border-gray-200 ${highestPscoreRowClassName}`}>
-                {moleculeStructure}
+                <div className="mb-4">
+                    <p className="whitespace-nowrap text-2xl text-gray-900">Name: {molData.name}</p>
+                    <MoleculeStructure
+                        id={`mol-smile-svg-${index}-${scaffoldIndex}`}
+                        structure={molData.molecule_smiles}
+                        subStructure={scafsmi}
+                        width={350}
+                        height={300}
+                        svgMode={true}
+                        className="mb-4"
+                    />
+                </div>
             </td>
             <td className="px-6 py-4 whitespace-nowrap border-r border-gray-200">
                 <MoleculeStructure
@@ -111,20 +122,6 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                 const molName = truncateName(molData.name, 16);
                 const molSmilesStr = truncateName(molData.molecule_smiles, 16);
                 if (molData.scaffolds !== undefined && molData.scaffolds !== null) {
-                    const moleculeStructure = (
-                        <div className="mb-4">
-                            <p className="whitespace-nowrap text-2xl text-gray-900">Name: {molName}</p>
-                            <MoleculeStructure
-                                id={`mol-smile-svg-${index}`}
-                                structure={molData.molecule_smiles}
-                                width={350}
-                                height={300}
-                                svgMode={true}
-                                className="mb-4"
-                            />
-                        </div>
-                    );
-
                     // Sort the scaffolds array by pscore in descending order
                     const scaffoldInfos = molData.scaffolds;
                     const sortedScaffolds = scaffoldInfos.sort((a, b) => {
@@ -140,7 +137,7 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                     return (
                         <React.Fragment key={index}>
                             {sortedScaffolds.map((scaffold, scaffoldIndex) => 
-                                getRow(moleculeStructure, scaffold, index, scaffoldIndex, highestPscoreRowClassName)
+                                getRow(molData, scaffold, index, scaffoldIndex, highestPscoreRowClassName)
                             )}
                             <tr>
                                 <td colSpan={5} className="py-2">
