@@ -113,10 +113,12 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
     };
 
     const fillWithExampleSMILES = () => {
-        const exampleSMILES = `COc1cc2c(ccnc2cc1)C(O)C4CC(CC3)C(C=C)CN34 quinine
-CC1(C)SC2C(NC(=O)Cc3ccccc3)C(=O)N2C1C(=O)O benzylpenicillin
-CCC(=C(c1ccc(OCCN(C)C)cc1)c1ccccc1)c1ccccc1 Tamoxifen
-CNCCC(c1ccccc1)Oc2ccc(cc2)C(F)(F)F.Cl Prozac`;
+        const exampleSMILES = `CCCc1nc-2c(=O)n(c(=O)nc2n(n1)C)C mol1
+c1ccc2c(c1)c(=O)n(s2)c3ccccc3C(=O)N4CCCC4 mol2
+Cc1cc(nc(n1)N=C(N)Nc2cccc(c2)N)C mol3
+CCc1c(c2ccccc2o1)C(=O)c3cc(c(c(c3)Br)O)Br mol4
+OC(=O)C1=C2CCCC(C=C3C=CC(=O)C=C3)=C2NC2=CC=CC=C12 mol5
+c1ccc2c(c1)C(=O)c3ccoc3C2=O mol6`;
         setSearchInput(exampleSMILES);
     };
 
