@@ -31,6 +31,30 @@ interface ChemPageProps {
     setChem: Dispatch<SetStateAction<any>>;
 }
 
+const transformSmiles = (smiles: string) => {
+    /*
+    This function is used to transform scaffold SMILES because RDKit.js uses get_qmol() to perform substructure-highlighting,
+    and get_qmol() expects SMARTS patterns. See: https://github.com/rdkit/rdkit/issues/5688 for more info.
+    Without this function some molecule/scaffold pairs would not properly highlight, e.g.:
+    molecule="CN1C(=O)N(C)C(=O)C(N(C)C=N2)=C12" # caffeine
+    scaffold="O=c1[nH]c(=O)c2[nH]cnc2[nH]1"
+    */
+    const atomMap = {
+        'b' : 5, // boron
+        'c': 6,  // carbon
+        'n': 7,  // nitrogen
+        'o': 8,  // oxygen
+        'p': 15,  // phosphorus
+        's': 16, // sulfur
+        'br': 35 // bromine
+    };
+
+    return smiles.replace(/\[([nocspe])H\]/gi, (match, atom: keyof typeof atomMap) => {
+        const lowerAtom = atom.toLowerCase() as keyof typeof atomMap;
+        return `[#${atomMap[lowerAtom] || atom}]`;
+    });
+};
+
 
 
 // for visualizing score advisory color
@@ -82,11 +106,11 @@ const getRow = (molData: MoleculeInfo, scaffold: ScaffoldInfo, index: number, sc
         <tr key={`${index}-${scaffoldIndex}`} className={rowClassName}>
             <td className={`px-6 py-4 whitespace-nowrap border-r border-gray-200 ${highestPscoreRowClassName}`}>
                 <div className="mb-4">
-                    <p className="whitespace-nowrap text-2xl text-gray-900">Name: {molData.name}</p>
+                    <p className="whitespace-nowrap text-2xl text-gray-900">Name: {truncateName(molData.name, 16)}</p>
                     <MoleculeStructure
                         id={`mol-smile-svg-${index}-${scaffoldIndex}`}
                         structure={molData.molecule_smiles}
-                        subStructure={scafsmi}
+                        subStructure={transformSmiles(scafsmi)}
                         width={350}
                         height={300}
                         svgMode={true}
