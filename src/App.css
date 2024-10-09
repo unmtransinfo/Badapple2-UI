@@ -52,7 +52,7 @@ main::after {
 }
 
 .btn-back {
-    @apply text-xs text-primary hover:text-white transition-colors mb-4;
+    @apply text-medium text-primary hover:text-white transition-colors mb-4;
 }
 
 #chem-page {
