@@ -1,7 +1,8 @@
-import React, {Dispatch, SetStateAction, ReactNode} from "react";
+import React, {Dispatch, SetStateAction, ReactNode, useState} from "react";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import MoleculeStructure from "./MoleculeStructure.tsx";
+import Pagination from "./Pagination.tsx";
 
 // define interfaces
 interface ScaffoldInfo {
@@ -307,7 +308,18 @@ const downloadTSV = (moleculeInfos: MoleculeInfo[]) => {
 };
 
 export default function ChemPage(props: ChemPageProps) {
+    const [currentPage, setCurrentPage] = useState(1);
+    const moleculesPerPage = 5;
+    const moleculeInfos = props.result;
 
+    const handlePageChange = (newPage: number) => {
+        setCurrentPage(newPage);
+    };
+
+    const paginatedMoleculeInfos = moleculeInfos.slice(
+        (currentPage - 1) * moleculesPerPage,
+        currentPage * moleculesPerPage
+    );
     return (
         <div id="chem-page" className="relative z-10">
             <div className="flex justify-between items-center mb-4">
@@ -317,12 +329,18 @@ export default function ChemPage(props: ChemPageProps) {
                     <FontAwesomeIcon icon={faArrowLeft} className="mr-2"/>
                     <span>Back</span>
                 </button>
-                <button onClick={() => downloadTSV(props.result)} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+                <button onClick={() => downloadTSV(moleculeInfos)} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
                     Download TSV
                 </button>
             </div>  
             <div className="glass-container active p-3">
-                {getResultsTable(props.result)}
+                {getResultsTable(paginatedMoleculeInfos )}
+                <Pagination
+                    currentPage={currentPage}
+                    totalMolecules={moleculeInfos.length}
+                    moleculesPerPage={moleculesPerPage}
+                    onPageChange={handlePageChange}
+                />
             </div>
         </div>
     );
