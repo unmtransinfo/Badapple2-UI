@@ -241,16 +241,65 @@ const getResultsTable = (moleculeInfos: MoleculeInfo[]): React.ReactNode => {
     );
 };
 
+
+const generateTSVData = (moleculeInfos: MoleculeInfo[]) => {
+    const headers = [
+        'molIdx', 'molSmiles', 'molName', 'scafSmiles', 'inDB', 'pScore', 'inDrug',
+        'substancesTested', 'substancesActive', 'assaysTested', 'assaysActive',
+        'samplesTested', 'samplesActive'
+    ];
+
+    const rows = moleculeInfos.flatMap((molData, molIdx) => {
+        return molData.scaffolds.map((scaffold) => {
+            return [
+                molIdx,
+                molData.molecule_smiles,
+                molData.name,
+                scaffold.scafsmi,
+                scaffold.in_db,
+                scaffold.pscore,
+                scaffold.in_drug,
+                scaffold.nsub_tested,
+                scaffold.nsub_active,
+                scaffold.nass_tested,
+                scaffold.nass_active,
+                scaffold.nsam_tested,
+                scaffold.nsam_active
+            ].join('\t');
+        });
+    });
+
+    return [headers.join('\t'), ...rows].join('\n');
+};
+
+const downloadTSV = (moleculeInfos: MoleculeInfo[]) => {
+    const tsvData = generateTSVData(moleculeInfos);
+    const blob = new Blob([tsvData], { type: 'text/tab-separated-values' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'badapple_out.tsv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+};
+
 export default function ChemPage(props: ChemPageProps) {
 
     return (
         <div id="chem-page" className="relative z-10">
-            <button onClick={() => {
-                props.setChem(undefined)
-            }} className="btn-back">
-                <FontAwesomeIcon icon={faArrowLeft} className="mr-2"/>
-                <span>Back</span>
-            </button>
+            <div className="flex justify-between items-center mb-4">
+                <button onClick={() => {
+                    props.setChem(undefined)
+                }} className="btn-back">
+                    <FontAwesomeIcon icon={faArrowLeft} className="mr-2"/>
+                    <span>Back</span>
+                </button>
+                <button onClick={() => downloadTSV(props.result)} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+                    Download TSV
+                </button>
+            </div>  
             <div className="glass-container active p-3">
                 {getResultsTable(props.result)}
             </div>
