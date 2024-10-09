@@ -145,7 +145,7 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
             {moleculeInfos.map((molData, index) => {
                 const molName = truncateName(molData.name, 16);
                 const molSmilesStr = truncateName(molData.molecule_smiles, 16);
-                if (molData.scaffolds !== undefined && molData.scaffolds !== null) {
+                if (molData.scaffolds !== undefined && molData.scaffolds !== null && molData.scaffolds.length > 0) {
                     // Sort the scaffolds array by pscore in descending order
                     const scaffoldInfos = molData.scaffolds;
                     const sortedScaffolds = scaffoldInfos.sort((a, b) => {
@@ -163,6 +163,38 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                             {sortedScaffolds.map((scaffold, scaffoldIndex) => 
                                 getRow(molData, scaffold, index, scaffoldIndex, highestPscoreRowClassName)
                             )}
+                            <tr>
+                                <td colSpan={5} className="py-2">
+                                    <hr className="border-t-2 border-gray-300" />
+                                </td>
+                            </tr>
+                        </React.Fragment>
+                    );
+                }
+                else if (molData.scaffolds !== undefined && molData.scaffolds !== null) {
+                    // valid input SMILES given, but mol has no scaffolds (ie ring systems, excluding benzene)
+                    // Get the highest pscore and its corresponding row class name (for molecule column color)
+                    return (
+                        <React.Fragment key={index}>
+                            <tr className={getRowClassName(-1)}>
+                                <td className="px-6 py-4 whitespace-nowrap border-r border-gray-200">
+                                    <div className="mb-4">
+                                        <p className="whitespace-nowrap text-2xl text-gray-900">Name: {truncateName(molData.name, 16)}</p>
+                                        <MoleculeStructure
+                                            id={`mol-smile-svg-${index}`}
+                                            structure={molData.molecule_smiles}
+                                            width={350}
+                                            height={300}
+                                            svgMode={true}
+                                            className="mb-4"
+                                        />
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-2xl text-gray-900 border-r border-gray-200">Molecule has no scaffolds</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-2xl text-gray-900 border-r border-gray-200"></td>
+                                <td className="px-6 py-4 whitespace-nowrap text-2xl text-gray-900 border-r border-gray-200"></td>
+                                <td className="px-6 py-4 whitespace-nowrap text-2xl text-gray-900 border-r border-gray-200"></td>
+                            </tr>
                             <tr>
                                 <td colSpan={5} className="py-2">
                                     <hr className="border-t-2 border-gray-300" />
