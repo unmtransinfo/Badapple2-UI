@@ -40,7 +40,6 @@ const UserOptionsTable: React.FC<UserOptionsProps> = ({ userOptions, updateUserO
                         </td>
                         <td>
                             <select name="molfmt" id="molFmt" value={format} onChange={(e) => updateUserOptions('format', e.target.value)}>
-                                <option value="MOLFILE">Molfile</option>
                                 <option value="SMILES" id="molFmtDefault">SMILES</option>
                             </select>
                         </td>
