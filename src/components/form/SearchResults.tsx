@@ -3,6 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faCircleNotch, faUpload } from '@fortawesome/free-solid-svg-icons';
 import axios from "axios";
 import UserOptionsTable, { UserOptions } from './UserOptions';
+import OutputOptionsTable, {OutputOptions} from './OutputOptions';
 import './SearchResults.css';
 import Papa from 'papaparse';
 
@@ -56,6 +57,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
         nameCol: 1,
         hasHeader: false
     });
+    const [outputOptions, setOutputOptions] = useState<OutputOptions>({
+        startIdx: 0,
+        maxMolecules : 10
+    });
     const maxInputSizeInBytes = 5 * 1024 * 1024; // 5 MB
 
     
@@ -66,14 +71,20 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
             [key]: value
         }));
     };
+    const updateOutputOptions = (key: keyof OutputOptions, value: any) => {
+        setOutputOptions((prevOptions: any) => ({
+            ...prevOptions,
+            [key]: value
+        }));
+    };
     const supportedFileExtensions = ['.txt', '.smi', '.tsv', '.csv', '.smiles'];
 
-    const fetchData = async (query: string, delimiter: string, smilesCol: number, nameCol: number, hasHeader: boolean) => {
+    const fetchData = async (query: string, delimiter: string, smilesCol: number, nameCol: number, hasHeader: boolean, startIdx: number, nMols: number) => {
         if (query && query.length) {
             setLoader(true);
             delimiter = delimiter === "\\t" ? "\t" : delimiter; // html saves tab as "\\t" instead of "\t"
-            const smilesList = parseQuery(query, delimiter, smilesCol, hasHeader);
-            const nameList = parseQuery(query, delimiter, nameCol, hasHeader);
+            const smilesList = parseQuery(query, delimiter, smilesCol, hasHeader).slice(startIdx, startIdx+nMols);
+            const nameList = parseQuery(query, delimiter, nameCol, hasHeader).slice(startIdx, startIdx+nMols);
             const data = await fetchScaffolds(smilesList, nameList);
             
             if (data) {
@@ -94,7 +105,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
     }
 
     const onSubmit = () => {
-        fetchData(searchInput, userOptions.delimiter, userOptions.smilesCol, userOptions.nameCol, userOptions.hasHeader);
+        fetchData(searchInput, userOptions.delimiter, userOptions.smilesCol, userOptions.nameCol, userOptions.hasHeader, outputOptions.startIdx, outputOptions.maxMolecules);
     };
     
     const handleKeyDown = (e: { key: string; shiftKey: any; preventDefault: () => void; }) => {
@@ -194,7 +205,10 @@ c1ccc2c(c1)C(=O)c3ccoc3C2=O mol6`;
                             onPaste={handlePaste}               
                             className="w-full h-40 p-2 mb-4 border dark:border-gray-600/40 backdrop-blur-md dark:bg-gray-600/30 dark:hover:bg-gray-600/50 dark:focus:bg-gray-600/50 dark:active:bg-gray-600/50 resize-y"
                         />
+                    </div>
+                    <div className="flex-container">
                         <UserOptionsTable userOptions={userOptions} updateUserOptions={updateUserOptions} />
+                        <OutputOptionsTable outputOptions={outputOptions} updateOutputOptions={updateOutputOptions} />
                     </div>
                     <br />
                     <button

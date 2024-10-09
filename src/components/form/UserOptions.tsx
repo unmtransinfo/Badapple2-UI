@@ -3,6 +3,8 @@ import './tooltip.css';
 import './optionsTable.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import handleNumberInputChange from './OptionsHandler';
+
 
 export interface UserOptions {
     format: string;
@@ -14,7 +16,7 @@ export interface UserOptions {
 
 export interface UserOptionsProps {
     userOptions: UserOptions;
-    updateUserOptions: (key: keyof UserOptionsProps['userOptions'], value: any) => void;
+    updateUserOptions: (key: keyof UserOptions, value: any) => void;
 }
 
 
@@ -67,7 +69,7 @@ const UserOptionsTable: React.FC<UserOptionsProps> = ({ userOptions, updateUserO
                             </span>
                         </td>
                         <td>
-                            <input type="number" name="smiles_col" id="smiles_column" min={0} size={4} value={smilesCol} onChange={(e) => updateUserOptions('smilesCol', Number(e.target.value))} />
+                            <input type="number" name="smiles_col" id="smiles_column" min={0} size={4} value={smilesCol} onChange={(e) => handleNumberInputChange(e, updateUserOptions, 'smilesCol', 0, 1e8)} />
                         </td>
                     </tr>
                     <tr>
@@ -78,7 +80,7 @@ const UserOptionsTable: React.FC<UserOptionsProps> = ({ userOptions, updateUserO
                             </span>
                         </td>
                         <td>
-                            <input type="number" name="name_col" id="name_column" min={0} size={4} value={nameCol} onChange={(e) => updateUserOptions('nameCol', Number(e.target.value))} />
+                            <input type="number" name="name_col" id="name_column" min={0} size={4} value={nameCol} onChange={(e) => handleNumberInputChange(e, updateUserOptions, 'nameCol', 0, 1e8)} />
                         </td>
                     </tr>
                     <tr>
