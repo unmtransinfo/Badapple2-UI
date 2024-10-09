@@ -10,6 +10,7 @@ interface SearchResultsProps {
     setChem: (chem: any) => void;
 }
 
+// TODO: fix edge case, if single molecule given with no name column then not parsed correctly
 const parseQuery = (rawText: string, delimiter: string, colIdx: number, hasHeader: boolean): string[] => {
     const results = Papa.parse(rawText, {
         delimiter: delimiter,
@@ -111,6 +112,14 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
         }
     };
 
+    const fillWithExampleSMILES = () => {
+        const exampleSMILES = `NC(C)Cc1ccccc1 adderall
+CNC(=C[N+](=O)[O-])NCCSCC1=CC=C(O1)CN(C)C.Cl Zantac
+Oc2cc(cc1OC(C3CCC(=CC3c12)C)(C)C)CCCCC THC
+CN1c2ccc(cc2C(=NCC1=O)c3ccccc3)Cl Valium`;
+        setSearchInput(exampleSMILES);
+    };
+
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, supportedExtensions: string[]) => {
         const file = e.target.files ? e.target.files[0] : null;
         if (file) {
@@ -167,6 +176,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
                         />
                         <button onClick={handleClear} className="ml-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center">
                                 Clear Input
+                        </button>
+                        <button onClick={fillWithExampleSMILES} className="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center">
+                            Example Input
                         </button>
                     </div>
                     <div className="flex-container">
