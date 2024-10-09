@@ -145,7 +145,8 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
             {moleculeInfos.map((molData, index) => {
                 const molName = truncateName(molData.name, 16);
                 const molSmilesStr = truncateName(molData.molecule_smiles, 16);
-                if (molData.scaffolds !== undefined && molData.scaffolds !== null && molData.scaffolds.length > 0) {
+                const validMol = (molData.scaffolds !== undefined && molData.scaffolds !== null);
+                if (validMol && molData.scaffolds.length > 0) {
                     // Sort the scaffolds array by pscore in descending order
                     const scaffoldInfos = molData.scaffolds;
                     const sortedScaffolds = scaffoldInfos.sort((a, b) => {
@@ -171,7 +172,7 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                         </React.Fragment>
                     );
                 }
-                else if (molData.scaffolds !== undefined && molData.scaffolds !== null) {
+                else if (validMol) {
                     // valid input SMILES given, but mol has no scaffolds (ie ring systems, excluding benzene)
                     // Get the highest pscore and its corresponding row class name (for molecule column color)
                     return (
@@ -244,29 +245,49 @@ const getResultsTable = (moleculeInfos: MoleculeInfo[]): React.ReactNode => {
 
 const generateTSVData = (moleculeInfos: MoleculeInfo[]) => {
     const headers = [
-        'molIdx', 'molSmiles', 'molName', 'scafSmiles', 'inDB', 'pScore', 'inDrug',
+        'molIdx', 'molSmiles', 'molName', 'validMol', 'scafSmiles', 'inDB', 'pScore', 'inDrug',
         'substancesTested', 'substancesActive', 'assaysTested', 'assaysActive',
         'samplesTested', 'samplesActive'
     ];
 
     const rows = moleculeInfos.flatMap((molData, molIdx) => {
-        return molData.scaffolds.map((scaffold) => {
-            return [
-                molIdx,
-                molData.molecule_smiles,
-                molData.name,
-                scaffold.scafsmi,
-                scaffold.in_db,
-                scaffold.pscore,
-                scaffold.in_drug,
-                scaffold.nsub_tested,
-                scaffold.nsub_active,
-                scaffold.nass_tested,
-                scaffold.nass_active,
-                scaffold.nsam_tested,
-                scaffold.nsam_active
-            ].join('\t');
-        });
+        const validMol = (molData.scaffolds !== undefined && molData.scaffolds !== null);
+        if (validMol && molData.scaffolds.length > 0) {
+            return molData.scaffolds.map((scaffold) => {
+                return [
+                    molIdx,
+                    molData.molecule_smiles,
+                    molData.name,
+                    validMol,
+                    scaffold.scafsmi,
+                    scaffold.in_db,
+                    scaffold.pscore,
+                    scaffold.in_drug,
+                    scaffold.nsub_tested,
+                    scaffold.nsub_active,
+                    scaffold.nass_tested,
+                    scaffold.nass_active,
+                    scaffold.nsam_tested,
+                    scaffold.nsam_active
+                ].join('\t');
+            });
+        }
+        return [
+            molIdx,
+            molData.molecule_smiles,
+            molData.name,
+            validMol,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        ].join('\t');
     });
 
     return [headers.join('\t'), ...rows].join('\n');
