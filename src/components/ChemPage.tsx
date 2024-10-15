@@ -246,7 +246,7 @@ const getResultsTable = (moleculeInfos: MoleculeInfo[]): React.ReactNode => {
 
 const generateTSVData = (moleculeInfos: MoleculeInfo[]) => {
     const headers = [
-        'molIdx', 'molSmiles', 'molName', 'validMol', 'scafSmiles', 'inDB', 'pScore', 'inDrug',
+        'molIdx', 'molSmiles', 'molName', 'validMol', 'scafSmiles', 'inDB', 'scafID', 'pScore', 'inDrug',
         'substancesTested', 'substancesActive', 'assaysTested', 'assaysActive',
         'samplesTested', 'samplesActive'
     ];
@@ -262,6 +262,7 @@ const generateTSVData = (moleculeInfos: MoleculeInfo[]) => {
                     validMol,
                     scaffold.scafsmi,
                     scaffold.in_db,
+                    scaffold.id,
                     scaffold.pscore,
                     scaffold.in_drug,
                     scaffold.nsub_tested,
@@ -278,6 +279,7 @@ const generateTSVData = (moleculeInfos: MoleculeInfo[]) => {
             molData.molecule_smiles,
             molData.name,
             validMol,
+            null,
             null,
             null,
             null,
