@@ -12,9 +12,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/@rdkit/rdkit/dist/RDKit_minimal.js"></script>
     <title>Badapple2</title>
+    <style>
+      .version-banner {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: yellow;
+        color: black;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-weight: bold;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <div class="version-banner">Version: BETA</div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
