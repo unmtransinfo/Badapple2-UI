@@ -1,5 +1,5 @@
 {
-  "name": "cf-chem",
+  "name": "badapple2",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -26,12 +26,14 @@
     "framer-motion": "^10.16.4",
     "lodash": "^4.17.21",
     "material-react-table": "^2.12.1",
+    "papaparse": "^5.4.1",
     "react": "^18.2.0",
     "react-csv": "^2.2.2",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.18.0"
   },
   "devDependencies": {
+    "@types/papaparse": "^5.3.14",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",

@@ -24,7 +24,7 @@ main::after {
 }
 
 #search-container {
-    @apply relative z-10 md:max-w-screen-md mx-auto p-6 pt-0;
+    @apply relative z-10 md:max-w-screen-lg mx-auto p-8 pt-0;
 }
 
 .page-container {
@@ -52,7 +52,7 @@ main::after {
 }
 
 .btn-back {
-    @apply text-xs text-primary hover:text-white transition-colors mb-4;
+    @apply text-medium text-primary hover:text-white transition-colors mb-4;
 }
 
 #chem-page {
