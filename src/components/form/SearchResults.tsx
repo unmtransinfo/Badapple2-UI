@@ -11,7 +11,6 @@ interface SearchResultsProps {
     setChem: (chem: any) => void;
 }
 
-// TODO: fix edge case, if single molecule given with no name column then not parsed correctly
 const parseQuery = (rawText: string, delimiter: string, colIdx: number, hasHeader: boolean): string[] => {
     const results = Papa.parse(rawText, {
         delimiter: delimiter,
@@ -84,7 +83,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
             setLoader(true);
             delimiter = delimiter === "\\t" ? "\t" : delimiter; // html saves tab as "\\t" instead of "\t"
             const smilesList = parseQuery(query, delimiter, smilesCol, hasHeader).slice(startIdx, startIdx+nMols);
-            const nameList = parseQuery(query, delimiter, nameCol, hasHeader).slice(startIdx, startIdx+nMols);
+            let nameList = parseQuery(query, delimiter, nameCol, hasHeader).slice(startIdx, startIdx+nMols);
+            nameList = nameList.map((name, index) => (name === undefined || name === "") ? smilesList[index] : name);
             const data = await fetchScaffolds(smilesList, nameList);
             
             if (data) {
