@@ -1,229 +1,225 @@
-import { SetStateAction, useState, useEffect, useRef } from 'react';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {useState, useEffect, useRef } from 'react';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleNotch, faUpload } from '@fortawesome/free-solid-svg-icons';
 import axios from "axios";
-import UserOptionsTable, { UserOptions } from './UserOptions';
-import OutputOptionsTable, {OutputOptions} from './OutputOptions';
-import './SearchResults.css';
 import Papa from 'papaparse';
+import UserOptionsTable, { UserOptions } from './UserOptions';
+import OutputOptionsTable, { OutputOptions } from './OutputOptions';
+import './SearchResults.css';
 
 interface SearchResultsProps {
     setChem: (chem: any) => void;
 }
 
+interface ParsedData {
+    smilesList: string[];
+    nameList: string[];
+}
+
+const DEFAULT_USER_OPTIONS: UserOptions = {
+    format: 'SMILES',
+    delimiter: ' ',
+    smilesCol: 0,
+    nameCol: 1,
+    hasHeader: false
+};
+
+const DEFAULT_OUTPUT_OPTIONS: OutputOptions = {
+    startIdx: 0,
+    maxMolecules: 10
+};
+
+const MAX_INPUT_SIZE = 5 * 1024 * 1024; // 5 MB
+const SUPPORTED_FILE_EXTENSIONS = ['.txt', '.smi', '.tsv', '.csv', '.smiles'];
+
+const EXAMPLE_SMILES = `CCCc1nc-2c(=O)n(c(=O)nc2n(n1)C)C mol1
+c1ccc2c(c1)c(=O)n(s2)c3ccccc3C(=O)N4CCCC4 mol2
+Cc1cc(nc(n1)N=C(N)Nc2cccc(c2)N)C mol3
+CCc1c(c2ccccc2o1)C(=O)c3cc(c(c(c3)Br)O)Br mol4
+OC(=O)C1=C2CCCC(C=C3C=CC(=O)C=C3)=C2NC2=CC=CC=C12 mol5
+c1ccc2c(c1)C(=O)c3ccoc3C2=O mol6`;
+
 const parseQuery = (rawText: string, delimiter: string, colIdx: number, hasHeader: boolean): string[] => {
     const results = Papa.parse(rawText, {
-        delimiter: delimiter,
+        delimiter: delimiter === "\\t" ? "\t" : delimiter,
         header: hasHeader,
         skipEmptyLines: true
     });
 
     if (hasHeader) {
         return results.data.map((row: any) => row[Object.keys(row)[colIdx]]);
-    } else {
-        return results.data.map((row: any) => row[colIdx]);
     }
+    return results.data.map((row: any) => row[colIdx]);
 };
 
-async function fetchScaffolds(smilesList: string[], nameList: string[]) {
-    const inputSMILES = smilesList.join(',');
-    const inputNames = nameList.join(',');
+const parseInputData = (
+    query: string,
+    { delimiter, smilesCol, nameCol, hasHeader }: UserOptions,
+    { startIdx, maxMolecules }: OutputOptions
+): ParsedData => {
+    const smilesList = parseQuery(query, delimiter, smilesCol, hasHeader).slice(startIdx, startIdx + maxMolecules);
+    const nameList = parseQuery(query, delimiter, nameCol, hasHeader)
+        .slice(startIdx, startIdx + maxMolecules)
+        .map((name, index) => name || smilesList[index]);
+    
+    return { smilesList, nameList };
+};
+
+async function fetchScaffolds(data: ParsedData) {
     const apiUrl = import.meta.env.VITE_API_HOST;
-    return await axios.get(apiUrl, {
-        params: {
-            SMILES: inputSMILES,
-            Names: inputNames
-        }
-    })
-        .then(promise => {
-            return promise.data;
-        })
-        .catch(e => {
-            console.error(e);
-        })
+    try {
+        const response = await axios.get(apiUrl, {
+            params: {
+                SMILES: data.smilesList.join(','),
+                Names: data.nameList.join(',')
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching scaffolds:', error);
+        return null;
+    }
 }
 
-// TODO: refactor some of this, right now its a mess
 const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
     const [searchInput, setSearchInput] = useState('');
     const [searchResults, setSearchResults] = useState({});
-    const [loader, setLoader] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [userOptions, setUserOptions] = useState<UserOptions>({
-        format: 'SMILES',
-        delimiter: ' ',
-        smilesCol: 0,
-        nameCol: 1,
-        hasHeader: false
-    });
-    const [outputOptions, setOutputOptions] = useState<OutputOptions>({
-        startIdx: 0,
-        maxMolecules : 10
-    });
-    const maxInputSizeInBytes = 5 * 1024 * 1024; // 5 MB
+    const [userOptions, setUserOptions] = useState<UserOptions>(DEFAULT_USER_OPTIONS);
+    const [outputOptions, setOutputOptions] = useState<OutputOptions>(DEFAULT_OUTPUT_OPTIONS);
 
-    
-
-    const updateUserOptions = (key: keyof UserOptions, value: any) => {
-        setUserOptions((prevOptions: any) => ({
-            ...prevOptions,
-            [key]: value
-        }));
-    };
-    const updateOutputOptions = (key: keyof OutputOptions, value: any) => {
-        setOutputOptions((prevOptions: any) => ({
-            ...prevOptions,
-            [key]: value
-        }));
-    };
-    const supportedFileExtensions = ['.txt', '.smi', '.tsv', '.csv', '.smiles'];
-
-    const fetchData = async (query: string, delimiter: string, smilesCol: number, nameCol: number, hasHeader: boolean, startIdx: number, nMols: number) => {
-        if (query && query.length) {
-            setLoader(true);
-            delimiter = delimiter === "\\t" ? "\t" : delimiter; // html saves tab as "\\t" instead of "\t"
-            const smilesList = parseQuery(query, delimiter, smilesCol, hasHeader).slice(startIdx, startIdx+nMols);
-            let nameList = parseQuery(query, delimiter, nameCol, hasHeader).slice(startIdx, startIdx+nMols);
-            nameList = nameList.map((name, index) => (name === undefined || name === "") ? smilesList[index] : name);
-            const data = await fetchScaffolds(smilesList, nameList);
-            
-            if (data) {
-                setSearchResults(data);
-            }
-            setLoader(false);
-        }
-    };
-    
     useEffect(() => {
-        if (searchResults && Object.keys(searchResults).length > 0) {
+        if (Object.keys(searchResults).length > 0) {
             setChem(searchResults);
         }
     }, [searchResults, setChem]);
 
-    const onSearchInput = (e: { target: { value: SetStateAction<string>; }; }) => {
-        setSearchInput(e.target.value);
-    }
+    const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
 
-    const onSubmit = () => {
-        fetchData(searchInput, userOptions.delimiter, userOptions.smilesCol, userOptions.nameCol, userOptions.hasHeader, outputOptions.startIdx, outputOptions.maxMolecules);
-    };
-    
-    const handleKeyDown = (e: { key: string; shiftKey: any; preventDefault: () => void; }) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            onSubmit();
+        const fileExtension = `.${file.name.split('.').pop()?.toLowerCase()}`;
+        if (!SUPPORTED_FILE_EXTENSIONS.includes(fileExtension)) {
+            alert(`Unsupported file type. Please upload: ${SUPPORTED_FILE_EXTENSIONS.join(', ')}`);
+            return;
         }
-    };
 
-    const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-        const paste = e.clipboardData.getData('text');
-        if (paste.length + searchInput.length > maxInputSizeInBytes) {
-            alert('Pasting this content would exceed the 5 MB limit. Please paste a smaller amount of text.');
-            e.preventDefault();
+        if (file.size > MAX_INPUT_SIZE) {
+            alert('File size exceeds the 5 MB limit. Please upload a smaller file.');
+            return;
         }
+
+        const text = await file.text();
+        setSearchInput(text);
     };
 
-    const fillWithExampleSMILES = () => {
-        const exampleSMILES = `CCCc1nc-2c(=O)n(c(=O)nc2n(n1)C)C mol1
-c1ccc2c(c1)c(=O)n(s2)c3ccccc3C(=O)N4CCCC4 mol2
-Cc1cc(nc(n1)N=C(N)Nc2cccc(c2)N)C mol3
-CCc1c(c2ccccc2o1)C(=O)c3cc(c(c(c3)Br)O)Br mol4
-OC(=O)C1=C2CCCC(C=C3C=CC(=O)C=C3)=C2NC2=CC=CC=C12 mol5
-c1ccc2c(c1)C(=O)c3ccoc3C2=O mol6`;
-        setSearchInput(exampleSMILES);
-    };
-
-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, supportedExtensions: string[]) => {
-        const file = e.target.files ? e.target.files[0] : null;
-        if (file) {
-            const fileExtension = file.name.split('.').pop()?.toLowerCase();
-
-            if (!fileExtension || !supportedExtensions.includes(`.${fileExtension}`)) {
-                alert(`Unsupported file type. Please upload a file with one of the following extensions: ${supportedExtensions.join(', ')}`);
-                return;
+    const handleSubmit = async () => {
+        if (!searchInput) return;
+        
+        setIsLoading(true);
+        try {
+            const parsedData = parseInputData(searchInput, userOptions, outputOptions);
+            const data = await fetchScaffolds(parsedData);
+            if (data) {
+                setSearchResults(data);
             }
-
-            if (file.size > maxInputSizeInBytes) {
-                alert('File size exceeds the 5 MB limit. Please upload a smaller file.');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                if (e.target && typeof e.target.result === 'string') {
-                    setSearchInput(e.target.result);
-                }
-            };
-            reader.readAsText(file);
+        } catch (error) {
+            console.error('Error processing submission:', error);
+            alert('An error occurred while processing your request.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    const triggerFileInput = () => {
-        if (fileInputRef.current) {
-            fileInputRef.current.click();
-        }
-    };
-
-    const handleClear = () => {
-        setSearchInput('');
+    const updateOption = <T extends Record<string, any>>(
+        setter: React.Dispatch<React.SetStateAction<T>>,
+        key: keyof T,
+        value: any
+    ) => {
+        setter(prev => ({ ...prev, [key]: value }));
     };
 
     return (
-        <div>
-            <div id="search-container" className="w-full max-w-5xl mx-auto">
-                <section className="mb-4">
-                    <div className="flex mb-2">
-                        <button
-                            onClick={triggerFileInput}
-                            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center"
-                        >
-                            <FontAwesomeIcon icon={faUpload} className="mr-2" />
-                            Upload File
-                        </button>
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={(e) => handleFileUpload(e, supportedFileExtensions)}
-                            accept=".txt,.smi,.tsv,.csv,.smiles"
-                            style={{ display: 'none' }}
-                        />
-                        <button onClick={handleClear} className="ml-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center">
-                                Clear Input
-                        </button>
-                        <button onClick={fillWithExampleSMILES} className="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center">
-                            Example Input
-                        </button>
-                    </div>
-                    <div className="flex-container">
-                        <textarea
-                            id="search-input"
-                            placeholder="Enter SMILES (Press Shift+Enter for new line)"
-                            value={searchInput}
-                            onChange={onSearchInput}
-                            onKeyDown={handleKeyDown}  
-                            maxLength={5000000} // 5 million characters
-                            onPaste={handlePaste}               
-                            className="w-full h-40 p-2 mb-4 border dark:border-gray-600/40 backdrop-blur-md dark:bg-gray-600/30 dark:hover:bg-gray-600/50 dark:focus:bg-gray-600/50 dark:active:bg-gray-600/50 resize-y"
-                        />
-                    </div>
-                    <div className="flex-container">
-                        <UserOptionsTable userOptions={userOptions} updateUserOptions={updateUserOptions} />
-                        <OutputOptionsTable outputOptions={outputOptions} updateOutputOptions={updateOutputOptions} />
-                    </div>
-                    <br />
+        <div className="w-full max-w-5xl mx-auto">
+            <section className="mb-4">
+                <div className="flex mb-2 gap-2">
                     <button
-                        onClick={onSubmit}
-                        className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center"
                     >
-                        Submit
+                        <FontAwesomeIcon icon={faUpload} className="mr-2" />
+                        Upload File
                     </button>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileUpload}
+                        accept={SUPPORTED_FILE_EXTENSIONS.join(',')}
+                        className="hidden"
+                    />
+                    <button 
+                        onClick={() => setSearchInput('')}
+                        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                        Clear Input
+                    </button>
+                    <button 
+                        onClick={() => setSearchInput(EXAMPLE_SMILES)}
+                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                        Example Input
+                    </button>
+                </div>
+
+                <textarea
+                    placeholder="Enter SMILES (Press Shift+Enter for new line)"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSubmit();
+                        }
+                    }}
+                    onPaste={(e) => {
+                        if (e.clipboardData.getData('text').length + searchInput.length > MAX_INPUT_SIZE) {
+                            e.preventDefault();
+                            alert('Pasting this content would exceed the 5 MB limit.');
+                        }
+                    }}
+                    maxLength={5000000}
+                    className="w-full h-40 p-2 mb-4 border dark:border-gray-600/40 backdrop-blur-md dark:bg-gray-600/30 dark:hover:bg-gray-600/50 dark:focus:bg-gray-600/50 dark:active:bg-gray-600/50 resize-y"
+                />
+
+                <div className="flex-container">
+                    <UserOptionsTable 
+                        userOptions={userOptions}
+                        updateUserOptions={(key, value) => updateOption(setUserOptions, key, value)}
+                    />
+                    <OutputOptionsTable 
+                        outputOptions={outputOptions}
+                        updateOutputOptions={(key, value) => updateOption(setOutputOptions, key, value)}
+                    />
+                </div>
+
+                <button
+                    onClick={handleSubmit}
+                    className="w-full px-4 py-2 mt-4 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                    Submit
+                </button>
+            </section>
+
+            {Object.keys(searchResults).length > 0 && (
+                <section className={`glass-container gap-0 p-0 ${isLoading ? 'active' : ''}`}>
+                    {isLoading && (
+                        <div className="loader active">
+                            <FontAwesomeIcon icon={faCircleNotch} className="text-primary animate-spin"/>
+                        </div>
+                    )}
                 </section>
-                <section className={'glass-container gap-0 p-0 ' + (Object.keys(searchResults).length ? 'active' : '')}>
-                    <div className={'loader ' + (loader ? 'active' : '')}>
-                        <FontAwesomeIcon icon={faCircleNotch} className="text-primary animate-spin"/>
-                    </div>
-                </section>
-            </div>
+            )}
         </div>
     );
 };
