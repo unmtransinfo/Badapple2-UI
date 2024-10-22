@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/Badapple2/',
+  base: '/badapple2/',
   plugins: [react()],
   server: {
     host: true,
