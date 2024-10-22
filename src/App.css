@@ -56,7 +56,7 @@ main::after {
 }
 
 #chem-page {
-    h3 {
+    :is(h3) {
         font-size: 24px;
         font-weight: bold;
         margin-bottom: 10px;
