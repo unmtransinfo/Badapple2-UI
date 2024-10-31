@@ -32,6 +32,10 @@ interface ChemPageProps {
     setChem: Dispatch<SetStateAction<any>>;
 }
 
+const COLUMN_HEADER_TEXT = "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200";
+const MOL_COL_TEXT = "whitespace-nowrap text-s font-medium text-gray-900";
+const ROW_INNER_TEXT = "px-6 py-4 whitespace-nowrap text-s text-gray-900 border-r border-gray-200";
+
 const transformSmiles = (smiles: string) => {
     /*
     This function is used to transform scaffold SMILES because RDKit.js uses get_qmol() to perform substructure-highlighting,
@@ -103,17 +107,19 @@ const getRow = (molData: MoleculeInfo, scaffold: ScaffoldInfo, index: number, sc
     const detailsArray = buildDetailsArray(scaffold);
     const weightedScore = !in_db ? -1 : pscore; // make score -1 to show colors correctly
     const rowClassName = getRowClassName(weightedScore);
+    const svgWidth = 200;
+    const svgHeight = 125;
     return (
         <tr key={`${index}-${scaffoldIndex}`} className={rowClassName}>
             <td className={`px-6 py-4 whitespace-nowrap border-r border-gray-200 ${highestPscoreRowClassName}`}>
                 <div className="mb-4">
-                    <p className="whitespace-nowrap text-2xl text-gray-900">Name: {truncateName(molData.name, 16)}</p>
+                    <p className={MOL_COL_TEXT}>Name: {truncateName(molData.name, 16)}</p>
                     <MoleculeStructure
                         id={`mol-smile-svg-${index}-${scaffoldIndex}`}
                         structure={molData.molecule_smiles}
                         subStructure={transformSmiles(scafsmi)}
-                        width={350}
-                        height={300}
+                        width={svgWidth}
+                        height={svgHeight}
                         svgMode={true}
                         className="mb-4"
                     />
@@ -123,15 +129,15 @@ const getRow = (molData: MoleculeInfo, scaffold: ScaffoldInfo, index: number, sc
                 <MoleculeStructure
                     id={`scaf-smile-svg-${index}-${scaffoldIndex}`}
                     structure={scafsmi}
-                    width={350}
-                    height={300}
+                    width={svgWidth}
+                    height={svgHeight}
                     svgMode={true}
                     className="mb-4"
                 />
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-2xl text-gray-900 border-r border-gray-200">{inDrugString}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-2xl text-gray-900 border-r border-gray-200">{pscoreString}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-2xl text-gray-900">
+            <td className={ROW_INNER_TEXT}>{inDrugString}</td>
+            <td className={ROW_INNER_TEXT}>{pscoreString}</td>
+            <td className={ROW_INNER_TEXT}>
                     {detailsArray.map((detail, detailIndex) => (
                         <div key={detailIndex}>{detail}</div>
                     ))}
@@ -175,13 +181,12 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                 }
                 else if (validMol) {
                     // valid input SMILES given, but mol has no scaffolds (ie ring systems, excluding benzene)
-                    // Get the highest pscore and its corresponding row class name (for molecule column color)
                     return (
                         <React.Fragment key={index}>
                             <tr className={getRowClassName(-1)}>
                                 <td className="px-6 py-4 whitespace-nowrap border-r border-gray-200">
                                     <div className="mb-4">
-                                        <p className="whitespace-nowrap text-2xl text-gray-900">Name: {truncateName(molData.name, 16)}</p>
+                                        <p className={MOL_COL_TEXT}>Name: {truncateName(molData.name, 16)}</p>
                                         <MoleculeStructure
                                             id={`mol-smile-svg-${index}`}
                                             structure={molData.molecule_smiles}
@@ -192,10 +197,10 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                                         />
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-2xl text-gray-900 border-r border-gray-200">Molecule has no scaffolds</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-2xl text-gray-900 border-r border-gray-200"></td>
-                                <td className="px-6 py-4 whitespace-nowrap text-2xl text-gray-900 border-r border-gray-200"></td>
-                                <td className="px-6 py-4 whitespace-nowrap text-2xl text-gray-900 border-r border-gray-200"></td>
+                                <td className={ROW_INNER_TEXT}>Molecule has no scaffolds</td>
+                                <td className={ROW_INNER_TEXT}></td>
+                                <td className={ROW_INNER_TEXT}></td>
+                                <td className={ROW_INNER_TEXT}></td>
                             </tr>
                             <tr>
                                 <td colSpan={5} className="py-2">
@@ -206,11 +211,12 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                     );
                 }
                 else {
+                    // invalid SMILES 
                     return (
                         <React.Fragment key={index}>
                             <td colSpan={5} className="py-4 text-center text-red-500">
-                                <p className="whitespace-nowrap text-2xl text-gray-900">Name: {molName}</p>
-                                <p className="whitespace-nowrap text-2xl text-gray-900">Given SMILES: {molSmilesStr}</p>
+                                <p className={MOL_COL_TEXT}>Name: {molName}</p>
+                                <p className={MOL_COL_TEXT}>Given SMILES: {molSmilesStr}</p>
                                 <p>{molData.error_msg}</p>
                             </td>
                             <tr>
@@ -231,11 +237,11 @@ const getResultsTable = (moleculeInfos: MoleculeInfo[]): React.ReactNode => {
         <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
                 <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">Molecule</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">Scaffold</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">InDrug</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">Pscore</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                    <th className={COLUMN_HEADER_TEXT}>Molecule</th>
+                    <th className={COLUMN_HEADER_TEXT}>Scaffold</th>
+                    <th className={COLUMN_HEADER_TEXT}>InDrug</th>
+                    <th className={COLUMN_HEADER_TEXT}>Pscore</th>
+                    <th className={COLUMN_HEADER_TEXT}>Details</th>
                 </tr>
             </thead>
             {getMoleculeRows(moleculeInfos)}
