@@ -6,11 +6,6 @@ page-wrapper {
     @apply relative min-h-[100vh] bg-white dark:shadow-[inset_0_5rem_5rem_0_rgb(0_0_0_/_0.7)] light:shadow-none transition-all;
 }
 
-main::after {
-    @apply h-full w-full absolute z-0 content-[''] top-0 bg-fixed bg-cover bg-center opacity-5 light:opacity-10;
-    background-image: url(/v01_molecules-53.jpg);
-}
-
 .loader {
     @apply flex absolute z-0 top-0 left-0 h-[6rem] w-full items-center justify-center text-3xl transition-all opacity-0;
 }
