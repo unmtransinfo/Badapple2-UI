@@ -141,8 +141,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
     };
 
     return (
-        <div className="w-full max-w-5xl mx-auto">
-            <section className="mb-4">
+        <div className="w-full max-w-6xl mx-auto">
+            <section className="mb-2">
                 <div className="flex mb-2 gap-2">
                     <button
                         onClick={() => fileInputRef.current?.click()}
@@ -171,46 +171,45 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
                         Example Input
                     </button>
                 </div>
-
-                <textarea
-                    placeholder="Enter SMILES (Press Shift+Enter for new line)"
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            handleSubmit();
-                        }
-                    }}
-                    onPaste={(e) => {
-                        if (e.clipboardData.getData('text').length + searchInput.length > MAX_INPUT_SIZE) {
-                            e.preventDefault();
-                            alert('Pasting this content would exceed the 5 MB limit.');
-                        }
-                    }}
-                    maxLength={5000000}
-                    className="w-full h-40 p-2 mb-4 border dark:border-gray-600/40 backdrop-blur-md dark:bg-gray-600/30 dark:hover:bg-gray-600/50 dark:focus:bg-gray-600/50 dark:active:bg-gray-600/50 resize-y"
-                />
-
                 <div className="flex-container">
-                    <UserOptionsTable 
-                        userOptions={userOptions}
-                        updateUserOptions={(key, value) => updateOption(setUserOptions, key, value)}
+                    <textarea
+                        placeholder="Enter SMILES (Press Shift+Enter for new line)"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                handleSubmit();
+                            }
+                        }}
+                        onPaste={(e) => {
+                            if (e.clipboardData.getData('text').length + searchInput.length > MAX_INPUT_SIZE) {
+                                e.preventDefault();
+                                alert('Pasting this content would exceed the 5 MB limit.');
+                            }
+                        }}
+                        maxLength={5000000}
+                        className="w-full h-60 p-2 mb-4 border dark:border-gray-600/40 backdrop-blur-md dark:bg-gray-600/30 dark:hover:bg-gray-600/50 dark:focus:bg-gray-600/50 dark:active:bg-gray-600/50 resize-y"
+                        style={{ width: '56rem' }}
                     />
-                    <OutputOptionsTable 
-                        outputOptions={outputOptions}
-                        updateOutputOptions={(key, value) => updateOption(setOutputOptions, key, value)}
-                    />
+                    <div className="flex-container">
+                        <UserOptionsTable 
+                            userOptions={userOptions}
+                            updateUserOptions={(key, value) => updateOption(setUserOptions, key, value)}
+                        />
+                        <OutputOptionsTable 
+                            outputOptions={outputOptions}
+                            updateOutputOptions={(key, value) => updateOption(setOutputOptions, key, value)}
+                        />
+                    </div>
                 </div>
-
-                <button
+            </section>
+            <button
                     onClick={handleSubmit}
-                    className="w-full px-4 py-2 mt-4 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    className="w-full px-4 py-2 mt-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                 >
                     Submit
-                </button>
-            </section>
-
+            </button>
             {Object.keys(searchResults).length > 0 && (
                 <section className={`glass-container gap-0 p-0 ${isLoading ? 'active' : ''}`}>
                     {isLoading && (
