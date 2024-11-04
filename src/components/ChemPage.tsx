@@ -34,7 +34,12 @@ interface ChemPageProps {
 
 const COLUMN_HEADER_TEXT = "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200";
 const MOL_COL_TEXT = "whitespace-nowrap text-s font-medium text-gray-900";
-const ROW_INNER_TEXT = "px-6 py-4 whitespace-nowrap text-s text-gray-900 border-r border-gray-200";
+const SVG_WIDTH = 200;
+const SVG_HEIGHT = 125;
+
+const getRowEntryClass = (entryColor: string, boldText: boolean) => {
+    return `px-6 py-4 whitespace-nowrap text-s ${boldText ? 'font-medium' : ''} text-gray-900 border-r border-gray-200 ${entryColor}`;
+}
 
 const transformSmiles = (smiles: string) => {
     /*
@@ -63,7 +68,7 @@ const transformSmiles = (smiles: string) => {
 
 
 // for visualizing score advisory color
-const getRowClassName = (pscore: number) => {
+const getRowEntryColor = (pscore: number) => {
     if (pscore >= 300) return "bg-red-300";
     if (pscore >= 100) return "bg-yellow-300";
     if (pscore >= 0) return "bg-green-300";
@@ -100,49 +105,81 @@ const truncateName = (name: string, maxLength: number) => {
 };
 
 
+const renderTableRow = (
+    index: number,
+    scaffoldIndex: number,
+    rowColor: string,
+    molData: any,
+    scafsmi: string,
+    highestPscoreColor: string,
+    inDrugString: string,
+    pscoreString: string | number,
+    detailsArray: string[]
+) => {
+    const first2ColClass = getRowEntryClass(highestPscoreColor, true);
+    const otherColClass = getRowEntryClass(rowColor, false)
+    return (
+        <tr key={`${index}-${scaffoldIndex}`} className={rowColor}>
+            <td className={first2ColClass}>{truncateName(molData.name, 16)}</td>
+            <td className={first2ColClass}>
+                <div className="mb-4">
+                    <MoleculeStructure
+                        id={`mol-smile-svg-${index}-${scaffoldIndex}`}
+                        structure={molData.molecule_smiles}
+                        subStructure={transformSmiles(scafsmi)}
+                        width={SVG_WIDTH}
+                        height={SVG_HEIGHT}
+                        svgMode={true}
+                        className="mb-4"
+                    />
+                </div>
+            </td>
+            {scafsmi ? (
+                <td className="px-6 py-4 whitespace-nowrap border-r border-gray-200">
+                    <MoleculeStructure
+                        id={`scaf-smile-svg-${index}-${scaffoldIndex}`}
+                        structure={scafsmi}
+                        width={SVG_WIDTH}
+                        height={SVG_HEIGHT}
+                        svgMode={true}
+                        className="mb-4"
+                    />
+                </td>
+            ) : (
+                <td className={otherColClass}>Molecule has no scaffolds</td>
+            )}
+            <td className={otherColClass}>{inDrugString ? inDrugString : ""}</td>
+            <td className={otherColClass}>{pscoreString ? pscoreString : ""}</td>
+            <td className={otherColClass}>
+                    {detailsArray ? (detailsArray.map((detail, detailIndex) => (
+                        <div key={detailIndex}>{detail}</div>
+                    ))) : ""}
+            </td>
+        </tr>
+    );
+};
+
+const getSeparator = () => { 
+    // separator shown between scaffolds for different molecules
+    const nColumns = 6;
+    return (
+        <tr>
+            <td colSpan={nColumns} className="py-2">
+                <hr className="border-t-2 border-gray-300" />
+            </td>
+        </tr>)
+}
+
+
 const getRow = (molData: MoleculeInfo, scaffold: ScaffoldInfo, index: number, scaffoldIndex: number, highestPscoreRowClassName: string): ReactNode => {
     const { scafsmi, pscore, in_db, in_drug} = scaffold;
     const inDrugString = !in_db ? "NULL" : (in_drug ? "True" : "False");
     const pscoreString = !in_db ? "NULL" : pscore;
     const detailsArray = buildDetailsArray(scaffold);
     const weightedScore = !in_db ? -1 : pscore; // make score -1 to show colors correctly
-    const rowClassName = getRowClassName(weightedScore);
-    const svgWidth = 200;
-    const svgHeight = 125;
+    const rowClassName = getRowEntryColor(weightedScore);
     return (
-        <tr key={`${index}-${scaffoldIndex}`} className={rowClassName}>
-            <td className={`px-6 py-4 whitespace-nowrap border-r border-gray-200 ${highestPscoreRowClassName}`}>
-                <div className="mb-4">
-                    <p className={MOL_COL_TEXT}>Name: {truncateName(molData.name, 16)}</p>
-                    <MoleculeStructure
-                        id={`mol-smile-svg-${index}-${scaffoldIndex}`}
-                        structure={molData.molecule_smiles}
-                        subStructure={transformSmiles(scafsmi)}
-                        width={svgWidth}
-                        height={svgHeight}
-                        svgMode={true}
-                        className="mb-4"
-                    />
-                </div>
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap border-r border-gray-200">
-                <MoleculeStructure
-                    id={`scaf-smile-svg-${index}-${scaffoldIndex}`}
-                    structure={scafsmi}
-                    width={svgWidth}
-                    height={svgHeight}
-                    svgMode={true}
-                    className="mb-4"
-                />
-            </td>
-            <td className={ROW_INNER_TEXT}>{inDrugString}</td>
-            <td className={ROW_INNER_TEXT}>{pscoreString}</td>
-            <td className={ROW_INNER_TEXT}>
-                    {detailsArray.map((detail, detailIndex) => (
-                        <div key={detailIndex}>{detail}</div>
-                    ))}
-            </td>
-        </tr>
+        renderTableRow(index, scaffoldIndex, rowClassName, molData, scafsmi, highestPscoreRowClassName, inDrugString, pscoreString, detailsArray)
     );
 }
 
@@ -164,18 +201,14 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
 
                     // Get the highest pscore and its corresponding row class name (for molecule column color)
                     const highestPscore = sortedScaffolds.length > 0 ? sortedScaffolds[0].pscore : -1;
-                    const highestPscoreRowClassName = getRowClassName(highestPscore);
+                    const highestPscoreRowClassName = getRowEntryColor(highestPscore);
 
                     return (
                         <React.Fragment key={index}>
                             {sortedScaffolds.map((scaffold, scaffoldIndex) => 
                                 getRow(molData, scaffold, index, scaffoldIndex, highestPscoreRowClassName)
                             )}
-                            <tr>
-                                <td colSpan={5} className="py-2">
-                                    <hr className="border-t-2 border-gray-300" />
-                                </td>
-                            </tr>
+                            {getSeparator()}
                         </React.Fragment>
                     );
                 }
@@ -183,30 +216,18 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                     // valid input SMILES given, but mol has no scaffolds (ie ring systems, excluding benzene)
                     return (
                         <React.Fragment key={index}>
-                            <tr className={getRowClassName(-1)}>
-                                <td className="px-6 py-4 whitespace-nowrap border-r border-gray-200">
-                                    <div className="mb-4">
-                                        <p className={MOL_COL_TEXT}>Name: {truncateName(molData.name, 16)}</p>
-                                        <MoleculeStructure
-                                            id={`mol-smile-svg-${index}`}
-                                            structure={molData.molecule_smiles}
-                                            width={350}
-                                            height={300}
-                                            svgMode={true}
-                                            className="mb-4"
-                                        />
-                                    </div>
-                                </td>
-                                <td className={ROW_INNER_TEXT}>Molecule has no scaffolds</td>
-                                <td className={ROW_INNER_TEXT}></td>
-                                <td className={ROW_INNER_TEXT}></td>
-                                <td className={ROW_INNER_TEXT}></td>
-                            </tr>
-                            <tr>
-                                <td colSpan={5} className="py-2">
-                                    <hr className="border-t-2 border-gray-300" />
-                                </td>
-                            </tr>
+                            {renderTableRow(
+                                index, 
+                                0, 
+                                getRowEntryColor(-1), 
+                                molData, 
+                                "", 
+                                "",
+                                "",
+                                "",
+                                []
+                            )}
+                            {getSeparator()}
                         </React.Fragment>
                     );
                 }
@@ -214,16 +235,12 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                     // invalid SMILES 
                     return (
                         <React.Fragment key={index}>
-                            <td colSpan={5} className="py-4 text-center text-red-500">
+                            <td colSpan={6} className="py-4 text-center text-red-500">
                                 <p className={MOL_COL_TEXT}>Name: {molName}</p>
                                 <p className={MOL_COL_TEXT}>Given SMILES: {molSmilesStr}</p>
                                 <p>{molData.error_msg}</p>
                             </td>
-                            <tr>
-                                <td colSpan={5} className="py-2">
-                                    <hr className="border-t-2 border-gray-300" />
-                                </td>
-                            </tr>
+                            {getSeparator()}
                         </React.Fragment>
                     );
                 }
@@ -237,6 +254,7 @@ const getResultsTable = (moleculeInfos: MoleculeInfo[]): React.ReactNode => {
         <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
                 <tr>
+                    <th className={COLUMN_HEADER_TEXT}>MolName</th>
                     <th className={COLUMN_HEADER_TEXT}>Molecule</th>
                     <th className={COLUMN_HEADER_TEXT}>Scaffold</th>
                     <th className={COLUMN_HEADER_TEXT}>InDrug</th>
