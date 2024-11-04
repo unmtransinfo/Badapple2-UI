@@ -190,30 +190,22 @@ class MoleculeStructure extends Component {
         </span>
             );
         } else if (this.props.svgMode) {
-            const DownloadLink = () => (
-                <a className='download-link'
-                   href={window.URL.createObjectURL(new Blob([this.state.svg], {type: "image/svg+xml"}))}
-                   download={"molecule.svg"}>
-                    <button className="btn btn-blue">
-                        <FontAwesomeIcon icon={faDownload} className="mr-2"/>
-                        Download SVG
-                    </button>
-                </a>
-            );
-
+            const downloadFname = `${this.props.id}.svg`
             return (
                 <div className='molecule-structure-wrapper'>
-                    <div
-                        title={this.props.structure}
-                        className={"molecule-structure-svg " + (this.props.className || "")}
-                        style={{width: this.props.width, height: this.props.height}}
-                        dangerouslySetInnerHTML={{__html: this.state.svg}}
-                    >
-                    </div>
-
-                    <DownloadLink/>
+                    <a className='molecule-structure-link'
+                       href={window.URL.createObjectURL(new Blob([this.state.svg], {type: "image/svg+xml"}))}
+                       download={downloadFname}
+                       style={{ cursor: 'pointer' }}>
+                        <div
+                            title={this.props.structure}
+                            className={"molecule-structure-svg " + (this.props.className || "")}
+                            style={{width: this.props.width, height: this.props.height}}
+                            dangerouslySetInnerHTML={{__html: this.state.svg}}
+                        >
+                        </div>
+                    </a>
                 </div>
-
             );
         } else {
             return (

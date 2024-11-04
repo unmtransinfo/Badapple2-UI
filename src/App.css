@@ -65,6 +65,11 @@ page-wrapper {
     }
 }
 
+.molecule-structure-link:hover .molecule-structure-svg {
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
 .btn {
     @apply bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow;
 }
