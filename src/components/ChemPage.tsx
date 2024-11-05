@@ -36,6 +36,7 @@ const COLUMN_HEADER_TEXT = "px-6 py-3 text-left text-xs font-medium text-gray-50
 const MOL_COL_TEXT = "whitespace-nowrap text-s font-medium text-gray-900";
 const SVG_WIDTH = 200;
 const SVG_HEIGHT = 125;
+const TABLE_N_COLUMNS = 8;
 
 const getRowEntryClass = (entryColor: string, boldText: boolean) => {
     return `px-6 py-4 whitespace-nowrap text-s ${boldText ? 'font-medium' : ''} text-gray-900 border-r border-gray-200 ${entryColor}`;
@@ -148,21 +149,37 @@ const renderTableRow = (
             )}
             <td id="table-results" className={otherColClass}>{inDrugString ? inDrugString : ""}</td>
             <td id="table-results" className={otherColClass}>{pscoreString ? pscoreString : ""}</td>
-            <td id="table-results" className={otherColClass}>
-                    {detailsArray ? (detailsArray.map((detail, detailIndex) => (
-                        <div key={detailIndex}>{detail}</div>
-                    ))) : ""}
-            </td>
+            {detailsArray && detailsArray.length === 6 ? (
+                <>
+                    <td id="table-results-1" className={otherColClass}>
+                        <div>{detailsArray[0]}</div>
+                        <div>{detailsArray[1]}</div>
+                    </td>
+                    <td id="table-results-2" className={otherColClass}>
+                        <div>{detailsArray[2]}</div>
+                        <div>{detailsArray[3]}</div>
+                    </td>
+                    <td id="table-results-3" className={otherColClass}>
+                        <div>{detailsArray[4]}</div>
+                        <div>{detailsArray[5]}</div>
+                    </td>
+                </>
+            ) : (
+                <>
+                    <td id="table-results" className={otherColClass}></td>
+                    <td id="table-results" className={otherColClass}></td>
+                    <td id="table-results" className={otherColClass}></td>
+                </>
+            )}
         </tr>
     );
 };
 
 const getSeparator = () => { 
     // separator shown between scaffolds for different molecules
-    const nColumns = 6;
     return (
         <tr>
-            <td colSpan={nColumns} className="py-2">
+            <td colSpan={TABLE_N_COLUMNS} className="py-2">
                 <hr className="border-t-2 border-gray-300" />
             </td>
         </tr>)
@@ -233,7 +250,7 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                     // invalid SMILES 
                     return (
                         <React.Fragment key={index}>
-                            <td colSpan={6} className="py-4 text-center text-red-500">
+                            <td colSpan={TABLE_N_COLUMNS} className="py-4 text-center text-red-500">
                                 <p className={MOL_COL_TEXT}>Name: {molName}</p>
                                 <p className={MOL_COL_TEXT}>Given SMILES: {molSmilesStr}</p>
                                 <p>{molData.error_msg}</p>
@@ -257,7 +274,9 @@ const getResultsTable = (moleculeInfos: MoleculeInfo[]): React.ReactNode => {
                     <th className={COLUMN_HEADER_TEXT}>Scaffold</th>
                     <th className={COLUMN_HEADER_TEXT}>InDrug</th>
                     <th className={COLUMN_HEADER_TEXT}>Pscore</th>
-                    <th className={COLUMN_HEADER_TEXT}>Details</th>
+                    <th className={COLUMN_HEADER_TEXT}>Substance Details</th>
+                    <th className={COLUMN_HEADER_TEXT}>Assay Details</th>
+                    <th className={COLUMN_HEADER_TEXT}>Sample Details</th>
                 </tr>
             </thead>
             {getMoleculeRows(moleculeInfos)}

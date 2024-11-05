@@ -75,12 +75,14 @@ page-wrapper {
 }
 
 
-/* For results page/table, remove top/bottom spacing */
+/* For results page/table */
 #table-results {
-    border-spacing: 2px;
- }
- 
+    border-spacing: 4px;
+    text-align: center;
+}
+
 #table-results td {
-    padding: 2px; 
-    margin: 2px;
- }
+    padding: 4px;
+    margin: 4px;
+    text-align: center;
+}
