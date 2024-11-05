@@ -1,4 +1,4 @@
-import React, {Dispatch, SetStateAction, ReactNode, useState} from "react";
+import React, {Dispatch, SetStateAction, ReactNode, useState, useRef} from "react";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import MoleculeStructure from "./MoleculeStructure.tsx";
@@ -115,13 +115,20 @@ const renderTableRow = (
     highestPscoreColor: string,
     inDrugString: string,
     pscoreString: string | number,
-    detailsArray: string[]
+    detailsArray: string[],
+    nRows: number,
+    isFirstOccurrence: boolean
 ) => {
     const first2ColClass = getRowEntryClass(highestPscoreColor, true);
     const otherColClass = getRowEntryClass(rowColor, false)
+
     return (
         <tr key={`${index}-${scaffoldIndex}`} className={rowColor}>
-            <td id="table-results" className={first2ColClass}>{truncateName(molData.name, 16)}</td>
+            {isFirstOccurrence ? (
+                <td id="table-results" className={first2ColClass} rowSpan={nRows}>
+                {truncateName(molData.name, 16)}
+                </td>
+            ) : <></>}
             <td id="table-results" className={first2ColClass}>
                 <MoleculeStructure
                     id={`mol-smile-svg-${index}-${scaffoldIndex}`}
@@ -186,15 +193,16 @@ const getSeparator = () => {
 }
 
 
-const getRow = (molData: MoleculeInfo, scaffold: ScaffoldInfo, index: number, scaffoldIndex: number, highestPscoreRowClassName: string): ReactNode => {
+const getRow = (molData: MoleculeInfo, scaffold: ScaffoldInfo, index: number, scaffoldIndex: number, highestPscoreRowClassName: string, molTotalRows: number): ReactNode => {
     const { scafsmi, pscore, in_db, in_drug} = scaffold;
     const inDrugString = !in_db ? "NULL" : (in_drug ? "True" : "False");
     const pscoreString = !in_db ? "NULL" : pscore;
     const detailsArray = buildDetailsArray(scaffold);
     const weightedScore = !in_db ? -1 : pscore; // make score -1 to show colors correctly
     const rowClassName = getRowEntryColor(weightedScore);
+    const isFirstOccurrence = (scaffoldIndex == 0);
     return (
-        renderTableRow(index, scaffoldIndex, rowClassName, molData, scafsmi, highestPscoreRowClassName, inDrugString, pscoreString, detailsArray)
+        renderTableRow(index, scaffoldIndex, rowClassName, molData, scafsmi, highestPscoreRowClassName, inDrugString, pscoreString, detailsArray, molTotalRows, isFirstOccurrence)
     );
 }
 
@@ -217,11 +225,10 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                     // Get the highest pscore and its corresponding row class name (for molecule column color)
                     const highestPscore = sortedScaffolds.length > 0 ? sortedScaffolds[0].pscore : -1;
                     const highestPscoreRowClassName = getRowEntryColor(highestPscore);
-
                     return (
                         <React.Fragment key={index}>
                             {sortedScaffolds.map((scaffold, scaffoldIndex) => 
-                                getRow(molData, scaffold, index, scaffoldIndex, highestPscoreRowClassName)
+                                getRow(molData, scaffold, index, scaffoldIndex, highestPscoreRowClassName, molData.scaffolds.length)
                             )}
                             {getSeparator()}
                         </React.Fragment>
@@ -240,7 +247,9 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                                 "",
                                 "",
                                 "",
-                                []
+                                [],
+                                1,
+                                true
                             )}
                             {getSeparator()}
                         </React.Fragment>
@@ -356,7 +365,9 @@ export default function ChemPage(props: ChemPageProps) {
     const moleculeInfos = props.result;
 
     const handlePageChange = (newPage: number) => {
-        setCurrentPage(newPage);
+        if (newPage !== currentPage) {
+          setCurrentPage(newPage);
+        }
     };
 
     const paginatedMoleculeInfos = moleculeInfos.slice(
@@ -367,7 +378,7 @@ export default function ChemPage(props: ChemPageProps) {
         <div id="chem-page" className="relative z-10">
             <div className="flex justify-between items-center mb-4">
                 <button onClick={() => {
-                    props.setChem(undefined)
+                    props.setChem(false)
                 }} className="btn-back">
                     <FontAwesomeIcon icon={faArrowLeft} className="mr-2"/>
                     <span>Back</span>
