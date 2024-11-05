@@ -115,7 +115,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
     };
 
     const handleSubmit = async () => {
-        if (!searchInput) return;
+        if (!searchInput  || isLoading) return;
         
         setIsLoading(true);
         try {
@@ -176,12 +176,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
                         placeholder="Enter SMILES (Press Shift+Enter for new line)"
                         value={searchInput}
                         onChange={(e) => setSearchInput(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault();
-                                handleSubmit();
-                            }
-                        }}
                         onPaste={(e) => {
                             if (e.clipboardData.getData('text').length + searchInput.length > MAX_INPUT_SIZE) {
                                 e.preventDefault();
