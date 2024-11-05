@@ -173,7 +173,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
                 </div>
                 <div className="flex-container">
                     <textarea
-                        placeholder="Enter SMILES (Press Shift+Enter for new line)"
+                        placeholder="Enter SMILES (Press Enter for new line)"
                         value={searchInput}
                         onChange={(e) => setSearchInput(e.target.value)}
                         onPaste={(e) => {
