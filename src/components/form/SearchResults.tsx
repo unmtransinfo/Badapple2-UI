@@ -60,7 +60,7 @@ const parseInputData = (
     const smilesList = parseQuery(query, delimiter, smilesCol, hasHeader).slice(startIdx, startIdx + maxMolecules);
     const nameList = parseQuery(query, delimiter, nameCol, hasHeader)
         .slice(startIdx, startIdx + maxMolecules)
-        .map((name, index) => name || smilesList[index]);
+        .map((name, index) => name || `${index}`);
     
     return { smilesList, nameList };
 };
