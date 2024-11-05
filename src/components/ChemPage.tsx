@@ -120,37 +120,35 @@ const renderTableRow = (
     const otherColClass = getRowEntryClass(rowColor, false)
     return (
         <tr key={`${index}-${scaffoldIndex}`} className={rowColor}>
-            <td className={first2ColClass}>{truncateName(molData.name, 16)}</td>
-            <td className={first2ColClass}>
-                <div className="mb-4">
-                    <MoleculeStructure
-                        id={`mol-smile-svg-${index}-${scaffoldIndex}`}
-                        structure={molData.molecule_smiles}
-                        subStructure={transformSmiles(scafsmi)}
-                        width={SVG_WIDTH}
-                        height={SVG_HEIGHT}
-                        svgMode={true}
-                        className="mb-4"
-                    />
-                </div>
+            <td id="table-results" className={first2ColClass}>{truncateName(molData.name, 16)}</td>
+            <td id="table-results" className={first2ColClass}>
+                <MoleculeStructure
+                    id={`mol-smile-svg-${index}-${scaffoldIndex}`}
+                    structure={molData.molecule_smiles}
+                    subStructure={transformSmiles(scafsmi)}
+                    width={SVG_WIDTH}
+                    height={SVG_HEIGHT}
+                    svgMode={true}
+                    className="mb-0"
+                />
             </td>
             {scafsmi ? (
-                <td className="px-6 py-4 whitespace-nowrap border-r border-gray-200">
+                <td id="table-results" className="px-6 py-4 whitespace-nowrap border-r border-gray-200">
                     <MoleculeStructure
                         id={`scaf-smile-svg-${index}-${scaffoldIndex}`}
                         structure={scafsmi}
                         width={SVG_WIDTH}
                         height={SVG_HEIGHT}
                         svgMode={true}
-                        className="mb-4"
+                        className="mb-0"
                     />
                 </td>
             ) : (
-                <td className={otherColClass}>Molecule has no scaffolds</td>
+                <td id="table-results" className={otherColClass}>Molecule has no scaffolds</td>
             )}
-            <td className={otherColClass}>{inDrugString ? inDrugString : ""}</td>
-            <td className={otherColClass}>{pscoreString ? pscoreString : ""}</td>
-            <td className={otherColClass}>
+            <td id="table-results" className={otherColClass}>{inDrugString ? inDrugString : ""}</td>
+            <td id="table-results" className={otherColClass}>{pscoreString ? pscoreString : ""}</td>
+            <td id="table-results" className={otherColClass}>
                     {detailsArray ? (detailsArray.map((detail, detailIndex) => (
                         <div key={detailIndex}>{detail}</div>
                     ))) : ""}
@@ -251,7 +249,7 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
 
 const getResultsTable = (moleculeInfos: MoleculeInfo[]): React.ReactNode => {
     return (
-        <table className="min-w-full divide-y divide-gray-200">
+        <table id="table-results" className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
                 <tr>
                     <th className={COLUMN_HEADER_TEXT}>MolName</th>
