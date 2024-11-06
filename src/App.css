@@ -23,7 +23,7 @@ page-wrapper {
 }
 
 .page-container {
-    @apply mx-auto p-6 pt-28;
+    @apply mx-auto p-6 pt-4;
 }
 
 .glass-container {
