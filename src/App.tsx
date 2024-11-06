@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './App.css';
 import SiteHeader from "./components/SiteHeader";
+import SiteFooter from './components/SiteFooter.tsx';
 import ChemPage from "./components/ChemPage.tsx";
 import SearchResults from "./components/form/SearchResults.tsx";
 import { createTheme, ThemeProvider } from "@mui/material";
@@ -13,12 +14,12 @@ function App() {
             <div className="page-wrapper">
                 <div className="page-container">
                     <SiteHeader />
-                    {/* TODO: Refactor to use ReactRouter */}
                     {!!chem ? (
                         <ChemPage result={chem} setChem={setChem} />
                     ) : (
                         <SearchResults setChem={setChem} />
                     )}
+                    <SiteFooter />
                 </div>
             </div>
         </ThemeProvider>

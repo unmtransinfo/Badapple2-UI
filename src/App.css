@@ -23,7 +23,7 @@ page-wrapper {
 }
 
 .page-container {
-    @apply mx-auto p-6 pt-28;
+    @apply mx-auto p-6 pt-4;
 }
 
 .glass-container {
@@ -65,6 +65,24 @@ page-wrapper {
     }
 }
 
+.molecule-structure-link:hover .molecule-structure-svg {
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
 .btn {
     @apply bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow;
+}
+
+
+/* For results page/table */
+#table-results {
+    border-spacing: 4px;
+    text-align: center;
+}
+
+#table-results td {
+    padding: 4px;
+    margin: 4px;
+    text-align: center;
 }
