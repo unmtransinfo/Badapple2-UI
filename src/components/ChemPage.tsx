@@ -70,10 +70,10 @@ const transformSmiles = (smiles: string) => {
 
 // for visualizing score advisory color
 const getRowEntryColor = (pscore: number) => {
+    if (pscore === null || pscore === undefined || pscore < -1) return "bg-gray-300";
     if (pscore >= 300) return "bg-red-300";
     if (pscore >= 100) return "bg-yellow-300";
-    if (pscore >= 0) return "bg-green-300";
-    return "bg-gray-300";
+    return "bg-green-300";
 };
 
 
