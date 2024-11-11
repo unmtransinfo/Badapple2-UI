@@ -30,9 +30,11 @@ score = ((sActive) / (sTested + median(sTested)) *
         <p>wActive (wells active) = # active wells (samples) containing this scaffold</p>
     </blockquote>
 
-    <p>The <b>inDrug</b> flag indicates whether the corresponding scaffold exists in any approved drug. 
+    <p>The <b>inDrug</b> flag indicates whether the corresponding scaffold exists in any approved drug<sup>*</sup>. 
         A high score for an inDrug scaffold thus represents conflicting evidence, but existence of an 
         approved drug is normally much stronger evidence.</p>
+    <p class="footnote"><small>* This analysis applies only to drugs with 5 ring systems or less. 
+        Drugs with many ring systems (e.g., venetoclax) are excluded.</small></p>
     <h3>Interpreting Scores</h3>
     <p>The table below provides an overview of how to interpret different pScores provided by Badapple.</p>
     <table border>
