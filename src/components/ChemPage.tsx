@@ -196,10 +196,9 @@ const getSeparator = () => {
 const getRow = (molData: MoleculeInfo, scaffold: ScaffoldInfo, index: number, scaffoldIndex: number, highestPscoreRowClassName: string, molTotalRows: number): ReactNode => {
     const { scafsmi, pscore, in_db, in_drug} = scaffold;
     const inDrugString = !in_db ? "NULL" : (in_drug ? "True" : "False");
-    const pscoreString = !in_db ? "NULL" : pscore;
+    const pscoreString = !in_db ? "NULL" : String(pscore);
     const detailsArray = buildDetailsArray(scaffold);
-    const weightedScore = !in_db ? -1 : pscore; // make score -1 to show colors correctly
-    const rowClassName = getRowEntryColor(weightedScore);
+    const rowClassName = getRowEntryColor(pscore);
     const isFirstOccurrence = (scaffoldIndex == 0);
     return (
         renderTableRow(index, scaffoldIndex, rowClassName, molData, scafsmi, highestPscoreRowClassName, inDrugString, pscoreString, detailsArray, molTotalRows, isFirstOccurrence)
@@ -217,8 +216,8 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                     // Sort the scaffolds array by pscore in descending order
                     const scaffoldInfos = molData.scaffolds;
                     const sortedScaffolds = scaffoldInfos.sort((a, b) => {
-                        if (b.pscore === undefined) return -1;
-                        if (a.pscore === undefined) return 1;
+                        if (b.pscore === undefined || b.pscore === null) return -1;
+                        if (a.pscore === undefined || a.pscore === null) return 1;
                         return b.pscore - a.pscore;
                     });
 
