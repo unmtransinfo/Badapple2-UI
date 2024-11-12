@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleNotch, faUpload } from '@fortawesome/free-solid-svg-icons';
 import axios from "axios";
 import Papa from 'papaparse';
-import UserOptionsTable, { UserOptions } from './UserOptions';
+import InputOptionsTable, { InputOptions } from './InputOptions';
 import OutputOptionsTable, { OutputOptions } from './OutputOptions';
 import './SearchResults.css';
 
@@ -16,7 +16,7 @@ interface ParsedData {
     nameList: string[];
 }
 
-const DEFAULT_USER_OPTIONS: UserOptions = {
+const DEFAULT_INPUT_OPTIONS: InputOptions = {
     format: 'SMILES',
     delimiter: ' ',
     smilesCol: 0,
@@ -54,7 +54,7 @@ const parseQuery = (rawText: string, delimiter: string, colIdx: number, hasHeade
 
 const parseInputData = (
     query: string,
-    { delimiter, smilesCol, nameCol, hasHeader }: UserOptions,
+    { delimiter, smilesCol, nameCol, hasHeader }: InputOptions,
     { startIdx, maxMolecules }: OutputOptions
 ): ParsedData => {
     const smilesList = parseQuery(query, delimiter, smilesCol, hasHeader).slice(startIdx, startIdx + maxMolecules);
@@ -86,7 +86,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
     const [searchResults, setSearchResults] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [userOptions, setUserOptions] = useState<UserOptions>(DEFAULT_USER_OPTIONS);
+    const [inputOptions, setInputOptions] = useState<InputOptions>(DEFAULT_INPUT_OPTIONS);
     const [outputOptions, setOutputOptions] = useState<OutputOptions>(DEFAULT_OUTPUT_OPTIONS);
 
     useEffect(() => {
@@ -119,7 +119,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
         
         setIsLoading(true);
         try {
-            const parsedData = parseInputData(searchInput, userOptions, outputOptions);
+            const parsedData = parseInputData(searchInput, inputOptions, outputOptions);
             const data = await fetchScaffolds(parsedData);
             if (data) {
                 setSearchResults(data);
@@ -187,9 +187,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
                         style={{ width: '56rem' }}
                     />
                     <div className="flex-container">
-                        <UserOptionsTable 
-                            userOptions={userOptions}
-                            updateUserOptions={(key, value) => updateOption(setUserOptions, key, value)}
+                        <InputOptionsTable 
+                            inputOptions={inputOptions}
+                            updateInputOptions={(key, value) => updateOption(setInputOptions, key, value)}
                         />
                         <OutputOptionsTable 
                             outputOptions={outputOptions}

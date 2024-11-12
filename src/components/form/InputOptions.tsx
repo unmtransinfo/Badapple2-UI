@@ -6,7 +6,7 @@ import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import handleNumberInputChange from './OptionsHandler';
 
 
-export interface UserOptions {
+export interface InputOptions {
     format: string;
     delimiter: string;
     smilesCol: number;
@@ -14,14 +14,14 @@ export interface UserOptions {
     hasHeader: boolean;
 }
 
-export interface UserOptionsProps {
-    userOptions: UserOptions;
-    updateUserOptions: (key: keyof UserOptions, value: any) => void;
+export interface InputOptionsProps {
+    inputOptions: InputOptions;
+    updateInputOptions: (key: keyof InputOptions, value: any) => void;
 }
 
 
-const UserOptionsTable: React.FC<UserOptionsProps> = ({ userOptions, updateUserOptions }) => {
-    const { format, delimiter, smilesCol, nameCol, hasHeader } = userOptions;
+const InputOptionsTable: React.FC<InputOptionsProps> = ({ inputOptions: inputOptions, updateInputOptions: updateInputOptions }) => {
+    const { format, delimiter, smilesCol, nameCol, hasHeader } = inputOptions;
 
     return (
         <div id="user-options-container">
@@ -41,7 +41,7 @@ const UserOptionsTable: React.FC<UserOptionsProps> = ({ userOptions, updateUserO
                             </span>
                         </td>
                         <td>
-                            <select name="molfmt" id="molFmt" value={format} onChange={(e) => updateUserOptions('format', e.target.value)}>
+                            <select name="molfmt" id="molFmt" value={format} onChange={(e) => updateInputOptions('format', e.target.value)}>
                                 <option value="SMILES" id="molFmtDefault">SMILES</option>
                             </select>
                         </td>
@@ -54,7 +54,7 @@ const UserOptionsTable: React.FC<UserOptionsProps> = ({ userOptions, updateUserO
                             </span>
                         </td>
                         <td>
-                            <select name="delimiter" id="delimChoice" value={delimiter} onChange={(e) => updateUserOptions('delimiter', e.target.value)}>
+                            <select name="delimiter" id="delimChoice" value={delimiter} onChange={(e) => updateInputOptions('delimiter', e.target.value)}>
                                 <option value=" " id="delimChoiceDefault">" " - space</option>
                                 <option value=",">"," - comma</option>
                                 <option value="\t">"\t" - tab</option>
@@ -69,7 +69,7 @@ const UserOptionsTable: React.FC<UserOptionsProps> = ({ userOptions, updateUserO
                             </span>
                         </td>
                         <td>
-                            <input type="number" name="smiles_col" id="smiles_column" min={0} size={4} value={smilesCol} onChange={(e) => handleNumberInputChange(e, updateUserOptions, 'smilesCol', 0, 1e8)} />
+                            <input type="number" name="smiles_col" id="smiles_column" min={0} size={4} value={smilesCol} onChange={(e) => handleNumberInputChange(e, updateInputOptions, 'smilesCol', 0, 1e8)} />
                         </td>
                     </tr>
                     <tr>
@@ -80,7 +80,7 @@ const UserOptionsTable: React.FC<UserOptionsProps> = ({ userOptions, updateUserO
                             </span>
                         </td>
                         <td>
-                            <input type="number" name="name_col" id="name_column" min={0} size={4} value={nameCol} onChange={(e) => handleNumberInputChange(e, updateUserOptions, 'nameCol', 0, 1e8)} />
+                            <input type="number" name="name_col" id="name_column" min={0} size={4} value={nameCol} onChange={(e) => handleNumberInputChange(e, updateInputOptions, 'nameCol', 0, 1e8)} />
                         </td>
                     </tr>
                     <tr>
@@ -91,7 +91,7 @@ const UserOptionsTable: React.FC<UserOptionsProps> = ({ userOptions, updateUserO
                             </span>
                         </td>
                         <td>
-                            <input type="checkbox" name="has_header" id="header_checkbox" checked={hasHeader} onChange={(e) => updateUserOptions('hasHeader', e.target.checked)} />
+                            <input type="checkbox" name="has_header" id="header_checkbox" checked={hasHeader} onChange={(e) => updateInputOptions('hasHeader', e.target.checked)} />
                         </td>
                     </tr>
                 </tbody>
@@ -100,4 +100,4 @@ const UserOptionsTable: React.FC<UserOptionsProps> = ({ userOptions, updateUserO
     );
 };
 
-export default UserOptionsTable;
+export default InputOptionsTable;
