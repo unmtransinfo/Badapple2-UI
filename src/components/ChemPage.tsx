@@ -152,7 +152,7 @@ const renderTableRow = (
                     />
                 </td>
             ) : (
-                <td id="table-results" className={otherColClass}>Molecule has no scaffolds</td>
+                <td id="table-results" className={otherColClass}>Has no scaffolds <br></br>or &gt;maxRings</td>
             )}
             <td id="table-results" className={otherColClass}>{inDrugString ? inDrugString : ""}</td>
             <td id="table-results" className={otherColClass}>{pscoreString ? pscoreString : ""}</td>
