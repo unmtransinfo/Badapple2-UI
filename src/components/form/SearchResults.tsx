@@ -26,7 +26,8 @@ const DEFAULT_INPUT_OPTIONS: InputOptions = {
 
 const DEFAULT_OUTPUT_OPTIONS: OutputOptions = {
     startIdx: 0,
-    maxMolecules: 10
+    maxMolecules: 10,
+    maxRings: 5
 };
 
 const MAX_INPUT_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -65,13 +66,14 @@ const parseInputData = (
     return { smilesList, nameList };
 };
 
-async function fetchScaffolds(data: ParsedData) {
+async function fetchScaffolds(data: ParsedData, maxRings: number) {
     const apiUrl = import.meta.env.VITE_API_HOST;
     try {
         const response = await axios.get(apiUrl, {
             params: {
                 SMILES: data.smilesList.join(','),
-                Names: data.nameList.join(',')
+                Names: data.nameList.join(','),
+                max_rings: maxRings
             }
         });
         return response.data;
@@ -120,7 +122,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
         setIsLoading(true);
         try {
             const parsedData = parseInputData(searchInput, inputOptions, outputOptions);
-            const data = await fetchScaffolds(parsedData);
+            const data = await fetchScaffolds(parsedData, outputOptions.maxRings);
             if (data) {
                 setSearchResults(data);
             }
