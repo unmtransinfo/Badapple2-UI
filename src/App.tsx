@@ -17,9 +17,11 @@ function App() {
                     {!!chem ? (
                         <ChemPage result={chem} setChem={setChem} />
                     ) : (
-                        <SearchResults setChem={setChem} />
+                        <>
+                            <SearchResults setChem={setChem} />
+                            <SiteFooter />
+                        </>
                     )}
-                    <SiteFooter />
                 </div>
             </div>
         </ThemeProvider>
