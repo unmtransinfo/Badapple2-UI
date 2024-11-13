@@ -7,7 +7,8 @@ import handleNumberInputChange from './OptionsHandler';
 
 export interface OutputOptions {
     maxMolecules: number,
-    startIdx: number
+    startIdx: number,
+    maxRings: number
 }
 
 export interface OutputOptionsProps {
@@ -16,7 +17,7 @@ export interface OutputOptionsProps {
 }
 
 const OutputOptionsTable: React.FC<OutputOptionsProps> = ({ outputOptions: outputOptions, updateOutputOptions: updateOutputOptions }) => {
-    const { maxMolecules, startIdx} = outputOptions;
+    const { maxMolecules, startIdx, maxRings} = outputOptions;
 
 
     return (
@@ -49,6 +50,17 @@ const OutputOptionsTable: React.FC<OutputOptionsProps> = ({ outputOptions: outpu
                         </td>
                         <td>
                             <input type="number" name="maxMolecules" id="maxMolecules" min={1} size={4} max={100} value={maxMolecules} onChange={(e) => handleNumberInputChange(e, updateOutputOptions, 'maxMolecules', 1, 100)} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Max Rings
+                            <span data-tooltip="Maximum number of ring systems in input molecules. Molecules which exceed this limit will not be processed. Max is 10.">
+                                <FontAwesomeIcon icon={faQuestionCircle} className="ml-2" />
+                            </span>
+                        </td>
+                        <td>
+                            <input type="number" name="maxRings" id="maxRings" min={1} size={4} max={10} value={maxRings} onChange={(e) => handleNumberInputChange(e, updateOutputOptions, 'maxRings', 1, 10)} />
                         </td>
                     </tr>
                 </tbody>
