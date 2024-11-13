@@ -65,7 +65,14 @@ score = ((sActive) / (sTested + median(sTested)) *
                 <b>badapple_classic</b> generates canonical SMILES using <a href="https://www.rdkit.org/" target="_blank">RDKit</a>, whereas <b>badapple</b> used <a href="https://openbabel.org/" target="_blank">openbabel</a>
             </li>
             <li>
-                <b>badapple_classic</b> uses a newer version of PostgreSQL with minor differences in median calculation
+                <b>badapple_classic</b> counts ring systems using 
+                <a href="https://github.com/PatWalters/useful_rdkit_utils/blob/master/useful_rdkit_utils/ring_systems.py#L17" target="_blank">RingSystemFinder</a> 
+                (RDKit-based), whereas <b>badapple</b> used 
+                <a href="https://github.com/unmtransinfo/unm_biocomp_hscaf/blob/befd175da409b27374d005f6431a2df94e361d02/unm_biocomp_hscaf/src/main/java/edu/unm/health/biocomp/hscaf/hier_scaffolds_utils.java#L161" target="_blank">RawRingsystemCount</a> 
+                (Chemaxon-based).
+            </li>
+            <li>
+                <b>badapple_classic</b> uses a newer version of PostgreSQL
             </li>
         </ul>
     </p>
@@ -90,9 +97,10 @@ score = ((sActive) / (sTested + median(sTested)) *
         Christopher A. Lipinski, and Larry Sklar for their previous efforts on this project.</p>
     <p>As well, we would like to acknowledge the developers of the many open-source software packages that have been vital to the success of this project. We'd like to especially acknowledge the following projects:</p>
     <ul>
-        <li><a href="https://www.rdkit.org/" target="_blank">RDKit</a></li>
-        <li><a href="https://academic.oup.com/bioinformatics/article/36/12/3930/5814205?login=false" target="_blank">ScaffoldGraph</a></li>
-        <li><a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a></li>
+        <li><a href="https://www.rdkit.org/" target="_blank">RDKit</a>  - <a href="https://github.com/rdkit/rdkit" target="_blank">Code</a> </li>
+        <li><a href="https://academic.oup.com/bioinformatics/article/36/12/3930/5814205?login=false" target="_blank">ScaffoldGraph</a> - <a href="https://github.com/UCLCheminformatics/ScaffoldGraph" target="_blank">Code</a></li>
+        <li><a href="http://practicalcheminformatics.blogspot.com/2022/01/useful-rdkit-utilities.html" target="_blank"> Useful RDKit Utilities</a> - <a href="https://github.com/PatWalters/useful_rdkit_utils" target="_blank">Code</a></li>
+        <li><a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a> - <a href="https://github.com/postgres/postgres" target="_blank"> Code</a> [Mirror]</li>
     </ul>
 
 </body>
