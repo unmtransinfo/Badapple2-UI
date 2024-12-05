@@ -20,7 +20,7 @@ interface ScaffoldInfo {
 }
 
 // each input SMILES will return a dict with the following:
-interface MoleculeInfo {
+export interface MoleculeInfo {
     molecule_smiles: string;
     name: string;
     scaffolds: ScaffoldInfo[];
@@ -29,6 +29,7 @@ interface MoleculeInfo {
 
 interface ChemPageProps {
     result:  MoleculeInfo[];
+    canGetDrugInfo: boolean;
     setChem: Dispatch<SetStateAction<any>>;
 }
 

@@ -68,7 +68,8 @@ const parseInputData = (
 };
 
 async function fetchScaffolds(data: ParsedData, maxRings: number, database: string) {
-    const apiUrl = import.meta.env.VITE_API_HOST;
+    const apiUrl = import.meta.env.VITE_API_FETCH_SCAFFOLDS_URL;
+    const canGetDrugInfo = database === import.meta.env.DB2_NAME; // only badapple2 has specific drug info
     try {
         const response = await axios.get(apiUrl, {
             params: {
@@ -78,26 +79,19 @@ async function fetchScaffolds(data: ParsedData, maxRings: number, database: stri
                 database: database
             }
         });
-        return response.data;
+        return { data: response.data, canGetDrugInfo };
     } catch (error) {
-        console.error('Error fetching scaffolds:', error);
-        return null;
+        console.error("Error fetching scaffolds:", error);
+        return { data: [], canGetDrugInfo };
     }
 }
 
 const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
     const [searchInput, setSearchInput] = useState('');
-    const [searchResults, setSearchResults] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [inputOptions, setInputOptions] = useState<InputOptions>(DEFAULT_INPUT_OPTIONS);
     const [outputOptions, setOutputOptions] = useState<OutputOptions>(DEFAULT_OUTPUT_OPTIONS);
-
-    useEffect(() => {
-        if (Object.keys(searchResults).length > 0) {
-            setChem(searchResults);
-        }
-    }, [searchResults, setChem]);
 
     const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -124,9 +118,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
         setIsLoading(true);
         try {
             const parsedData = parseInputData(searchInput, inputOptions, outputOptions);
-            const data = await fetchScaffolds(parsedData, outputOptions.maxRings, outputOptions.database);
+            const { data, canGetDrugInfo } = await fetchScaffolds(parsedData, outputOptions.maxRings, outputOptions.database);
             if (data) {
-                setSearchResults(data);
+                console.log("got results!");
+                setChem({result: data, canGetDrugInfo: canGetDrugInfo });
             }
         } catch (error) {
             console.error('Error processing submission:', error);
@@ -208,15 +203,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
                 >
                     Submit
             </button>
-            {Object.keys(searchResults).length > 0 && (
-                <section className={`glass-container gap-0 p-0 ${isLoading ? 'active' : ''}`}>
-                    {isLoading && (
-                        <div className="loader active">
-                            <FontAwesomeIcon icon={faCircleNotch} className="text-primary animate-spin"/>
-                        </div>
-                    )}
-                </section>
-            )}
+            <section className={`glass-container gap-0 p-0 ${isLoading ? 'active' : ''}`}>
+                {isLoading && (
+                    <div className="loader active">
+                        <FontAwesomeIcon icon={faCircleNotch} className="text-primary animate-spin"/>
+                    </div>
+                )}
+            </section>
         </div>
     );
 };
