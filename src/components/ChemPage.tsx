@@ -3,7 +3,8 @@ import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import MoleculeStructure from "./MoleculeStructure.tsx";
 import Pagination from "./Pagination.tsx";
-import {fetchDrugDetails} from '../api.ts';
+import DrugDetails from "./DrugDetails.tsx";
+import ReactDOM from 'react-dom';
 
 // define interfaces
 interface ScaffoldInfo {
@@ -108,54 +109,12 @@ const truncateName = (name: string, maxLength: number) => {
 };
 
 
-
-
-
 const displayDrugDetails = async(scaffoldID: number) => {
-    const drugRows = await fetchDrugDetails(scaffoldID);
-    const rowKeys: (keyof DrugRow)[] = ["drug_id", "inn"]; // excluding "cansmi" for now - probably not of interest
-    const tableHeaders = ["DrugCentralID", "INN"];
-    let tableHTML = `
-        <p>The table below provides the specific drugs scaffold with  id=${scaffoldID} was found in. 
-        For each drug, the DrugCentralID and the 
-        International Nonproprietary Name (INN) are provided. Clicking on the DrugCentralID will take you to the DrugCentral page for the drug.</p>
-        <table border='1'><tr>`;
-
-    // Add table headers
-    tableHeaders.forEach(header => {
-        tableHTML += `<th>${header}</th>`;
-    });
-    tableHTML += "</tr>";
-
-    // Add table rows
-    interface DrugRow {
-        drug_id: string;
-        inn: string;
-        cansmi: string;
-    }
-
-    drugRows.forEach((row: DrugRow) => {
-        tableHTML += "<tr>";
-        rowKeys.forEach((rowKey: keyof DrugRow) => {
-            if (rowKey !== "drug_id") {
-                tableHTML += `<td>${row[rowKey]}</td>`;
-            } else {
-                const drugcentralID = row[rowKey];
-                const drugCentralLink = `https://drugcentral.org/drugcard/${drugcentralID}`;
-                tableHTML += `<td><a href="${drugCentralLink}" target="_blank">${drugcentralID}</a></td>`;
-            }
-        });
-        tableHTML += "</tr>";
-    });
-    tableHTML += "</table>";
-
-    // Open a new window and write the table HTML to it
-    const popupWindow = window.open("", "DrugRowsPopup", "width=600,height=400");
+    const popupWindow = window.open("", "DrugDetailsPopup", "width=600,height=400");
     if (popupWindow) {
-        popupWindow.document.write("<html><head><title>Drug Rows</title></head><body>");
-        popupWindow.document.write(tableHTML);
-        popupWindow.document.write("</body></html>");
+        popupWindow.document.write("<html><head><title>Drug Details</title></head><body><div id='drug-details-root'></div></body></html>");
         popupWindow.document.close();
+        ReactDOM.render(<DrugDetails scaffoldID={scaffoldID} />, popupWindow.document.getElementById('drug-details-root'));
     } else {
         console.error("Failed to open popup window");
     }
