@@ -4,6 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import MoleculeStructure from "./MoleculeStructure.tsx";
 import Pagination from "./Pagination.tsx";
 import DrugDetails from "./DrugDetails.tsx";
+import TargetDetails from "./TargetDetails.tsx";
 import ReactDOM from 'react-dom';
 
 // define interfaces
@@ -120,6 +121,17 @@ const displayDrugDetails = async(scaffoldID: number) => {
     }
 }
 
+const displayTargetDetails = async(scaffoldID: number) => {
+    const popupWindow = window.open("", "TargetDetailsPopUp", "width=600,height=400");
+    if (popupWindow) {
+        popupWindow.document.write("<html><head><title>Target Details</title></head><body><div id='target-details-root'></div></body></html>");
+        popupWindow.document.close();
+        ReactDOM.render(<TargetDetails scaffoldID={scaffoldID} />, popupWindow.document.getElementById('target-details-root'));
+    } else {
+        console.error("Failed to open popup window");
+    }
+}
+
 const renderTableRow = (
     index: number,
     scaffoldIndex: number,
@@ -207,7 +219,18 @@ const renderTableRow = (
                 </>
             )}
             {canGetTargetInfo ? (
-                    <td id="table-results" className={otherColClass}>{"HAMBURGER"}</td>
+                    <td className={otherColClass}>
+                        {scaffold && in_db ? (
+                            <a href="#" onClick={(event) => {
+                                event.preventDefault();
+                                displayTargetDetails(scaffold.id);
+                            }} className="clickable-link">
+                                {"Click Here"}
+                            </a>
+                        ) : (
+                            "" // for valid mols with no scaffolds
+                        )}
+                    </td>
             ) : (
                 <></>
             )}

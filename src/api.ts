@@ -44,7 +44,6 @@ export const parseInputData = (
 
 export async function fetchScaffolds(data: ParsedInputData, maxRings: number, database: string) {
     const apiUrl = import.meta.env.VITE_API_FETCH_SCAFFOLDS_URL;
-    const canGetDrugInfo = database === import.meta.env.VITE_DB2_NAME; // only badapple2 has specific drug info
     try {
         const response = await axios.get(apiUrl, {
             params: {
@@ -54,10 +53,10 @@ export async function fetchScaffolds(data: ParsedInputData, maxRings: number, da
                 database: database
             }
         });
-        return { data: response.data, canGetDrugInfo: canGetDrugInfo };
+        return response.data;
     } catch (error) {
         console.error("Error fetching scaffolds:", error);
-        return { data: [], canGetDrugInfo: canGetDrugInfo };
+        return [];
     }
 }
 
@@ -74,6 +73,24 @@ export async function fetchDrugDetails(scaffoldID: number) {
         return response.data;
     } catch (error) {
         console.error("Error fetching drug details:", error);
+        return [];
+    }
+}
+
+
+// related to getting (active) target details
+export async function fetchActiveTargetDetails(scaffoldID: number) {
+    // Note: this assumes database === "badapple2" (DB2_NAME), as this is currently the only DB compatible with this API call
+    const apiUrl = import.meta.env.VITE_API_FETCH_TARGETS_URL;
+    try {
+        const response = await axios.get(apiUrl, {
+            params: {
+                scafid: scaffoldID
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching active target details:", error);
         return [];
     }
 }
