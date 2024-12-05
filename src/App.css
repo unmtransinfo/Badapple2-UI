@@ -86,3 +86,9 @@ page-wrapper {
     margin: 4px;
     text-align: center;
 }
+
+.clickable-link {
+    color: black;
+    cursor: pointer;
+    text-decoration: underline;
+}
