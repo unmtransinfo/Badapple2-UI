@@ -92,12 +92,12 @@ const buildDetailsArray = (scaffold: ScaffoldInfo): string[] => {
     } = scaffold;
 
     return [
-        `substances tested: ${nsub_tested}`,
-        `substances active: ${nsub_active}`,
-        `assays tested: ${nass_tested}`,
-        `assays active: ${nass_active}`,
-        `samples tested: ${nsam_tested}`,
-        `samples active: ${nsam_active}`
+        `tested: ${nsub_tested}`,
+        `active: ${nsub_active}`,
+        `tested: ${nass_tested}`,
+        `active: ${nass_active}`,
+        `tested: ${nsam_tested}`,
+        `active: ${nsam_active}`
     ];
 };
 
@@ -203,7 +203,7 @@ const renderTableRow = (
                 )}
             </td>
             <td id="table-results" className={otherColClass}>{pscoreString ? pscoreString : ""}</td>
-            {detailsArray && detailsArray.length === 6 ? (
+            {in_db && detailsArray && detailsArray.length === 6 ? (
                 <>
                     <td id="table-results-1" className={otherColClass}>
                         <div>{detailsArray[0]}</div>
@@ -331,7 +331,7 @@ const getResultsTable = (moleculeInfos: MoleculeInfo[], canGetDrugInfo: boolean,
                     <th className={COLUMN_HEADER_TEXT}>Molecule</th>
                     <th className={COLUMN_HEADER_TEXT}>Scaffold</th>
                     <th className={COLUMN_HEADER_TEXT}>InDrug</th>
-                    <th className={COLUMN_HEADER_TEXT}>Pscore</th>
+                    <th className={COLUMN_HEADER_TEXT}>pScore</th>
                     <th className={COLUMN_HEADER_TEXT}>Substance Details</th>
                     <th className={COLUMN_HEADER_TEXT}>Assay Details</th>
                     <th className={COLUMN_HEADER_TEXT}>Sample Details</th>
