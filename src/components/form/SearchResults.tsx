@@ -1,19 +1,13 @@
-import {useState, useEffect, useRef } from 'react';
+import {useState, useRef } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleNotch, faUpload } from '@fortawesome/free-solid-svg-icons';
-import axios from "axios";
-import Papa from 'papaparse';
 import InputOptionsTable, { InputOptions } from './InputOptions';
 import OutputOptionsTable, { OutputOptions } from './OutputOptions';
+import { fetchScaffolds, parseInputData} from '../../api';
 import './SearchResults.css';
 
 interface SearchResultsProps {
     setChem: (chem: any) => void;
-}
-
-interface ParsedData {
-    smilesList: string[];
-    nameList: string[];
 }
 
 const DEFAULT_INPUT_OPTIONS: InputOptions = {
@@ -40,51 +34,6 @@ Cc1cc(nc(n1)N=C(N)Nc2cccc(c2)N)C mol3
 CCc1c(c2ccccc2o1)C(=O)c3cc(c(c(c3)Br)O)Br mol4
 OC(=O)C1=C2CCCC(C=C3C=CC(=O)C=C3)=C2NC2=CC=CC=C12 mol5
 c1ccc2c(c1)C(=O)c3ccoc3C2=O mol6`;
-
-const parseQuery = (rawText: string, delimiter: string, colIdx: number, hasHeader: boolean): string[] => {
-    const results = Papa.parse(rawText, {
-        delimiter: delimiter === "\\t" ? "\t" : delimiter,
-        header: hasHeader,
-        skipEmptyLines: true
-    });
-
-    if (hasHeader) {
-        return results.data.map((row: any) => row[Object.keys(row)[colIdx]]);
-    }
-    return results.data.map((row: any) => row[colIdx]);
-};
-
-const parseInputData = (
-    query: string,
-    { delimiter, smilesCol, nameCol, hasHeader }: InputOptions,
-    { startIdx, maxMolecules }: OutputOptions
-): ParsedData => {
-    const smilesList = parseQuery(query, delimiter, smilesCol, hasHeader).slice(startIdx, startIdx + maxMolecules);
-    const nameList = parseQuery(query, delimiter, nameCol, hasHeader)
-        .slice(startIdx, startIdx + maxMolecules)
-        .map((name, index) => name || `${index}`);
-    
-    return { smilesList, nameList };
-};
-
-async function fetchScaffolds(data: ParsedData, maxRings: number, database: string) {
-    const apiUrl = import.meta.env.VITE_API_FETCH_SCAFFOLDS_URL;
-    const canGetDrugInfo = database === import.meta.env.VITE_DB2_NAME; // only badapple2 has specific drug info
-    try {
-        const response = await axios.get(apiUrl, {
-            params: {
-                SMILES: data.smilesList.join(','),
-                Names: data.nameList.join(','),
-                max_rings: maxRings,
-                database: database
-            }
-        });
-        return { data: response.data, canGetDrugInfo: canGetDrugInfo };
-    } catch (error) {
-        console.error("Error fetching scaffolds:", error);
-        return { data: [], canGetDrugInfo: canGetDrugInfo };
-    }
-}
 
 const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
     const [searchInput, setSearchInput] = useState('');

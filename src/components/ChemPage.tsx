@@ -3,7 +3,7 @@ import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import MoleculeStructure from "./MoleculeStructure.tsx";
 import Pagination from "./Pagination.tsx";
-import axios from "axios";
+import {fetchDrugDetails} from '../api.ts';
 
 // define interfaces
 interface ScaffoldInfo {
@@ -108,21 +108,7 @@ const truncateName = (name: string, maxLength: number) => {
 };
 
 
-async function fetchDrugDetails(scaffoldID: number) {
-    // Note: this assumes database === "badapple2" (DB2_NAME), as this is currently the only DB compatible with this API call
-    const apiUrl = import.meta.env.VITE_API_FETCH_DRUGS_URL;
-    try {
-        const response = await axios.get(apiUrl, {
-            params: {
-                scafid: scaffoldID
-            }
-        });
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching drug details:", error);
-        return [];
-    }
-}
+
 
 
 const displayDrugDetails = async(scaffoldID: number) => {
