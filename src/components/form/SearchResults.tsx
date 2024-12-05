@@ -69,7 +69,7 @@ const parseInputData = (
 
 async function fetchScaffolds(data: ParsedData, maxRings: number, database: string) {
     const apiUrl = import.meta.env.VITE_API_FETCH_SCAFFOLDS_URL;
-    const canGetDrugInfo = database === import.meta.env.DB2_NAME; // only badapple2 has specific drug info
+    const canGetDrugInfo = database === import.meta.env.VITE_DB2_NAME; // only badapple2 has specific drug info
     try {
         const response = await axios.get(apiUrl, {
             params: {
@@ -79,10 +79,10 @@ async function fetchScaffolds(data: ParsedData, maxRings: number, database: stri
                 database: database
             }
         });
-        return { data: response.data, canGetDrugInfo };
+        return { data: response.data, canGetDrugInfo: canGetDrugInfo };
     } catch (error) {
         console.error("Error fetching scaffolds:", error);
-        return { data: [], canGetDrugInfo };
+        return { data: [], canGetDrugInfo: canGetDrugInfo };
     }
 }
 

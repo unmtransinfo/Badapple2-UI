@@ -19,7 +19,6 @@ export interface OutputOptionsProps {
 
 const OutputOptionsTable: React.FC<OutputOptionsProps> = ({ outputOptions: outputOptions, updateOutputOptions: updateOutputOptions }) => {
     const { maxMolecules, startIdx, maxRings, database} = outputOptions;
-
     return (
         <div id="user-options-container">
             <table className="table-bordered">
@@ -39,8 +38,8 @@ const OutputOptionsTable: React.FC<OutputOptionsProps> = ({ outputOptions: outpu
                         </td>
                         <td>
                             <select name="database" id="databaseChoice" value={database} onChange={(e) => updateOutputOptions('database', e.target.value)}>
-                                <option value={import.meta.env.DB_NAME} id="databaseChoiceDefault">badapple_classic</option>
-                                <option value={import.meta.env.DB2_NAME}>badapple2</option>
+                                <option value={import.meta.env.VITE_DB_NAME} id="databaseChoiceDefault">badapple_classic</option>
+                                <option value={import.meta.env.VITE_DB2_NAME}>badapple2</option>
                             </select>
                         </td>
                     </tr>
