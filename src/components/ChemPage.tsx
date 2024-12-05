@@ -32,6 +32,7 @@ export interface MoleculeInfo {
 interface ChemPageProps {
     result:  MoleculeInfo[];
     canGetDrugInfo: boolean;
+    canGetTargetInfo: boolean;
     setChem: Dispatch<SetStateAction<any>>;
 }
 
@@ -39,7 +40,6 @@ const COLUMN_HEADER_TEXT = "px-6 py-3 text-left text-xs font-medium text-gray-50
 const MOL_COL_TEXT = "whitespace-nowrap text-s font-medium text-gray-900";
 const SVG_WIDTH = 200;
 const SVG_HEIGHT = 125;
-const TABLE_N_COLUMNS = 8;
 
 const getRowEntryClass = (entryColor: string, boldText: boolean) => {
     return `px-6 py-4 whitespace-nowrap text-s ${boldText ? 'font-medium' : ''} text-gray-900 border-r border-gray-200 ${entryColor}`;
@@ -127,7 +127,8 @@ const renderTableRow = (
     scaffold: ScaffoldInfo | null,
     highestPscoreColor: string,
     nRows: number,
-    canGetDrugInfo: boolean
+    canGetDrugInfo: boolean,
+    canGetTargetInfo: boolean
 ) => {
     const { scafsmi = "", pscore = null, in_db = null, in_drug = null } = scaffold || {};
     const inDrugString = !in_db ? "NULL" : (in_drug ? "True" : "False");
@@ -205,29 +206,27 @@ const renderTableRow = (
                     <td id="table-results" className={otherColClass}></td>
                 </>
             )}
+            {canGetTargetInfo ? (
+                    <td id="table-results" className={otherColClass}>{"HAMBURGER"}</td>
+            ) : (
+                <></>
+            )}
         </tr>
     );
 };
 
-const getSeparator = () => { 
+const getSeparator = (nColumns: number) => { 
     // separator shown between scaffolds for different molecules
     return (
         <tr>
-            <td colSpan={TABLE_N_COLUMNS} className="py-2">
+            <td colSpan={nColumns} className="py-2">
                 <hr className="border-t-2 border-gray-300" />
             </td>
         </tr>)
 }
 
 
-const getRow = (molData: MoleculeInfo, scaffold: ScaffoldInfo, index: number, scaffoldIndex: number, highestPscoreRowClassName: string, molTotalRows: number, canGetDrugInfo: boolean): ReactNode => {
-    
-    return (
-        renderTableRow(index, scaffoldIndex, molData, scaffold, highestPscoreRowClassName, molTotalRows, canGetDrugInfo)
-    );
-}
-
-const getMoleculeRows = (moleculeInfos: MoleculeInfo[], canGetDrugInfo: boolean) : React.ReactNode => {
+const getMoleculeRows = (moleculeInfos: MoleculeInfo[], canGetDrugInfo: boolean, canGetTargetInfo: boolean, nColumns: number) : React.ReactNode => {
     return (
         <tbody className="bg-white divide-y divide-gray-200">
             {moleculeInfos.map((molData, index) => {
@@ -249,9 +248,10 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[], canGetDrugInfo: boolean)
                     return (
                         <React.Fragment key={index}>
                             {sortedScaffolds.map((scaffold, scaffoldIndex) => 
-                                getRow(molData, scaffold, index, scaffoldIndex, highestPscoreRowClassName, molData.scaffolds.length, canGetDrugInfo)
+                                renderTableRow(index, scaffoldIndex, molData, scaffold, highestPscoreRowClassName, 
+                                    molData.scaffolds.length, canGetDrugInfo, canGetTargetInfo)
                             )}
-                            {getSeparator()}
+                            {getSeparator(nColumns)}
                         </React.Fragment>
                     );
                 }
@@ -266,9 +266,10 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[], canGetDrugInfo: boolean)
                                 null,
                                 getRowEntryColor(-1),
                                 1,
-                                false
+                                false,
+                                canGetTargetInfo // helps make the display consistent/not have gaps
                             )}
-                            {getSeparator()}
+                            {getSeparator(nColumns)}
                         </React.Fragment>
                     );
                 }
@@ -276,12 +277,12 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[], canGetDrugInfo: boolean)
                     // invalid SMILES 
                     return (
                         <React.Fragment key={index}>
-                            <td colSpan={TABLE_N_COLUMNS} className="py-4 text-center text-red-500">
+                            <td colSpan={nColumns} className="py-4 text-center text-red-500">
                                 <p className={MOL_COL_TEXT}>Name: {molName}</p>
                                 <p className={MOL_COL_TEXT}>Given SMILES: {molSmilesStr}</p>
                                 <p>{molData.error_msg}</p>
                             </td>
-                            {getSeparator()}
+                            {getSeparator(nColumns)}
                         </React.Fragment>
                     );
                 }
@@ -290,7 +291,8 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[], canGetDrugInfo: boolean)
     )
 }
 
-const getResultsTable = (moleculeInfos: MoleculeInfo[], canGetDrugInfo: boolean): React.ReactNode => {
+const getResultsTable = (moleculeInfos: MoleculeInfo[], canGetDrugInfo: boolean, canGetTargetInfo: boolean): React.ReactNode => {
+    const nColumns = canGetTargetInfo ? 9 : 8;
     return (
         <table id="table-results" className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -303,9 +305,10 @@ const getResultsTable = (moleculeInfos: MoleculeInfo[], canGetDrugInfo: boolean)
                     <th className={COLUMN_HEADER_TEXT}>Substance Details</th>
                     <th className={COLUMN_HEADER_TEXT}>Assay Details</th>
                     <th className={COLUMN_HEADER_TEXT}>Sample Details</th>
+                    {canGetTargetInfo ? (<th className={COLUMN_HEADER_TEXT}>Active Targets</th>) : (<></>)}
                 </tr>
             </thead>
-            {getMoleculeRows(moleculeInfos, canGetDrugInfo)}
+            {getMoleculeRows(moleculeInfos, canGetDrugInfo, canGetTargetInfo, nColumns)}
         </table>
     );
 };
@@ -380,7 +383,6 @@ export default function ChemPage(props: ChemPageProps) {
     const [currentPage, setCurrentPage] = useState(1);
     const moleculesPerPage = 5;
     const moleculeInfos = props.result;
-    const canGetDrugInfo = props.canGetDrugInfo;
 
     const handlePageChange = (newPage: number) => {
         if (newPage !== currentPage) {
@@ -406,7 +408,7 @@ export default function ChemPage(props: ChemPageProps) {
                 </button>
             </div>  
             <div className="glass-container active p-3">
-                {getResultsTable(paginatedMoleculeInfos, canGetDrugInfo)}
+                {getResultsTable(paginatedMoleculeInfos, props.canGetDrugInfo, props.canGetTargetInfo)}
                 <Pagination
                     currentPage={currentPage}
                     totalMolecules={moleculeInfos.length}

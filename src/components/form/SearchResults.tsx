@@ -67,10 +67,12 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
         setIsLoading(true);
         try {
             const parsedData = parseInputData(searchInput, inputOptions, outputOptions);
-            const { data, canGetDrugInfo } = await fetchScaffolds(parsedData, outputOptions.maxRings, outputOptions.database);
+            // at time of writing only badapple2 has specific drug and target info
+            const canGetDrugInfo = outputOptions.database === import.meta.env.VITE_DB2_NAME;
+            const canGetTargetInfo = outputOptions.database === import.meta.env.VITE_DB2_NAME;  
+            const data = await fetchScaffolds(parsedData, outputOptions.maxRings, outputOptions.database);
             if (data) {
-                console.log("got results!");
-                setChem({result: data, canGetDrugInfo: canGetDrugInfo });
+                setChem({result: data, canGetDrugInfo: canGetDrugInfo, canGetTargetInfo: canGetTargetInfo});
             }
         } catch (error) {
             console.error('Error processing submission:', error);
