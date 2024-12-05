@@ -5,7 +5,7 @@ import MoleculeStructure from "./MoleculeStructure.tsx";
 import Pagination from "./Pagination.tsx";
 import DrugDetails from "./DrugDetails.tsx";
 import TargetDetails from "./TargetDetails.tsx";
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client'
 
 // define interfaces
 interface ScaffoldInfo {
@@ -109,27 +109,34 @@ const truncateName = (name: string, maxLength: number) => {
     return name;
 };
 
-
-const displayDrugDetails = async(scaffoldID: number) => {
-    const popupWindow = window.open("", "DrugDetailsPopup", "width=600,height=400");
+const displayPopupWindow = async(popupName: string, popupWindowName: string, componentToRender: ReactNode) => {
+    const popupWindow = window.open("", popupName, "width=600,height=400");
     if (popupWindow) {
-        popupWindow.document.write("<html><head><title>Drug Details</title></head><body><div id='drug-details-root'></div></body></html>");
+        popupWindow.document.write(`<html><head><title>${popupWindowName}</title></head><body><div id='drug-details-root'></div></body></html>`);
         popupWindow.document.close();
-        ReactDOM.render(<DrugDetails scaffoldID={scaffoldID} />, popupWindow.document.getElementById('drug-details-root'));
+        const root = popupWindow.document.getElementById('drug-details-root');
+        if (root) {
+            createRoot(root).render(componentToRender);
+        } else {
+            console.error("Failed to find root element");
+        }
     } else {
         console.error("Failed to open popup window");
     }
 }
 
+
+const displayDrugDetails = async(scaffoldID: number) => {
+    const popupName = `DrugDetailsPopup_${scaffoldID}`;
+    const popupWindowName = `Drug Details scafid=${scaffoldID}`;
+    displayPopupWindow(popupName, popupWindowName, <DrugDetails scaffoldID={scaffoldID} />);
+}
+
+
 const displayTargetDetails = async(scaffoldID: number) => {
-    const popupWindow = window.open("", "TargetDetailsPopUp", "width=600,height=400");
-    if (popupWindow) {
-        popupWindow.document.write("<html><head><title>Target Details</title></head><body><div id='target-details-root'></div></body></html>");
-        popupWindow.document.close();
-        ReactDOM.render(<TargetDetails scaffoldID={scaffoldID} />, popupWindow.document.getElementById('target-details-root'));
-    } else {
-        console.error("Failed to open popup window");
-    }
+    const popupName = `TargetDetailsPopUp_${scaffoldID}`;
+    const popupWindowName = `Target Details scafid=${scaffoldID}`;
+    displayPopupWindow(popupName, popupWindowName, <TargetDetails scaffoldID={scaffoldID} />);
 }
 
 const renderTableRow = (
