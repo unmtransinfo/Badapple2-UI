@@ -8,7 +8,8 @@ import handleNumberInputChange from './OptionsHandler';
 export interface OutputOptions {
     maxMolecules: number,
     startIdx: number,
-    maxRings: number
+    maxRings: number,
+    database: string
 }
 
 export interface OutputOptionsProps {
@@ -17,8 +18,7 @@ export interface OutputOptionsProps {
 }
 
 const OutputOptionsTable: React.FC<OutputOptionsProps> = ({ outputOptions: outputOptions, updateOutputOptions: updateOutputOptions }) => {
-    const { maxMolecules, startIdx, maxRings} = outputOptions;
-
+    const { maxMolecules, startIdx, maxRings, database} = outputOptions;
 
     return (
         <div id="user-options-container">
@@ -30,6 +30,20 @@ const OutputOptionsTable: React.FC<OutputOptionsProps> = ({ outputOptions: outpu
                     </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td>
+                            Database
+                            <span data-tooltip="Database to fetch information from">
+                                <FontAwesomeIcon icon={faQuestionCircle} className="ml-2" />
+                            </span>
+                        </td>
+                        <td>
+                            <select name="database" id="databaseChoice" value={database} onChange={(e) => updateOutputOptions('database', e.target.value)}>
+                                <option value={import.meta.env.BADAPPLE_CLASSIC} id="databaseChoiceDefault">badapple_classic</option>
+                                <option value={import.meta.env.BADAPPLE2}>badapple2</option>
+                            </select>
+                        </td>
+                    </tr>
                     <tr>
                         <td>
                             Start Index
