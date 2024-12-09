@@ -92,6 +92,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
 
     return (
         <div className="w-full max-w-6xl mx-auto">
+            <section className={`glass-container gap-0 p-0 ${isLoading ? 'active' : ''}`}>
+                {isLoading && (
+                    <div className="loader active">
+                        <FontAwesomeIcon icon={faCircleNotch} className="text-primary animate-spin fa-2x"/>
+                    </div>
+                )}
+            </section>
             <section className="mb-2">
                 <div className="flex mb-2 gap-2">
                     <button
@@ -154,13 +161,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
                 >
                     Submit
             </button>
-            <section className={`glass-container gap-0 p-0 ${isLoading ? 'active' : ''}`}>
-                {isLoading && (
-                    <div className="loader active">
-                        <FontAwesomeIcon icon={faCircleNotch} className="text-primary animate-spin"/>
-                    </div>
-                )}
-            </section>
         </div>
     );
 };
