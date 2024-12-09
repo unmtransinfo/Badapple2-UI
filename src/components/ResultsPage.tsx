@@ -156,8 +156,8 @@ const renderTableRow = (
     canGetTargetInfo: boolean
 ) => {
     const { scafsmi = "", pscore = null, in_db = null, in_drug = null } = scaffold || {};
-    const inDrugString = !in_db ? "NULL" : (in_drug ? "True" : "False");
-    const pscoreString = !in_db ? "NULL" : String(pscore);
+    const inDrugString = !in_db ? (scaffold ? "NULL" : "") : (in_drug ? "True" : "False");
+    const pscoreString = !in_db ? (scaffold ? "NULL" : "") : String(pscore);
     const detailsArray = scaffold ? buildDetailsArray(scaffold) : [];
     const rowColor = pscore ? getRowEntryColor(pscore) : getRowEntryColor(-1);
     const isFirstOccurrence = (scaffoldIndex == 0);
