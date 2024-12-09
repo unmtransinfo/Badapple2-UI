@@ -34,11 +34,11 @@ export const parseInputData = (
     { delimiter, smilesCol, nameCol, hasHeader }: InputOptions,
     { startIdx, maxMolecules }: OutputOptions
 ): ParsedInputData => {
-    const smilesList = parseQuery(query, delimiter, smilesCol, hasHeader).slice(startIdx, startIdx + maxMolecules);
+    const endIndex = startIdx + maxMolecules;
+    const smilesList = parseQuery(query, delimiter, smilesCol, hasHeader).slice(startIdx, endIndex);
     const nameList = parseQuery(query, delimiter, nameCol, hasHeader)
-        .slice(startIdx, startIdx + maxMolecules)
+        .slice(startIdx, endIndex)
         .map((name, index) => name || `${index}`);
-    
     return { smilesList, nameList };
 };
 
