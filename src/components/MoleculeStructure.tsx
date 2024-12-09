@@ -3,8 +3,6 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import "./MoleculeStructure.css";
 import initRDKit from "../utils/initRDKit.js";
-import {faDownload} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class MoleculeStructure extends Component {
     static propTypes = {

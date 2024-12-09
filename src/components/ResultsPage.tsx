@@ -1,4 +1,10 @@
-import React, {Dispatch, SetStateAction, ReactNode, useState, useRef} from "react";
+/*
+@author Jack Ringer
+Date: 12/9/2024
+Description:
+Page showing the results table.
+*/
+import React, {Dispatch, SetStateAction, ReactNode, useState} from "react";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import MoleculeStructure from "./MoleculeStructure.tsx";
@@ -30,7 +36,7 @@ export interface MoleculeInfo {
     error_msg: string,
 };
 
-interface ChemPageProps {
+interface ResultsPageProps {
     result:  MoleculeInfo[];
     canGetDrugInfo: boolean;
     canGetTargetInfo: boolean;
@@ -409,7 +415,7 @@ const downloadTSV = (moleculeInfos: MoleculeInfo[]) => {
     URL.revokeObjectURL(url);
 };
 
-export default function ChemPage(props: ChemPageProps) {
+export default function ResultsPage(props: ResultsPageProps) {
     const [currentPage, setCurrentPage] = useState(1);
     const moleculesPerPage = 5;
     const moleculeInfos = props.result;
