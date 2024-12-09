@@ -57,7 +57,7 @@ const OutputOptionsTable: React.FC<OutputOptionsProps> = ({ outputOptions: outpu
                     <tr>
                         <td>
                             N. Molecules
-                            <span data-tooltip="Number of molecules to process, beginning from given start index. Max is 100.">
+                            <span data-tooltip="Number of molecules to process, beginning from given start index. Max is 100. Note also that there is a limit on the number of input characters.">
                                 <FontAwesomeIcon icon={faQuestionCircle} className="ml-2" />
                             </span>
                         </td>
