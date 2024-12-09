@@ -52,9 +52,16 @@ score = ((sActive) / (sTested + median(sTested)) *
     <p>For more information about Badapple please see the following paper:</p>
     <p><a href="https://jcheminf.biomedcentral.com/articles/10.1186/s13321-016-0137-3" target="_blank">Badapple: promiscuity patterns from noisy evidence</a></p>
     <p>Although the original Badapple project was developed several years ago, we have re-created the original Badapple database and website using updated free and open-source software. See next section for more details.</p>
-    <h3>What's different about this version?</h3>
-    <p>The only differences between the current database (<b>badapple_classic</b>) and the 
-        original database (<b>badapple</b>) are:
+    <h3>Databases: badapple vs badapple_classic vs badapple2</h3>
+    Under the Badapple project there have been three unique databases developed so far. They can be summarized as follows:
+    <ul>
+        <li><b>badapple:</b> The original Badapple database developed several years ago and resulting in the publication of <a href="https://jcheminf.biomedcentral.com/articles/10.1186/s13321-016-0137-3" target="_blank">Badapple: promiscuity patterns from noisy evidence</a>. This DB is not available as part of the webapp because it relies on outdated and proprietary code.</li>
+        <li><b>badapple_classic:</b> Updated version of <b>badapple</b>, built using identical assay records and other data.</li>
+        <li><b>badapple2:</b> Newest version of Badapple which incorporates an additional 83 new assay records.</li>
+    </ul>
+    For more information on the differences between these databases please see the next two sections.
+    <h4>What's different between badapple and badapple_classic?</h4>
+    <p>The only differences <b>badapple_classic</b> and <b>badapple</b> are:
         <ul>
             <li>
                 <b>badapple_classic</b> uses the RDKit-based HierS algorithm 
@@ -78,6 +85,34 @@ score = ((sActive) / (sTested + median(sTested)) *
     </p>
     <p>We have performed several analyses to confirm that <b>badapple_classic</b> and <b>badapple</b> align closely. 
         Details on the analyses we've done can be found <a href="https://github.com/unmtransinfo/Badapple2/tree/main/badapple1_comparison#optional-compare-the-badapple-db-and-badapple_classic-db" target="_blank">here</a>.</p>
+        <h4>What's different between badapple_classic and badapple2?</h4>
+        <p>The most significant differences between <b>badapple_classic</b> and <b>badapple2</b> are:
+            <ul>
+                <li>
+                    <b>badapple_classic</b> uses the same set of (823) assays as the original badapple DB, whereas <b>badapple2</b> incorporates an additional 83 new assay records (906 total).
+                    <ul>
+                        <li>For both cases, assay records are restricted to HTS (>= 20k compounds) and come from NIH centers.</li>
+                        <li>You can compare the files <a href="https://unmtid-dbs.net/download/Badapple2/badapple_classic_files/badapple_classic_tested.aid" target="_blank">badapple_classic_tested.aid</a> and <a href="https://unmtid-dbs.net/download/Badapple2/badapple2_files/badapple2_tested.aid" target="_blank">badapple2_tested.aid</a> to see the exact difference.</li>
+                    </ul>
+                </li>
+                <li>
+                    <b>badapple_classic</b> was restricted to substances from <a href="https://pubchem.ncbi.nlm.nih.gov/source/MLSMR" target="_blank">MLSMR</a>, whereas <b>badapple2</b> uses all bioactivity data present in the provided assay records.
+                </li>
+                <li><b>badapple2</b> uses the <b>badapple_classic</b> medians to normalize pScores in order to ensure that our criteria for what constitutes a "high" amounts of evidence remains consistent.
+                    <ul>
+                        <li>Note that because we no longer use the MLSMR filter, there are many scaffolds present in <b>badapple2</b> which have a low amount of evidence. Using the <b>badapple2</b> medians to normalize scores would significantly lower the bar for what is considered enough evidence to assign a high pScore.</li>
+                    </ul>
+                </li>
+            </ul>
+        </p>
+        <p>In addition to the items above, <b>badapple2</b> stores information not present in <b>badapple_classic</b>, including:
+            <ul>
+                <li>Biological target information for each assay</li>
+                <li>A record of the specific approved drug(s) a scaffold is present in if <b>inDrug</b> is true.
+                <li>Assay descriptors (description and protocol text + annotations from <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4383997/" target="_blank">BARD</a>)</li>
+            </ul>
+        </p>
+        If you select <b>badapple2</b> in the webapp, details on the associated biological targets and approved drugs are available for each scaffold.
     <h2>Help</h2>
     <p>If you have any issues or questions please raise them <a href="https://github.com/unmtransinfo/Badapple2/issues" target="_blank">here</a>.</p>
     <h2>Code Availability</h2>
