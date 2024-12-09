@@ -67,6 +67,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
         setIsLoading(true);
         try {
             const parsedData = parseInputData(searchInput, inputOptions, outputOptions);
+            if (parsedData.smilesList.length === 0) {
+                alert("No input molecules were provided, please check input and specs (you may want to look at 'Start Index').");
+                return;
+            }
             // at time of writing only badapple2 has specific drug and target info
             const canGetDrugInfo = outputOptions.database === import.meta.env.VITE_DB2_NAME;
             const canGetTargetInfo = outputOptions.database === import.meta.env.VITE_DB2_NAME;  
