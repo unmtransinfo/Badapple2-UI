@@ -43,14 +43,14 @@ const TargetDetails: React.FC<TargetDetailsProps> = ({ scaffoldID }) => {
             <p>The table below provides the specific assay records where scaffold with id={scaffoldID} was found to be present in an active substance, along with corresponding biological target(s).
             For each target the following information is provided:</p>
             <ul>
-                <li><b>AID:</b> The PubChem AssayID (AID) the given scaffold was found to be active in.</li>
-                <li><b>TargetType:</b> Target type (most commonly "Protein", but can also include "Gene", "Nucleotide", etc).</li>
+                <li><b>AID:</b> The <a href="https://pubchem.ncbi.nlm.nih.gov/"target="_blank" rel="noopener noreferrer">PubChem</a> AssayID (AID) the given scaffold was found to be active in.</li>
+                <li><b>TargetType:</b> Target type (most commonly "Protein", but can also include "Gene", "Nucleotide", and "Pathway").</li>
                 <li><b>ID:</b> Target ID. Clickable if ID-TYPE is either "UniProt" or "NCBI".</li>
                 <li><b>ID-TYPE:</b> Resource ID is linked to (one of "UniProt", "NCBI", or "Other")</li>
                 <li><b>Name:</b> Name of the target</li>
-                <li><b>Taxonomy:</b> Target taxon from the NCBI Taxonomy Database</li>
+                <li><b>Taxonomy:</b> Target taxon from the <a href="https://www.ncbi.nlm.nih.gov/taxonomy" target="_blank" rel="noopener noreferrer"> NCBI Taxonomy Database</a></li>
                 <li><b>TaxonomyID:</b> Taxon ID from the NCBI Taxonomy Database. If clicked on will redirect to the taxon page on NCBI website.</li>
-                <li><b>ProteinFamily:</b> Protein family information from <a href={`https://pharos.nih.gov/`} target="_blank" rel="noopener noreferrer">Pharos</a>, if available.</li>
+                <li><b>ProteinFamily:</b> Protein family information from <a href="https://pharos.nih.gov/" target="_blank" rel="noopener noreferrer">Pharos</a>, if available.</li>
             </ul>
             <p> Note that some PubChem assay records do not provide explicit target information. 
                 For these cases target information is not provided here, but one can visit the linked assay page to learn more.</p>

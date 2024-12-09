@@ -33,8 +33,11 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({ scaffoldID }) => {
     return (
         <div>
             <p>The table below provides the specific drugs scaffold with id={scaffoldID} was found in. 
-            For each drug, the DrugCentralID and the International Nonproprietary Name (INN) are provided. 
-            Clicking on the DrugCentralID will take you to the DrugCentral page for the drug.</p>
+            For each drug the following information is provided:</p>
+            <ul>
+                <li><b>DrugCentralID:</b> ID from <a href="https://drugcentral.org/" target="_blank" rel="noopener noreferrer">DrugCentral</a>. Clicking on the ID will take you to the DrugCentral page for the drug.</li>
+                <li><b>INN:</b> International Nonproprietary Name</li>
+            </ul>
             <table border={1}>
                 <thead>
                     <tr>
