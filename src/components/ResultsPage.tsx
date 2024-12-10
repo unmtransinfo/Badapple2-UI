@@ -105,12 +105,12 @@ const buildDetailsArray = (scaffold: ScaffoldInfo): string[] => {
     } = scaffold;
 
     return [
-        `tested: ${nsub_tested}`,
-        `active: ${nsub_active}`,
-        `tested: ${nass_tested}`,
-        `active: ${nass_active}`,
-        `tested: ${nsam_tested}`,
-        `active: ${nsam_active}`
+        `sTested: ${nsub_tested}`,
+        `sActive: ${nsub_active}`,
+        `aTested: ${nass_tested}`,
+        `aActive: ${nass_active}`,
+        `wTested: ${nsam_tested}`,
+        `wActive: ${nsam_active}`
     ];
 };
 

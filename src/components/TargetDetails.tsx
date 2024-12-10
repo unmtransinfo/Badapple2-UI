@@ -46,7 +46,7 @@ const TargetDetails: React.FC<TargetDetailsProps> = ({ scaffoldID, scaffoldImage
                 <h3>ScaffoldID={scaffoldID}</h3>
                 {scaffoldImage}
             </div>
-            <p>The table below provides the specific assay records where scaffold with id={scaffoldID} was present in an active substance, along with corresponding biological target(s).
+            <p>The table below provides the specific assay records where scaffold with id={scaffoldID} was present in one or more active substances, along with corresponding biological target(s).
             For each target the following information is provided:</p>
             <ul>
                 <li><b>AID:</b> The <a href="https://pubchem.ncbi.nlm.nih.gov/"target="_blank" rel="noopener noreferrer">PubChem</a> AssayID (AID) the given scaffold was found to be active in.</li>
