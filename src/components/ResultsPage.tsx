@@ -132,17 +132,17 @@ const displayPopupWindow = async(popupName: string, popupWindowName: string, com
 }
 
 
-const displayDrugDetails = async(scaffoldID: number) => {
+const displayDrugDetails = async(scaffoldID: number, scaffoldImage: ReactNode) => {
     const popupName = `DrugDetailsPopup_${scaffoldID}`;
     const popupWindowName = `Drug Details scafid=${scaffoldID}`;
-    displayPopupWindow(popupName, popupWindowName, <DrugDetails scaffoldID={scaffoldID} />);
+    displayPopupWindow(popupName, popupWindowName, <DrugDetails scaffoldID={scaffoldID} scaffoldImage={scaffoldImage}/>);
 }
 
 
-const displayTargetDetails = async(scaffoldID: number) => {
+const displayTargetDetails = async(scaffoldID: number, scaffoldImage: ReactNode) => {
     const popupName = `TargetDetailsPopUp_${scaffoldID}`;
     const popupWindowName = `Target Details scafid=${scaffoldID}`;
-    displayPopupWindow(popupName, popupWindowName, <TargetDetails scaffoldID={scaffoldID} />);
+    displayPopupWindow(popupName, popupWindowName, <TargetDetails scaffoldID={scaffoldID} scaffoldImage={scaffoldImage}/>);
 }
 
 const renderTableRow = (
@@ -156,6 +156,14 @@ const renderTableRow = (
     canGetTargetInfo: boolean
 ) => {
     const { scafsmi = "", pscore = null, in_db = null, in_drug = null } = scaffold || {};
+    const scaffoldImage = scafsmi ? <MoleculeStructure
+                                        id={`scaf-smile-svg-${index}-${scaffoldIndex}`}
+                                        structure={scafsmi}
+                                        width={SVG_WIDTH}
+                                        height={SVG_HEIGHT}
+                                        svgMode={true}
+                                        className="mb-0"
+                                /> : null;
     const inDrugString = !in_db ? (scaffold ? "NULL" : "") : (in_drug ? "True" : "False");
     const pscoreString = !in_db ? (scaffold ? "NULL" : "") : String(pscore);
     const detailsArray = scaffold ? buildDetailsArray(scaffold) : [];
@@ -182,25 +190,16 @@ const renderTableRow = (
                     className="mb-0"
                 />
             </td>
-            {scafsmi ? (
-                <td id="table-results" className="px-6 py-4 whitespace-nowrap border-r border-gray-200">
-                    <MoleculeStructure
-                        id={`scaf-smile-svg-${index}-${scaffoldIndex}`}
-                        structure={scafsmi}
-                        width={SVG_WIDTH}
-                        height={SVG_HEIGHT}
-                        svgMode={true}
-                        className="mb-0"
-                    />
-                </td>
-            ) : (
+            {scaffoldImage ? (
+                <td id="table-results" className="px-6 py-4 whitespace-nowrap border-r border-gray-200">{scaffoldImage}</td>)
+                : (
                 <td id="table-results" className={otherColClass}>Has no scaffolds <br></br>or &gt;maxRings</td>
             )}
             <td className={otherColClass}>
-                {scaffold && in_drug && canGetDrugInfo ? (
+                {scaffold && scaffoldImage && in_drug && canGetDrugInfo ? (
                     <a href="#" onClick={(event) => {
                         event.preventDefault();
-                        displayDrugDetails(scaffold.id);
+                        displayDrugDetails(scaffold.id, scaffoldImage);
                     }} className="clickable-link">
                         {inDrugString}
                     </a>
@@ -233,10 +232,10 @@ const renderTableRow = (
             )}
             {canGetTargetInfo ? (
                     <td className={otherColClass}>
-                        {scaffold && in_db ? (
+                        {scaffold && scaffoldImage && in_db ? (
                             <a href="#" onClick={(event) => {
                                 event.preventDefault();
-                                displayTargetDetails(scaffold.id);
+                                displayTargetDetails(scaffold.id, scaffoldImage);
                             }} className="clickable-link">
                                 {"Click Here"}
                             </a>

@@ -4,7 +4,7 @@ Date: 12/5/2024
 Description:
 Component which displays the pop-up window with inDrug details for a given scaffold.
 */
-import React from 'react';
+import React, {ReactNode} from 'react';
 import { fetchDrugDetails } from '../api';
 
 interface DrugRow {
@@ -14,9 +14,10 @@ interface DrugRow {
 
 interface DrugDetailsProps {
     scaffoldID: number;
+    scaffoldImage: ReactNode;
 }
 
-const DrugDetails: React.FC<DrugDetailsProps> = ({ scaffoldID }) => {
+const DrugDetails: React.FC<DrugDetailsProps> = ({ scaffoldID, scaffoldImage}) => {
     const [drugRows, setDrugRows] = React.useState<DrugRow[]>([]);
 
     React.useEffect(() => {
@@ -32,6 +33,11 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({ scaffoldID }) => {
 
     return (
         <div>
+            <div style={{ marginBottom: '20px'}}>
+                <h2>Drug Details for Scaffold</h2>
+                <h3>ScaffoldID={scaffoldID}</h3>
+                {scaffoldImage}
+            </div>
             <p>The table below provides the specific drugs scaffold with id={scaffoldID} was found in. 
             For each drug the following information is provided:</p>
             <ul>

@@ -5,7 +5,7 @@ Description:
 Component which displays table with details on active biological targets
 for a given scaffold.
 */
-import React from 'react';
+import React, {ReactNode} from 'react';
 import { fetchActiveTargetDetails } from '../api';
 
 interface TargetRow {
@@ -22,9 +22,10 @@ interface TargetRow {
 
 interface TargetDetailsProps {
     scaffoldID: number;
+    scaffoldImage: ReactNode;
 }
 
-const TargetDetails: React.FC<TargetDetailsProps> = ({ scaffoldID }) => {
+const TargetDetails: React.FC<TargetDetailsProps> = ({ scaffoldID, scaffoldImage}) => {
     const [targetRows, setTargetRows] = React.useState<TargetRow[]>([]);
 
     React.useEffect(() => {
@@ -40,7 +41,12 @@ const TargetDetails: React.FC<TargetDetailsProps> = ({ scaffoldID }) => {
 
     return (
         <div>
-            <p>The table below provides the specific assay records where scaffold with id={scaffoldID} was found to be present in an active substance, along with corresponding biological target(s).
+            <div style={{ marginBottom: '20px'}}>
+                <h2>Assay+Target Details for Scaffold</h2>
+                <h3>ScaffoldID={scaffoldID}</h3>
+                {scaffoldImage}
+            </div>
+            <p>The table below provides the specific assay records where scaffold with id={scaffoldID} was present in an active substance, along with corresponding biological target(s).
             For each target the following information is provided:</p>
             <ul>
                 <li><b>AID:</b> The <a href="https://pubchem.ncbi.nlm.nih.gov/"target="_blank" rel="noopener noreferrer">PubChem</a> AssayID (AID) the given scaffold was found to be active in.</li>
