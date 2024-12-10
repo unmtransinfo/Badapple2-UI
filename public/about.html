@@ -10,7 +10,7 @@
     <h3>(Bioassay-Data Associative Promiscuity Pattern Learning Engine)</h3>
     <h2>About</h2>
     <p>This web app analyzes each input query molecule by searching a database of bioactivity data experimentally 
-        produced by NIH screening centers (data from <a href="https://pubchem.ncbi.nlm.nih.gov/" target="_blank">PubChem</a>). For each scaffold in the query molecule, the Badapple promiscuity score (pScore) 
+        produced by NIH screening centers (data from <a href="https://pubchem.ncbi.nlm.nih.gov/" target="_blank" rel="noopener noreferrer">PubChem</a>). For each scaffold in the query molecule, the Badapple promiscuity score (pScore) 
         is computed according to the following scaffold scoring formula:</p>
     <blockquote>
         <pre>
@@ -22,12 +22,12 @@ score = ((sActive) / (sTested + median(sTested)) *
     </blockquote>
     <p>where:</p>
     <blockquote>    
-        <p>sTested (substances tested) = # tested substances containing this scaffold</p>
-        <p>sActive (substances active) = # active substances containing this scaffold</p>
-        <p>aTested (assays tested) = # assays with tested compounds containing this scaffold</p>
-        <p>aActive (assays active) = # assays with active compounds containing this scaffold</p>
-        <p>wTested (wells tested) = # wells (samples) containing this scaffold</p>
-        <p>wActive (wells active) = # active wells (samples) containing this scaffold</p>
+        <p>sTested = # tested substances containing this scaffold</p>
+        <p>sActive = # active substances containing this scaffold</p>
+        <p>aTested = # assays with tested compounds containing this scaffold</p>
+        <p>aActive = # assays with active compounds containing this scaffold</p>
+        <p>wTested = # wells (samples) containing this scaffold</p>
+        <p>wActive = # active wells (samples) containing this scaffold</p>
     </blockquote>
 
     <p>The <b>inDrug</b> flag indicates whether the corresponding scaffold exists in any approved drug<sup>*</sup>. 
@@ -35,6 +35,7 @@ score = ((sActive) / (sTested + median(sTested)) *
         approved drug is normally much stronger evidence.</p>
     <p class="footnote"><small>* This analysis applies only to drugs with 5 ring systems or less. 
         Drugs with many ring systems (e.g., venetoclax) are excluded.</small></p>
+    <p>Note that <a href="https://pubchem.ncbi.nlm.nih.gov/compound/Benzene" target="_blank" rel="noopener noreferrer">benzene</a> is not considered as a scaffold due to it being such a common substructure.</p>
     <h3>Interpreting Scores</h3>
     <p>The table below provides an overview of how to interpret different pScores provided by Badapple.</p>
     <table border>
@@ -50,12 +51,12 @@ score = ((sActive) / (sTested + median(sTested)) *
     </table>
     <h3>Badapple Paper</h3>
     <p>For more information about Badapple please see the following paper:</p>
-    <p><a href="https://jcheminf.biomedcentral.com/articles/10.1186/s13321-016-0137-3" target="_blank">Badapple: promiscuity patterns from noisy evidence</a></p>
+    <p><a href="https://jcheminf.biomedcentral.com/articles/10.1186/s13321-016-0137-3" target="_blank" rel="noopener noreferrer">Badapple: promiscuity patterns from noisy evidence</a></p>
     <p>Although the original Badapple project was developed several years ago, we have re-created the original Badapple database and website using updated free and open-source software. See next section for more details.</p>
     <h3>Databases: badapple vs badapple_classic vs badapple2</h3>
     Under the Badapple project there have been three unique databases developed so far. They can be summarized as follows:
     <ul>
-        <li><b>badapple:</b> The original Badapple database developed several years ago which resulted in the publication of <a href="https://jcheminf.biomedcentral.com/articles/10.1186/s13321-016-0137-3" target="_blank">Badapple: promiscuity patterns from noisy evidence</a>. This DB is not available as part of the webapp because it relies on outdated and proprietary code.</li>
+        <li><b>badapple:</b> The original Badapple database developed several years ago which resulted in the publication of <a href="https://jcheminf.biomedcentral.com/articles/10.1186/s13321-016-0137-3" target="_blank" rel="noopener noreferrer">Badapple: promiscuity patterns from noisy evidence</a>. This DB is not available as part of the webapp because it relies on outdated and proprietary code.</li>
         <li><b>badapple_classic:</b> Updated version of <b>badapple</b>, built using identical assay records and other data.</li>
         <li><b>badapple2:</b> Newest version of Badapple which incorporates an additional 83 new assay records.</li>
     </ul>
@@ -65,17 +66,17 @@ score = ((sActive) / (sTested + median(sTested)) *
         <ul>
             <li>
                 <b>badapple_classic</b> uses the RDKit-based HierS algorithm 
-                from <a href="https://github.com/UCLCheminformatics/ScaffoldGraph" target="_blank">ScaffoldGraph</a> 
-                rather than <a href="https://github.com/unmtransinfo/unm_biocomp_hscaf" target="_blank">our Chemaxon-based version of HierS</a>.
+                from <a href="https://github.com/UCLCheminformatics/ScaffoldGraph" target="_blank" rel="noopener noreferrer">ScaffoldGraph</a> 
+                rather than <a href="https://github.com/unmtransinfo/unm_biocomp_hscaf" target="_blank" rel="noopener noreferrer">our Chemaxon-based version of HierS</a>.
             </li>
             <li>
-                <b>badapple_classic</b> generates canonical SMILES using <a href="https://www.rdkit.org/" target="_blank">RDKit</a>, whereas <b>badapple</b> used <a href="https://openbabel.org/" target="_blank">openbabel</a>
+                <b>badapple_classic</b> generates canonical SMILES using <a href="https://www.rdkit.org/" target="_blank" rel="noopener noreferrer">RDKit</a>, whereas <b>badapple</b> used <a href="https://openbabel.org/" target="_blank" rel="noopener noreferrer">openbabel</a>
             </li>
             <li>
                 <b>badapple_classic</b> counts ring systems using 
-                <a href="https://github.com/PatWalters/useful_rdkit_utils/blob/master/useful_rdkit_utils/ring_systems.py#L17" target="_blank">RingSystemFinder</a> 
+                <a href="https://github.com/PatWalters/useful_rdkit_utils/blob/master/useful_rdkit_utils/ring_systems.py#L17" target="_blank" rel="noopener noreferrer">RingSystemFinder</a> 
                 (RDKit-based), whereas <b>badapple</b> used 
-                <a href="https://github.com/unmtransinfo/unm_biocomp_hscaf/blob/befd175da409b27374d005f6431a2df94e361d02/unm_biocomp_hscaf/src/main/java/edu/unm/health/biocomp/hscaf/hier_scaffolds_utils.java#L161" target="_blank">RawRingsystemCount</a> 
+                <a href="https://github.com/unmtransinfo/unm_biocomp_hscaf/blob/befd175da409b27374d005f6431a2df94e361d02/unm_biocomp_hscaf/src/main/java/edu/unm/health/biocomp/hscaf/hier_scaffolds_utils.java#L161" target="_blank" rel="noopener noreferrer">RawRingsystemCount</a> 
                 (Chemaxon-based).
             </li>
             <li>
@@ -84,7 +85,7 @@ score = ((sActive) / (sTested + median(sTested)) *
         </ul>
     </p>
     <p>We have performed several analyses to confirm that <b>badapple_classic</b> and <b>badapple</b> align closely. 
-        Details on the analyses we've done can be found <a href="https://github.com/unmtransinfo/Badapple2/tree/main/badapple1_comparison#optional-compare-the-badapple-db-and-badapple_classic-db" target="_blank">here</a>.</p>
+        Details on the analyses we've done can be found <a href="https://github.com/unmtransinfo/Badapple2/tree/main/badapple1_comparison#optional-compare-the-badapple-db-and-badapple_classic-db" target="_blank" rel="noopener noreferrer">here</a>.</p>
         <h4>What's different between badapple_classic and badapple2?</h4>
         <p>The most significant differences between <b>badapple_classic</b> and <b>badapple2</b> are:
             <ul>
@@ -92,7 +93,7 @@ score = ((sActive) / (sTested + median(sTested)) *
                     <b>badapple_classic</b> uses the same set of (823) assays as the original badapple DB, whereas <b>badapple2</b> incorporates an additional 83 new assay records (906 total).
                     <ul>
                         <li>For both cases, assay records are restricted to HTS (>= 20k compounds) and come from NIH centers.</li>
-                        <li>You can compare the files <a href="https://unmtid-dbs.net/download/Badapple2/badapple_classic_files/badapple_classic_tested.aid" target="_blank">badapple_classic_tested.aid</a> and <a href="https://unmtid-dbs.net/download/Badapple2/badapple2_files/badapple2_tested.aid" target="_blank">badapple2_tested.aid</a> to see the exact difference.</li>
+                        <li>You can compare the files <a href="https://unmtid-dbs.net/download/Badapple2/badapple_classic_files/badapple_classic_tested.aid" target="_blank" rel="noopener noreferrer">badapple_classic_tested.aid</a> and <a href="https://unmtid-dbs.net/download/Badapple2/badapple2_files/badapple2_tested.aid" target="_blank" rel="noopener noreferrer">badapple2_tested.aid</a> to see the exact difference.</li>
                     </ul>
                 </li>
                 <li>In addition to the 83 new assay records, <b>badapple2</b> also uses updated versions of the original 823 assay records.</li>
@@ -104,7 +105,7 @@ score = ((sActive) / (sTested + median(sTested)) *
                         <li><b>badapple2</b> date cutoff: <i>2024-11-26</i></li>
                     </ul>
                 <li>
-                    <b>badapple_classic</b> was restricted to substances from <a href="https://pubchem.ncbi.nlm.nih.gov/source/MLSMR" target="_blank">MLSMR</a>, whereas <b>badapple2</b> uses all bioactivity data present in the provided assay records.
+                    <b>badapple_classic</b> was restricted to substances from <a href="https://pubchem.ncbi.nlm.nih.gov/source/MLSMR" target="_blank" rel="noopener noreferrer">MLSMR</a>, whereas <b>badapple2</b> uses all bioactivity data present in the provided assay records.
                 </li>
                 <li><b>badapple2</b> uses the <b>badapple_classic</b> medians to normalize pScores in order to ensure that our criteria for what constitutes a "high" amounts of evidence remains consistent.
                     <ul>
@@ -117,33 +118,33 @@ score = ((sActive) / (sTested + median(sTested)) *
             <ul>
                 <li>Biological target information for each assay</li>
                 <li>A record of the specific approved drug(s) a scaffold is present in if <b>inDrug</b> is true.
-                <li>Assay descriptors (description and protocol text + annotations from <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4383997/" target="_blank">BARD</a>)</li>
+                <li>Assay descriptors (description and protocol text + annotations from <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4383997/" target="_blank" rel="noopener noreferrer">BARD</a>)</li>
             </ul>
         </p>
         If you select <b>badapple2</b> in the webapp, details on the associated biological targets and approved drugs are available for each scaffold.
     <h2>Help</h2>
-    <p>If you have any issues or questions please raise them <a href="https://github.com/unmtransinfo/Badapple2/issues" target="_blank">here</a>.</p>
+    <p>If you have any issues or questions please raise them <a href="https://github.com/unmtransinfo/Badapple2/issues" target="_blank" rel="noopener noreferrer">here</a>.</p>
     <h2>Code Availability</h2>
     <p>All of our code, including the Badapple database, API, and UI are publicly available. Please see the links below.</p>
     <ul>
-        <li><a href="https://github.com/unmtransinfo/Badapple2" target="_blank">Badapple2</a></li>
-        <li><a href="https://github.com/unmtransinfo/Badapple2-API" target="_blank">Badapple2-API</a></li>
-        <li><a href="https://github.com/unmtransinfo/Badapple2-UI" target="_blank">Badapple2-UI</a></li>
+        <li><a href="https://github.com/unmtransinfo/Badapple2" target="_blank" rel="noopener noreferrer">Badapple2</a></li>
+        <li><a href="https://github.com/unmtransinfo/Badapple2-API" target="_blank" rel="noopener noreferrer">Badapple2-API</a></li>
+        <li><a href="https://github.com/unmtransinfo/Badapple2-UI" target="_blank" rel="noopener noreferrer">Badapple2-UI</a></li>
     </ul>
     <h2>Authors and Acknowledgement</h2>
     This project was developed within the UNM School of Medicine, Dept. of Internal Medicine, Translational Informatics Division.
     <ul>
-        <li>Lead Developer: <a href="https://github.com/Jack-42" target="_blank">Jack Ringer</a></li>
-        <li>Supervision: <a href="https://github.com/jeremyjyang" target="_blank">Jeremy Yang</a></li>
+        <li>Lead Developer: <a href="https://github.com/Jack-42" target="_blank" rel="noopener noreferrer">Jack Ringer</a></li>
+        <li>Supervision: <a href="https://github.com/jeremyjyang" target="_blank" rel="noopener noreferrer">Jeremy Yang</a></li>
     </ul>
     <p>We would like to thank Cristian Bologa for his guidance, as well as Oleg Ursu, Tudor Oprea, 
         Christopher A. Lipinski, and Larry Sklar for their previous efforts on this project.</p>
     <p>As well, we would like to acknowledge the developers of the many open-source software packages that have been vital to the success of this project. We'd like to especially acknowledge the following projects:</p>
     <ul>
-        <li><a href="https://www.rdkit.org/" target="_blank">RDKit</a>  - <a href="https://github.com/rdkit/rdkit" target="_blank">Code</a> </li>
-        <li><a href="https://academic.oup.com/bioinformatics/article/36/12/3930/5814205?login=false" target="_blank">ScaffoldGraph</a> - <a href="https://github.com/UCLCheminformatics/ScaffoldGraph" target="_blank">Code</a></li>
-        <li><a href="http://practicalcheminformatics.blogspot.com/2022/01/useful-rdkit-utilities.html" target="_blank"> Useful RDKit Utilities</a> - <a href="https://github.com/PatWalters/useful_rdkit_utils" target="_blank">Code</a></li>
-        <li><a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a> - <a href="https://github.com/postgres/postgres" target="_blank"> Code</a> [Mirror]</li>
+        <li><a href="https://www.rdkit.org/" target="_blank" rel="noopener noreferrer">RDKit</a>  - <a href="https://github.com/rdkit/rdkit" target="_blank" rel="noopener noreferrer">Code</a> </li>
+        <li><a href="https://academic.oup.com/bioinformatics/article/36/12/3930/5814205?login=false" target="_blank" rel="noopener noreferrer">ScaffoldGraph</a> - <a href="https://github.com/UCLCheminformatics/ScaffoldGraph" target="_blank" rel="noopener noreferrer">Code</a></li>
+        <li><a href="http://practicalcheminformatics.blogspot.com/2022/01/useful-rdkit-utilities.html" target="_blank" rel="noopener noreferrer"> Useful RDKit Utilities</a> - <a href="https://github.com/PatWalters/useful_rdkit_utils" target="_blank" rel="noopener noreferrer">Code</a></li>
+        <li><a href="https://www.postgresql.org/" target="_blank" rel="noopener noreferrer">PostgreSQL</a> - <a href="https://github.com/postgres/postgres" target="_blank" rel="noopener noreferrer"> Code</a> [Mirror]</li>
     </ul>
 
 </body>
