@@ -55,7 +55,7 @@ score = ((sActive) / (sTested + median(sTested)) *
     <h3>Databases: badapple vs badapple_classic vs badapple2</h3>
     Under the Badapple project there have been three unique databases developed so far. They can be summarized as follows:
     <ul>
-        <li><b>badapple:</b> The original Badapple database developed several years ago and resulting in the publication of <a href="https://jcheminf.biomedcentral.com/articles/10.1186/s13321-016-0137-3" target="_blank">Badapple: promiscuity patterns from noisy evidence</a>. This DB is not available as part of the webapp because it relies on outdated and proprietary code.</li>
+        <li><b>badapple:</b> The original Badapple database developed several years ago which resulted in the publication of <a href="https://jcheminf.biomedcentral.com/articles/10.1186/s13321-016-0137-3" target="_blank">Badapple: promiscuity patterns from noisy evidence</a>. This DB is not available as part of the webapp because it relies on outdated and proprietary code.</li>
         <li><b>badapple_classic:</b> Updated version of <b>badapple</b>, built using identical assay records and other data.</li>
         <li><b>badapple2:</b> Newest version of Badapple which incorporates an additional 83 new assay records.</li>
     </ul>
@@ -95,6 +95,14 @@ score = ((sActive) / (sTested + median(sTested)) *
                         <li>You can compare the files <a href="https://unmtid-dbs.net/download/Badapple2/badapple_classic_files/badapple_classic_tested.aid" target="_blank">badapple_classic_tested.aid</a> and <a href="https://unmtid-dbs.net/download/Badapple2/badapple2_files/badapple2_tested.aid" target="_blank">badapple2_tested.aid</a> to see the exact difference.</li>
                     </ul>
                 </li>
+                <li>In addition to the 83 new assay records, <b>badapple2</b> also uses updated versions of the original 823 assay records.</li>
+                    <ul>
+                        <li>PubChem is constantly updated. Substances, compounds, and bioassays can be modified/removed over time. 
+                            One particular way these updates have impacted <b>badapple2</b> is that some PubChem compounds have been removed since the creation of <b>badapple</b> (e.g., CIDs 6212642, 24761676, and 24762101). 
+                            Thus, some scaffolds which are in <b>badapple_classic</b> may no longer be in <b>badapple2</b> (e.g., the scaffold with SMILES 'C1=C2CCCC=C2Nc2ccccc21').</li>
+                        <li><b>badapple</b> & <b>badapple_classsic</b> date cutoff: <i>2017-08-14</i></li>
+                        <li><b>badapple2</b> date cutoff: <i>2024-11-26</i></li>
+                    </ul>
                 <li>
                     <b>badapple_classic</b> was restricted to substances from <a href="https://pubchem.ncbi.nlm.nih.gov/source/MLSMR" target="_blank">MLSMR</a>, whereas <b>badapple2</b> uses all bioactivity data present in the provided assay records.
                 </li>
