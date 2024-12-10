@@ -80,13 +80,6 @@ const transformSmiles = (smiles: string) => {
 
 // for visualizing score advisory color
 const getRowEntryColor = (pscore: number) => {
-    console.log({
-        pscore,
-        isNull: pscore === null,
-        isUndefined: pscore === undefined,
-        isNegative: pscore < 0,
-        type: typeof pscore
-      });
     if (pscore === null || pscore === undefined || pscore < 0) return "bg-gray-300";
     if (pscore >= 300) return "bg-red-300";
     if (pscore >= 100) return "bg-yellow-300";
