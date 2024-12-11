@@ -95,7 +95,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
     };
 
     return (
-        <div className="w-full max-w-7xl mx-auto">
+        <div className="w-full max-w-6xl mx-auto">
             <section className={`glass-container gap-0 p-0 ${isLoading ? 'active' : ''}`}>
                 {isLoading && (
                     <div className="loader active">
