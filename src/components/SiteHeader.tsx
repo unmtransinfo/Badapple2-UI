@@ -6,7 +6,7 @@ export default function SiteHeader() {
             </h1>
             <button 
                 onClick={() => window.open('/badapple2/about.html', '_blank')} 
-                className="mt-2 mb-0 px-2 py-1 bg-gray-50 text-black rounded hover:bg-gray-500 text-sm"
+                className="mt-2 mb-2 px-2 py-1 bg-gray-50 text-black rounded hover:bg-gray-500 text-sm"
             >
                 About
             </button>

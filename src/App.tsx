@@ -2,12 +2,12 @@ import { useState } from 'react';
 import './App.css';
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from './components/SiteFooter.tsx';
-import ChemPage from "./components/ChemPage.tsx";
+import ResultsPage, { MoleculeInfo } from "./components/ResultsPage.tsx";
 import SearchResults from "./components/form/SearchResults.tsx";
 import { createTheme, ThemeProvider } from "@mui/material";
 
 function App() {
-    const [chem, setChem] = useState();
+    const [chem, setChem] = useState<{ result: MoleculeInfo[], canGetDrugInfo: boolean, canGetTargetInfo: boolean } | null>(null);
     const theme = createTheme({ palette: { mode: 'dark' } });
     return (
         <ThemeProvider theme={theme}>
@@ -15,7 +15,7 @@ function App() {
                 <div className="page-container">
                     <SiteHeader />
                     {!!chem ? (
-                        <ChemPage result={chem} setChem={setChem} />
+                        <ResultsPage result={chem.result} setChem={setChem} canGetDrugInfo={chem.canGetDrugInfo} canGetTargetInfo={chem.canGetTargetInfo}/>
                     ) : (
                         <>
                             <SearchResults setChem={setChem} />

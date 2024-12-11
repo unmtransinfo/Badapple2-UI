@@ -1,8 +1,17 @@
-import React, {Dispatch, SetStateAction, ReactNode, useState, useRef} from "react";
+/*
+@author Jack Ringer
+Date: 12/9/2024
+Description:
+Page showing the results table.
+*/
+import React, {Dispatch, SetStateAction, ReactNode, useState} from "react";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import MoleculeStructure from "./MoleculeStructure.tsx";
 import Pagination from "./Pagination.tsx";
+import DrugDetails from "./DrugDetails.tsx";
+import TargetDetails from "./TargetDetails.tsx";
+import { createRoot } from 'react-dom/client'
 
 // define interfaces
 interface ScaffoldInfo {
@@ -20,15 +29,17 @@ interface ScaffoldInfo {
 }
 
 // each input SMILES will return a dict with the following:
-interface MoleculeInfo {
+export interface MoleculeInfo {
     molecule_smiles: string;
     name: string;
     scaffolds: ScaffoldInfo[];
     error_msg: string,
 };
 
-interface ChemPageProps {
+interface ResultsPageProps {
     result:  MoleculeInfo[];
+    canGetDrugInfo: boolean;
+    canGetTargetInfo: boolean;
     setChem: Dispatch<SetStateAction<any>>;
 }
 
@@ -36,7 +47,6 @@ const COLUMN_HEADER_TEXT = "px-6 py-3 text-left text-xs font-medium text-gray-50
 const MOL_COL_TEXT = "whitespace-nowrap text-s font-medium text-gray-900";
 const SVG_WIDTH = 200;
 const SVG_HEIGHT = 125;
-const TABLE_N_COLUMNS = 8;
 
 const getRowEntryClass = (entryColor: string, boldText: boolean) => {
     return `px-6 py-4 whitespace-nowrap text-s ${boldText ? 'font-medium' : ''} text-gray-900 border-r border-gray-200 ${entryColor}`;
@@ -88,12 +98,12 @@ const buildDetailsArray = (scaffold: ScaffoldInfo): string[] => {
     } = scaffold;
 
     return [
-        `substances tested: ${nsub_tested}`,
-        `substances active: ${nsub_active}`,
-        `assays tested: ${nass_tested}`,
-        `assays active: ${nass_active}`,
-        `samples tested: ${nsam_tested}`,
-        `samples active: ${nsam_active}`
+        `sTested: ${nsub_tested}`,
+        `sActive: ${nsub_active}`,
+        `aTested: ${nass_tested}`,
+        `aActive: ${nass_active}`,
+        `wTested: ${nsam_tested}`,
+        `wActive: ${nsam_active}`
     ];
 };
 
@@ -105,22 +115,62 @@ const truncateName = (name: string, maxLength: number) => {
     return name;
 };
 
+const displayPopupWindow = async(popupName: string, popupWindowName: string, componentToRender: ReactNode) => {
+    const popupWindow = window.open("", popupName, "width=600,height=400");
+    if (popupWindow) {
+        popupWindow.document.write(`<html><head><title>${popupWindowName}</title></head><body><div id='drug-details-root'></div></body></html>`);
+        popupWindow.document.close();
+        const root = popupWindow.document.getElementById('drug-details-root');
+        if (root) {
+            createRoot(root).render(componentToRender);
+        } else {
+            console.error("Failed to find root element");
+        }
+    } else {
+        console.error("Failed to open popup window");
+    }
+}
+
+
+const displayDrugDetails = async(scaffoldID: number, scaffoldImage: ReactNode) => {
+    const popupName = `DrugDetailsPopup_${scaffoldID}`;
+    const popupWindowName = `Drug Details scafid=${scaffoldID}`;
+    displayPopupWindow(popupName, popupWindowName, <DrugDetails scaffoldID={scaffoldID} scaffoldImage={scaffoldImage}/>);
+}
+
+
+const displayTargetDetails = async(scaffoldID: number, scaffoldImage: ReactNode) => {
+    const popupName = `TargetDetailsPopUp_${scaffoldID}`;
+    const popupWindowName = `Target Details scafid=${scaffoldID}`;
+    displayPopupWindow(popupName, popupWindowName, <TargetDetails scaffoldID={scaffoldID} scaffoldImage={scaffoldImage}/>);
+}
 
 const renderTableRow = (
     index: number,
     scaffoldIndex: number,
-    rowColor: string,
     molData: any,
-    scafsmi: string,
+    scaffold: ScaffoldInfo | null,
     highestPscoreColor: string,
-    inDrugString: string,
-    pscoreString: string | number,
-    detailsArray: string[],
     nRows: number,
-    isFirstOccurrence: boolean
+    canGetDrugInfo: boolean,
+    canGetTargetInfo: boolean
 ) => {
+    const { scafsmi = "", pscore = null, in_db = null, in_drug = null } = scaffold || {};
+    const scaffoldImage = scafsmi ? <MoleculeStructure
+                                        id={`scaf-smile-svg-${index}-${scaffoldIndex}`}
+                                        structure={scafsmi}
+                                        width={SVG_WIDTH}
+                                        height={SVG_HEIGHT}
+                                        svgMode={true}
+                                        className="mb-0"
+                                /> : null;
+    const inDrugString = !in_db ? (scaffold ? "NULL" : "") : (in_drug ? "True" : "False");
+    const pscoreString = !in_db ? (scaffold ? "NULL" : "") : String(pscore);
+    const detailsArray = scaffold ? buildDetailsArray(scaffold) : [];
+    const rowColor = (pscore !== null && pscore !== undefined) ? getRowEntryColor(pscore) : getRowEntryColor(-1);
+    const isFirstOccurrence = (scaffoldIndex == 0);
     const first2ColClass = getRowEntryClass(highestPscoreColor, true);
-    const otherColClass = getRowEntryClass(rowColor, false)
+    const otherColClass = getRowEntryClass(rowColor, false);
 
     return (
         <tr key={`${index}-${scaffoldIndex}`} className={rowColor}>
@@ -140,23 +190,25 @@ const renderTableRow = (
                     className="mb-0"
                 />
             </td>
-            {scafsmi ? (
-                <td id="table-results" className="px-6 py-4 whitespace-nowrap border-r border-gray-200">
-                    <MoleculeStructure
-                        id={`scaf-smile-svg-${index}-${scaffoldIndex}`}
-                        structure={scafsmi}
-                        width={SVG_WIDTH}
-                        height={SVG_HEIGHT}
-                        svgMode={true}
-                        className="mb-0"
-                    />
-                </td>
-            ) : (
+            {scaffoldImage ? (
+                <td id="table-results" className="px-6 py-4 whitespace-nowrap border-r border-gray-200">{scaffoldImage}</td>)
+                : (
                 <td id="table-results" className={otherColClass}>Has no scaffolds <br></br>or &gt;maxRings</td>
             )}
-            <td id="table-results" className={otherColClass}>{inDrugString ? inDrugString : ""}</td>
+            <td className={otherColClass}>
+                {scaffold && scaffoldImage && in_drug && canGetDrugInfo ? (
+                    <a href="#" onClick={(event) => {
+                        event.preventDefault();
+                        displayDrugDetails(scaffold.id, scaffoldImage);
+                    }} className="clickable-link">
+                        {inDrugString}
+                    </a>
+                ) : (
+                    inDrugString
+                )}
+            </td>
             <td id="table-results" className={otherColClass}>{pscoreString ? pscoreString : ""}</td>
-            {detailsArray && detailsArray.length === 6 ? (
+            {in_db && detailsArray && detailsArray.length === 6 ? (
                 <>
                     <td id="table-results-1" className={otherColClass}>
                         <div>{detailsArray[0]}</div>
@@ -178,34 +230,38 @@ const renderTableRow = (
                     <td id="table-results" className={otherColClass}></td>
                 </>
             )}
+            {canGetTargetInfo ? (
+                    <td className={otherColClass}>
+                        {scaffold && scaffoldImage && in_db ? (
+                            <a href="#" onClick={(event) => {
+                                event.preventDefault();
+                                displayTargetDetails(scaffold.id, scaffoldImage);
+                            }} className="clickable-link">
+                                {"Click Here"}
+                            </a>
+                        ) : (
+                            "" // for valid mols with no scaffolds
+                        )}
+                    </td>
+            ) : (
+                <></>
+            )}
         </tr>
     );
 };
 
-const getSeparator = () => { 
+const getSeparator = (nColumns: number) => { 
     // separator shown between scaffolds for different molecules
     return (
         <tr>
-            <td colSpan={TABLE_N_COLUMNS} className="py-2">
+            <td colSpan={nColumns} className="py-2">
                 <hr className="border-t-2 border-gray-300" />
             </td>
         </tr>)
 }
 
 
-const getRow = (molData: MoleculeInfo, scaffold: ScaffoldInfo, index: number, scaffoldIndex: number, highestPscoreRowClassName: string, molTotalRows: number): ReactNode => {
-    const { scafsmi, pscore, in_db, in_drug} = scaffold;
-    const inDrugString = !in_db ? "NULL" : (in_drug ? "True" : "False");
-    const pscoreString = !in_db ? "NULL" : String(pscore);
-    const detailsArray = buildDetailsArray(scaffold);
-    const rowClassName = getRowEntryColor(pscore);
-    const isFirstOccurrence = (scaffoldIndex == 0);
-    return (
-        renderTableRow(index, scaffoldIndex, rowClassName, molData, scafsmi, highestPscoreRowClassName, inDrugString, pscoreString, detailsArray, molTotalRows, isFirstOccurrence)
-    );
-}
-
-const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
+const getMoleculeRows = (moleculeInfos: MoleculeInfo[], canGetDrugInfo: boolean, canGetTargetInfo: boolean, nColumns: number) : React.ReactNode => {
     return (
         <tbody className="bg-white divide-y divide-gray-200">
             {moleculeInfos.map((molData, index) => {
@@ -227,9 +283,10 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                     return (
                         <React.Fragment key={index}>
                             {sortedScaffolds.map((scaffold, scaffoldIndex) => 
-                                getRow(molData, scaffold, index, scaffoldIndex, highestPscoreRowClassName, molData.scaffolds.length)
+                                renderTableRow(index, scaffoldIndex, molData, scaffold, highestPscoreRowClassName, 
+                                    molData.scaffolds.length, canGetDrugInfo, canGetTargetInfo)
                             )}
-                            {getSeparator()}
+                            {getSeparator(nColumns)}
                         </React.Fragment>
                     );
                 }
@@ -238,19 +295,16 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                     return (
                         <React.Fragment key={index}>
                             {renderTableRow(
-                                index, 
-                                0, 
-                                getRowEntryColor(-1), 
-                                molData, 
-                                "", 
-                                "",
-                                "",
-                                "",
-                                [],
+                                index,
+                                0,
+                                molData,
+                                null,
+                                getRowEntryColor(-1),
                                 1,
-                                true
+                                false,
+                                canGetTargetInfo // helps make the display consistent/not have gaps
                             )}
-                            {getSeparator()}
+                            {getSeparator(nColumns)}
                         </React.Fragment>
                     );
                 }
@@ -258,12 +312,12 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
                     // invalid SMILES 
                     return (
                         <React.Fragment key={index}>
-                            <td colSpan={TABLE_N_COLUMNS} className="py-4 text-center text-red-500">
+                            <td colSpan={nColumns} className="py-4 text-center text-red-500">
                                 <p className={MOL_COL_TEXT}>Name: {molName}</p>
                                 <p className={MOL_COL_TEXT}>Given SMILES: {molSmilesStr}</p>
                                 <p>{molData.error_msg}</p>
                             </td>
-                            {getSeparator()}
+                            {getSeparator(nColumns)}
                         </React.Fragment>
                     );
                 }
@@ -272,7 +326,8 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[]) : React.ReactNode => {
     )
 }
 
-const getResultsTable = (moleculeInfos: MoleculeInfo[]): React.ReactNode => {
+const getResultsTable = (moleculeInfos: MoleculeInfo[], canGetDrugInfo: boolean, canGetTargetInfo: boolean): React.ReactNode => {
+    const nColumns = canGetTargetInfo ? 9 : 8;
     return (
         <table id="table-results" className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -281,13 +336,14 @@ const getResultsTable = (moleculeInfos: MoleculeInfo[]): React.ReactNode => {
                     <th className={COLUMN_HEADER_TEXT}>Molecule</th>
                     <th className={COLUMN_HEADER_TEXT}>Scaffold</th>
                     <th className={COLUMN_HEADER_TEXT}>InDrug</th>
-                    <th className={COLUMN_HEADER_TEXT}>Pscore</th>
+                    <th className={COLUMN_HEADER_TEXT}>pScore</th>
                     <th className={COLUMN_HEADER_TEXT}>Substance Details</th>
                     <th className={COLUMN_HEADER_TEXT}>Assay Details</th>
                     <th className={COLUMN_HEADER_TEXT}>Sample Details</th>
+                    {canGetTargetInfo ? (<th className={COLUMN_HEADER_TEXT}>Active Targets</th>) : (<></>)}
                 </tr>
             </thead>
-            {getMoleculeRows(moleculeInfos)}
+            {getMoleculeRows(moleculeInfos, canGetDrugInfo, canGetTargetInfo, nColumns)}
         </table>
     );
 };
@@ -358,7 +414,7 @@ const downloadTSV = (moleculeInfos: MoleculeInfo[]) => {
     URL.revokeObjectURL(url);
 };
 
-export default function ChemPage(props: ChemPageProps) {
+export default function ResultsPage(props: ResultsPageProps) {
     const [currentPage, setCurrentPage] = useState(1);
     const moleculesPerPage = 5;
     const moleculeInfos = props.result;
@@ -387,7 +443,7 @@ export default function ChemPage(props: ChemPageProps) {
                 </button>
             </div>  
             <div className="glass-container active p-3">
-                {getResultsTable(paginatedMoleculeInfos )}
+                {getResultsTable(paginatedMoleculeInfos, props.canGetDrugInfo, props.canGetTargetInfo)}
                 <Pagination
                     currentPage={currentPage}
                     totalMolecules={moleculeInfos.length}

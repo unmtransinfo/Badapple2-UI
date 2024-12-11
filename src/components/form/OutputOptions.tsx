@@ -8,7 +8,8 @@ import handleNumberInputChange from './OptionsHandler';
 export interface OutputOptions {
     maxMolecules: number,
     startIdx: number,
-    maxRings: number
+    maxRings: number,
+    database: string
 }
 
 export interface OutputOptionsProps {
@@ -17,9 +18,7 @@ export interface OutputOptionsProps {
 }
 
 const OutputOptionsTable: React.FC<OutputOptionsProps> = ({ outputOptions: outputOptions, updateOutputOptions: updateOutputOptions }) => {
-    const { maxMolecules, startIdx, maxRings} = outputOptions;
-
-
+    const { maxMolecules, startIdx, maxRings, database} = outputOptions;
     return (
         <div id="user-options-container">
             <table className="table-bordered">
@@ -30,6 +29,20 @@ const OutputOptionsTable: React.FC<OutputOptionsProps> = ({ outputOptions: outpu
                     </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td>
+                            Database
+                            <span data-tooltip="Database to fetch information from">
+                                <FontAwesomeIcon icon={faQuestionCircle} className="ml-2" />
+                            </span>
+                        </td>
+                        <td>
+                            <select name="database" id="databaseChoice" value={database} onChange={(e) => updateOutputOptions('database', e.target.value)}>
+                                <option value={import.meta.env.VITE_DB_NAME} id="databaseChoiceDefault">badapple_classic</option>
+                                <option value={import.meta.env.VITE_DB2_NAME}>badapple2</option>
+                            </select>
+                        </td>
+                    </tr>
                     <tr>
                         <td>
                             Start Index
@@ -44,7 +57,7 @@ const OutputOptionsTable: React.FC<OutputOptionsProps> = ({ outputOptions: outpu
                     <tr>
                         <td>
                             N. Molecules
-                            <span data-tooltip="Number of molecules to process, beginning from given start index. Max is 100.">
+                            <span data-tooltip="Number of molecules to process, beginning from given start index. Max is 100. Note also that there is a limit on the number of input characters.">
                                 <FontAwesomeIcon icon={faQuestionCircle} className="ml-2" />
                             </span>
                         </td>
