@@ -7,15 +7,12 @@ CSS related to SearchResults.tsx
 
 .flex-container {
     display: flex;
-    gap: 1.25em; /* Adjust the gap between the textarea and UserOptions as needed */
+    gap: 1rem; /* Adjust the gap between the textarea and UserOptions as needed */
     width: 100%;
     position: relative;
-}
-
-#search-input {
-    flex: 1; /* Allow the textarea to take up the remaining space */
+    flex-wrap: wrap;
 }
 
 #user-options-container {
-    flex: 0 0 18.75em;
+    flex: 0 0 20rem;
 } 

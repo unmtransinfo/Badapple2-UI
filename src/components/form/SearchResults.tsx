@@ -95,7 +95,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
     };
 
     return (
-        <div className="w-full max-w-6xl mx-auto">
+        <div className="w-full max-w-7xl mx-auto">
             <section className={`glass-container gap-0 p-0 ${isLoading ? 'active' : ''}`}>
                 {isLoading && (
                     <div className="loader active">
@@ -145,18 +145,16 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
                         }}
                         maxLength={5000000}
                         className="w-full h-60 p-2 mb-4 border dark:border-gray-600/40 backdrop-blur-md dark:bg-gray-600/30 dark:hover:bg-gray-600/50 dark:focus:bg-gray-600/50 dark:active:bg-gray-600/50 resize-y"
-                        style={{ width: '56rem' }}
+                        style={{ minWidth: '20rem', width: '30rem' }}
                     />
-                    <div className="flex-container">
-                        <InputOptionsTable 
-                            inputOptions={inputOptions}
-                            updateInputOptions={(key, value) => updateOption(setInputOptions, key, value)}
-                        />
-                        <OutputOptionsTable 
-                            outputOptions={outputOptions}
-                            updateOutputOptions={(key, value) => updateOption(setOutputOptions, key, value)}
-                        />
-                    </div>
+                    <InputOptionsTable 
+                        inputOptions={inputOptions}
+                        updateInputOptions={(key, value) => updateOption(setInputOptions, key, value)}
+                    />
+                    <OutputOptionsTable 
+                        outputOptions={outputOptions}
+                        updateOutputOptions={(key, value) => updateOption(setOutputOptions, key, value)}
+                    />
                 </div>
             </section>
             <button
