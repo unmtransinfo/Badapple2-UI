@@ -25,3 +25,7 @@ _Watch:_
 ```shell
 npx tailwindcss -i ./src/App.css -o ./dist/App.css --watch
 ```
+
+## Acknowledgment
+Originally forked from the CFChemUI repo:
+https://github.com/unmtransinfo/CFChemUI
