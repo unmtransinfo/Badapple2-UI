@@ -29,11 +29,15 @@ const MAX_INPUT_SIZE = 5 * 1024 * 1024; // 5 MB
 const SUPPORTED_FILE_EXTENSIONS = ['.txt', '.smi', '.tsv', '.csv', '.smiles'];
 
 const EXAMPLE_SMILES = `CCCc1nc-2c(=O)n(c(=O)nc2n(n1)C)C mol1
-c1ccc2c(c1)c(=O)n(s2)c3ccccc3C(=O)N4CCCC4 mol2
-Cc1cc(nc(n1)N=C(N)Nc2cccc(c2)N)C mol3
-CCc1c(c2ccccc2o1)C(=O)c3cc(c(c(c3)Br)O)Br mol4
-OC(=O)C1=C2CCCC(C=C3C=CC(=O)C=C3)=C2NC2=CC=CC=C12 mol5
-c1ccc2c(c1)C(=O)c3ccoc3C2=O mol6`;
+C[C@]12CC(=O)[C@H]3[C@H]([C@@H]1CC[C@@]2(C(=O)CO)O)CCC4=CC(=O)C=C[C@]34C mol2
+c1ccc2c(c1)c(=O)n(s2)c3ccccc3C(=O)N4CCCC4 mol3
+COc1ccc2c3c([nH]c2c1)C(C)=NCC3 mol4
+Cc1cc(nc(n1)N=C(N)Nc2cccc(c2)N)C mol5
+CCc1c(c2ccccc2o1)C(=O)c3cc(c(c(c3)Br)O)Br mol6
+OC(=O)C1=C2CCCC(C=C3C=CC(=O)C=C3)=C2NC2=CC=CC=C12 mol7
+c1ccc2c(c1)C(=O)c3ccoc3C2=O mol8
+O=C(O)CCC(=O)N1CCCC1C(=O)O mol9
+O=C([O-])c1cc(=O)c2c(OCC(O)COc3cccc4oc(C(=O)[O-])cc(=O)c34)cccc2o1 mol10`;
 
 const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
     const [searchInput, setSearchInput] = useState('');
