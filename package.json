@@ -22,7 +22,7 @@
     "@mui/x-date-pickers": "^7.2.0",
     "@nextui-org/react": "^2.1.13",
     "@rdkit/rdkit": "^2023.9.2-1.0.0",
-    "axios": "^1.5.1",
+    "axios": "^1.8.2",
     "framer-motion": "^10.16.4",
     "lodash": "^4.17.21",
     "material-react-table": "^2.12.1",
