@@ -17,13 +17,13 @@
     "@fortawesome/free-regular-svg-icons": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@heroui/react": "2.7.5",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "@mui/x-date-pickers": "^7.2.0",
-    "@nextui-org/react": "^2.1.13",
     "@rdkit/rdkit": "^2023.9.2-1.0.0",
     "axios": "^1.8.2",
-    "framer-motion": "^10.16.4",
+    "framer-motion": "^12.5.0",
     "lodash": "^4.17.21",
     "material-react-table": "^2.12.1",
     "papaparse": "^5.4.1",
@@ -46,6 +46,6 @@
     "postcss": "^8.4.30",
     "tailwindcss": "^3.3.3",
     "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "vite": "^6.2.3"
   }
 }
