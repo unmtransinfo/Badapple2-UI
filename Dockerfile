@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:22-alpine
 ARG ASSET_ROOT='\/badapple2'
 ENV ASSET_ROOT=$ASSET_ROOT
 WORKDIR /app
