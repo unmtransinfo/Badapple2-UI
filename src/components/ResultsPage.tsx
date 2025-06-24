@@ -164,8 +164,9 @@ const renderTableRow = (
                                         svgMode={true}
                                         className="mb-0"
                                 /> : null;
-    const inDrugString = !in_db ? (scaffold ? "NULL" : "") : (in_drug ? "True" : "False");
-    const pscoreString = !in_db ? (scaffold ? "NULL" : "") : String(pscore);
+    const inDBString = in_db ? "True" : (scaffold ? "False" : "");
+    const inDrugString = !in_db ? "" : (in_drug ? "True" : "False");
+    const pscoreString = !in_db ? "" : String(pscore);
     const detailsArray = scaffold ? buildDetailsArray(scaffold) : [];
     const rowColor = (pscore !== null && pscore !== undefined) ? getRowEntryColor(pscore) : getRowEntryColor(-1);
     const isFirstOccurrence = (scaffoldIndex == 0);
@@ -195,6 +196,9 @@ const renderTableRow = (
                 : (
                 <td id="table-results" className={otherColClass}>Has no scaffolds <br></br>or &gt;maxRings</td>
             )}
+            <td className={otherColClass}>
+                {inDBString}
+            </td>
             <td className={otherColClass}>
                 {scaffold && scaffoldImage && in_drug && canGetDrugInfo ? (
                     <a href="#" onClick={(event) => {
@@ -327,7 +331,7 @@ const getMoleculeRows = (moleculeInfos: MoleculeInfo[], canGetDrugInfo: boolean,
 }
 
 const getResultsTable = (moleculeInfos: MoleculeInfo[], canGetDrugInfo: boolean, canGetTargetInfo: boolean): React.ReactNode => {
-    const nColumns = canGetTargetInfo ? 9 : 8;
+    const nColumns = canGetTargetInfo ? 10 : 9;
     return (
         <table id="table-results" className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -335,6 +339,7 @@ const getResultsTable = (moleculeInfos: MoleculeInfo[], canGetDrugInfo: boolean,
                     <th className={COLUMN_HEADER_TEXT}>MolName</th>
                     <th className={COLUMN_HEADER_TEXT}>Molecule</th>
                     <th className={COLUMN_HEADER_TEXT}>Scaffold</th>
+                    <th className={COLUMN_HEADER_TEXT}>InDB</th>
                     <th className={COLUMN_HEADER_TEXT}>InDrug</th>
                     <th className={COLUMN_HEADER_TEXT}>pScore</th>
                     <th className={COLUMN_HEADER_TEXT}>Substance Details</th>
