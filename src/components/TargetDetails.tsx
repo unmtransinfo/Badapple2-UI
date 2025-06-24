@@ -46,7 +46,7 @@ const TargetDetails: React.FC<TargetDetailsProps> = ({ scaffoldID, scaffoldImage
                 <h3>ScaffoldID={scaffoldID}</h3>
                 {scaffoldImage}
             </div>
-            <p>The table below provides the specific assay records where scaffold with id={scaffoldID} was present in one or more active substances, along with corresponding biological target(s).
+            <p>The table below provides the specific assay records where scaffold with id={scaffoldID} was present in one or more active substances<sup>*</sup>, along with corresponding biological target(s).
             For each target the following information is provided:</p>
             <ul>
                 <li><b>AID:</b> The <a href="https://pubchem.ncbi.nlm.nih.gov/"target="_blank" rel="noopener noreferrer">PubChem</a> AssayID (AID) the given scaffold was found to be active in.</li>
@@ -60,6 +60,7 @@ const TargetDetails: React.FC<TargetDetailsProps> = ({ scaffoldID, scaffoldImage
             </ul>
             <p> Note that some PubChem assay records do not provide explicit target information. 
                 For these cases target information is not provided here, but one can visit the linked assay page to learn more.</p>
+            <p> <small>*Note that when determining pScores and related statistics (such as aActive) only data from compounds tested in 50 or more unique assays is considered. In contrast, the information shown on this page considers all compounds/substances in the database. For this reason more assays may be shown in the table below than were counted by aActive. Please see the about page for more information.</small></p>
             <table border={1}>
                 <thead>
                     <tr>

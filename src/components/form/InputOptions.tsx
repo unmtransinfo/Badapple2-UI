@@ -42,7 +42,7 @@ const InputOptionsTable: React.FC<InputOptionsProps> = ({ inputOptions: inputOpt
                         </td>
                         <td>
                             <select name="molfmt" id="molFmt" value={format} onChange={(e) => updateInputOptions('format', e.target.value)}>
-                                <option value="SMILES" id="molFmtDefault">SMILES</option>
+                                <option value="SMILES">SMILES</option>
                             </select>
                         </td>
                     </tr>
@@ -55,7 +55,7 @@ const InputOptionsTable: React.FC<InputOptionsProps> = ({ inputOptions: inputOpt
                         </td>
                         <td>
                             <select name="delimiter" id="delimChoice" value={delimiter} onChange={(e) => updateInputOptions('delimiter', e.target.value)}>
-                                <option value=" " id="delimChoiceDefault">" " - space</option>
+                                <option value=" ">" " - space</option>
                                 <option value=",">"," - comma</option>
                                 <option value="\t">"\t" - tab</option>
                             </select>
