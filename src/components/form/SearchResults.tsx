@@ -22,7 +22,7 @@ const DEFAULT_OUTPUT_OPTIONS: OutputOptions = {
     startIdx: 0,
     maxMolecules: 10,
     maxRings: 5,
-    database: import.meta.env.DB_NAME
+    database: import.meta.env.VITE_DB2_NAME
 };
 
 const MAX_INPUT_SIZE = 5 * 1024 * 1024; // 5 MB
