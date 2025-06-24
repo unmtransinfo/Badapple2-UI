@@ -38,7 +38,7 @@ const OutputOptionsTable: React.FC<OutputOptionsProps> = ({ outputOptions: outpu
                         </td>
                         <td>
                             <select name="database" id="databaseChoice" value={database} onChange={(e) => updateOutputOptions('database', e.target.value)}>
-                                <option value={import.meta.env.VITE_DB_NAME} id="databaseChoiceDefault">badapple_classic</option>
+                                <option value={import.meta.env.VITE_DB_NAME}>badapple_classic</option>
                                 <option value={import.meta.env.VITE_DB2_NAME}>badapple2</option>
                             </select>
                         </td>
