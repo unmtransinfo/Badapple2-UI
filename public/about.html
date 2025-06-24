@@ -51,6 +51,7 @@ score = ((sActive) / (sTested + median(sTested)) *
     </table>
     <h3>Programmatic access</h3>
     <p>For programmatic access to Badapple please see the <a href="https://chiltepin.health.unm.edu/badapple2/apidocs/" target="_blank" rel="noopener noreferrer">API Docs Page</a></p>
+    <p>For large use cases, or if one wishes to explore the Badapple data in more detail, please see the <a href="https://github.com/unmtransinfo/Badapple2-API?tab=readme-ov-file#setup-local-installation" target="_blank" rel="noopener noreferrer">local installation guide</a>.</p>
     <h3>Badapple Paper</h3>
     <p>For more information about Badapple please see the following paper:</p>
     <p><a href="https://jcheminf.biomedcentral.com/articles/10.1186/s13321-016-0137-3" target="_blank" rel="noopener noreferrer">Badapple: promiscuity patterns from noisy evidence</a></p>
@@ -107,7 +108,12 @@ score = ((sActive) / (sTested + median(sTested)) *
                         <li><b>badapple2</b> date cutoff: <i>2024-11-26</i></li>
                     </ul>
                 <li>
-                    <b>badapple_classic</b> was restricted to substances from <a href="https://pubchem.ncbi.nlm.nih.gov/source/MLSMR" target="_blank" rel="noopener noreferrer">MLSMR</a>, whereas <b>badapple2</b> uses all bioactivity data present in the provided assay records.
+                    <b>badapple_classic</b> was restricted to substances from <a href="https://pubchem.ncbi.nlm.nih.gov/source/MLSMR" target="_blank" rel="noopener noreferrer">MLSMR</a>, whereas <b>badapple2</b> incorporates bioactivity data from all compounds tested in at least 50 unique assays.
+                    <ul>
+                        <li>Omitting this restriction often leads to an artificially reduced sActive/sTested ratio</li>
+                        <li>This restriction was not necessary in <b>badapple_classic</b> due to the MLSMR filter</li>
+                        <li>Because of this restriction many scaffolds in badapple2 have a null pScore. However, even for these cases the website still provides inDrug information as well as assays where the scaffold was present in an active substance. Users can download a local version of <b>badapple2</b> (see instructions above) to explore bioactivity data from these cases and can test different NAT restrictions by following the instructions <a href="https://github.com/unmtransinfo/Badapple2/tree/main/snakemake#badapple2-number-of-assays-tested-analysis-nata" target="_blank" rel="noopener noreferrer">here</a>.</li>
+                    </ul>
                 </li>
                 <li><b>badapple2</b> uses the <b>badapple_classic</b> medians to normalize pScores in order to ensure that our criteria for what constitutes a "high" amounts of evidence remains consistent.
                     <ul>
