@@ -25,10 +25,15 @@ interface TargetDetailsProps {
     scaffoldImage: ReactNode;
 }
 
-const SmallNote = ({text}: {text: string}) => {
+interface SmallNoteProps {
+    text: string
+}
+
+const SmallNote: React.FC<SmallNoteProps> = ({text}) => {
     return <p><small>{text}</small></p>
 }
 
+// TODO: fix to not be in Quirks mode
 const TargetDetails: React.FC<TargetDetailsProps> = ({ scaffoldID, scaffoldImage}) => {
     const [targetRows, setTargetRows] = React.useState<TargetRow[]>([]);
 

@@ -17,6 +17,7 @@ interface DrugDetailsProps {
     scaffoldImage: ReactNode;
 }
 
+// TODO: fix to not be in Quirks mode
 const DrugDetails: React.FC<DrugDetailsProps> = ({ scaffoldID, scaffoldImage}) => {
     const [drugRows, setDrugRows] = React.useState<DrugRow[]>([]);
 
