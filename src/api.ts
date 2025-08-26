@@ -44,17 +44,15 @@ export const parseInputData = (
 
 export async function fetchScaffolds(data: ParsedInputData, maxRings: number, database: string) {
     const apiUrl = import.meta.env.VITE_API_FETCH_SCAFFOLDS_URL;
-    const smilesString = data.smilesList.join(',');
-    const namesString = data.nameList.join(',');
+    const smilesString = data.smilesList;
+    const namesString = data.nameList;
 
     try {
-        const response = await axios.get(apiUrl, {
-            params: {
+        const response = await axios.post(apiUrl, {
                 SMILES: smilesString,
                 Names: namesString,
                 max_rings: maxRings,
                 database: database
-            }
         });
         return response.data;
     } catch (error) {
