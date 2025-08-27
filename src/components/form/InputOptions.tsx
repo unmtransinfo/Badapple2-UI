@@ -10,7 +10,7 @@ export interface InputOptions {
   nameCol: number;
   hasHeader: boolean;
 }
-
+// TODO: figure out why number input shows up weird on Chromium browsers here
 export interface InputOptionsProps {
   inputOptions: InputOptions;
   updateInputOptions: (key: keyof InputOptions, value: any) => void;
