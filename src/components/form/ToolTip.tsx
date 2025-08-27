@@ -1,6 +1,6 @@
 import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import "./tooltip.css";
+import "./ToolTip.css";
 
 interface ToolTipProps {
   name: string;

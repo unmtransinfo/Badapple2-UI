@@ -1,6 +1,6 @@
 import React from "react";
 import handleNumberInputChange from "./OptionsHandler";
-import "./optionsTable.css";
+import "./OptionsTable.css";
 import ToolTip from "./ToolTip";
 
 export interface OutputOptions {
