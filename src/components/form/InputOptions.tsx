@@ -66,7 +66,7 @@ const InputOptionsTable: React.FC<InputOptionsProps> = ({
                   updateInputOptions("delimiter", e.target.value)
                 }
                 optionValues={[" ", ",", "\t"]}
-                optionNames={['" " - space', '"," - comma', '"\t" - tab']}
+                optionNames={['" " - space', '"," - comma', '"\\t" - tab']}
               />
             </td>
           </tr>
