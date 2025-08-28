@@ -11,6 +11,7 @@ const SiteHeader = () => {
           className="inline-block w-36"
         />
       </h1>
+      <div className="version-banner">Version: 1.0</div>
       <div className="flex flex-col items-center mt-2 mb-2">
         <Button
           onClick={() => window.open("/badapple2/about.html", "_blank")}
