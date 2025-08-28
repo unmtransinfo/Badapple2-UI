@@ -38,7 +38,6 @@ const SmallNote: React.FC<SmallNoteProps> = ({ text }) => {
   );
 };
 
-// TODO: fix to not be in Quirks mode
 const TargetDetails: React.FC<TargetDetailsProps> = ({
   scaffoldID,
   scaffoldImage,

@@ -126,7 +126,7 @@ const displayPopupWindow = async (
   const popupWindow = window.open("", popupName, "width=600,height=400");
   if (popupWindow) {
     popupWindow.document.write(
-      `<html><head><title>${popupWindowName}</title></head><body><div id='drug-details-root'></div></body></html>`
+      `<!DOCTYPE html><html><head><title>${popupWindowName}</title></head><body><div id='drug-details-root'></div></body></html>`
     );
     popupWindow.document.close();
     const root = popupWindow.document.getElementById("drug-details-root");
