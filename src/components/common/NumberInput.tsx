@@ -1,10 +1,12 @@
+import { ChangeEventHandler } from "react";
+
 interface NumberInputProps {
   name: string;
   id: string;
   min: number;
   max: number;
-  value: any;
-  onChange: any;
+  value: number;
+  onChange: ChangeEventHandler<HTMLInputElement>;
 }
 
 const NumberInput: React.FC<NumberInputProps> = ({

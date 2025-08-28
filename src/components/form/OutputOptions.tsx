@@ -47,7 +47,7 @@ const OutputOptionsTable: React.FC<OutputOptionsProps> = ({
                 name="database"
                 id="databaseChoice"
                 value={database}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                   updateOutputOptions("database", e.target.value)
                 }
                 optionValues={databaseNames}

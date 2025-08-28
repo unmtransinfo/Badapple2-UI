@@ -45,7 +45,7 @@ const InputOptionsTable: React.FC<InputOptionsProps> = ({
                 name="molfmt"
                 id="molFmt"
                 value={format}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                   updateInputOptions("format", e.target.value)
                 }
                 optionValues={["SMILES"]}
@@ -62,7 +62,7 @@ const InputOptionsTable: React.FC<InputOptionsProps> = ({
                 name="delimiter"
                 id="delimChoice"
                 value={delimiter}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                   updateInputOptions("delimiter", e.target.value)
                 }
                 optionValues={[" ", ",", "\t"]}

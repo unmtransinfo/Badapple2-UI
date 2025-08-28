@@ -1,10 +1,10 @@
-import { useId } from "react";
+import { ChangeEventHandler, useId } from "react";
 
 interface SelectInputProps {
   name: string;
   id: string;
-  value: any;
-  onChange: any;
+  value: string;
+  onChange: ChangeEventHandler<HTMLSelectElement>;
   optionValues: string[];
   optionNames: string[];
 }
