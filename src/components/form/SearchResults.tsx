@@ -2,6 +2,7 @@ import { faCircleNotch, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef, useState } from "react";
 import { fetchScaffolds, parseInputData } from "../../api";
+import { Button } from "../common";
 import InputOptionsTable, { InputOptions } from "./InputOptions";
 import OutputOptionsTable, { OutputOptions } from "./OutputOptions";
 import "./SearchResults.css";
@@ -150,13 +151,14 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
       </section>
       <section className="mb-2">
         <div className="flex mb-2 gap-2">
-          <button
+          <Button
+            variant="success"
+            icon={faUpload}
             onClick={() => fileInputRef.current?.click()}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center"
           >
-            <FontAwesomeIcon icon={faUpload} className="mr-2" />
             Upload File
-          </button>
+          </Button>
+
           <input
             type="file"
             ref={fileInputRef}
@@ -164,18 +166,17 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
             accept={SUPPORTED_FILE_EXTENSIONS.join(",")}
             className="hidden"
           />
-          <button
-            onClick={() => setSearchInput("")}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-          >
+
+          <Button variant="danger" onClick={() => setSearchInput("")}>
             Clear Input
-          </button>
-          <button
+          </Button>
+
+          <Button
+            variant="primary"
             onClick={() => setSearchInput(EXAMPLE_SMILES)}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Example Input
-          </button>
+          </Button>
         </div>
         <div className="flex-container">
           <textarea
@@ -209,12 +210,14 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
           />
         </div>
       </section>
-      <button
+      <Button
         onClick={handleSubmit}
-        className="w-full px-4 py-2 mt-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        variant="primary"
+        fullWidth
+        className="mt-2"
       >
         Submit
-      </button>
+      </Button>
     </div>
   );
 };
