@@ -1,5 +1,5 @@
 import React from "react";
-import { NumberInput, SelectInput } from "../common";
+import { Checkbox, NumberInput, SelectInput } from "../common";
 import handleNumberInputChange from "./OptionsHandler";
 import "./OptionsTable.css";
 import ToolTip from "./ToolTip";
@@ -127,12 +127,11 @@ const InputOptionsTable: React.FC<InputOptionsProps> = ({
               <ToolTip name="Header" text="Indicates if header line present" />
             </td>
             <td>
-              <input
-                type="checkbox"
+              <Checkbox
                 name="has_header"
                 id="header_checkbox"
                 checked={hasHeader}
-                onChange={(e) =>
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   updateInputOptions("hasHeader", e.target.checked)
                 }
               />
