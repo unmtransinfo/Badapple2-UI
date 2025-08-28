@@ -1,5 +1,5 @@
 import React from "react";
-import { NumberInput } from "../common";
+import { NumberInput, SelectInput } from "../common";
 import handleNumberInputChange from "./OptionsHandler";
 import "./OptionsTable.css";
 import ToolTip from "./ToolTip";
@@ -21,6 +21,10 @@ const OutputOptionsTable: React.FC<OutputOptionsProps> = ({
   updateOutputOptions: updateOutputOptions,
 }) => {
   const { maxMolecules, startIdx, maxRings, database } = outputOptions;
+  const databaseNames = [
+    import.meta.env.VITE_DB_NAME,
+    import.meta.env.VITE_DB2_NAME,
+  ];
   return (
     <div id="user-options-container">
       <table className="table-bordered">
@@ -39,19 +43,16 @@ const OutputOptionsTable: React.FC<OutputOptionsProps> = ({
               />
             </td>
             <td>
-              <select
+              <SelectInput
                 name="database"
                 id="databaseChoice"
                 value={database}
-                onChange={(e) =>
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   updateOutputOptions("database", e.target.value)
                 }
-              >
-                <option value={import.meta.env.VITE_DB_NAME}>
-                  badapple_classic
-                </option>
-                <option value={import.meta.env.VITE_DB2_NAME}>badapple2</option>
-              </select>
+                optionValues={databaseNames}
+                optionNames={databaseNames}
+              />
             </td>
           </tr>
           <tr>

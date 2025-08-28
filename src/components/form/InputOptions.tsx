@@ -1,5 +1,5 @@
 import React from "react";
-import { NumberInput } from "../common";
+import { NumberInput, SelectInput } from "../common";
 import handleNumberInputChange from "./OptionsHandler";
 import "./OptionsTable.css";
 import ToolTip from "./ToolTip";
@@ -11,7 +11,7 @@ export interface InputOptions {
   nameCol: number;
   hasHeader: boolean;
 }
-// TODO: figure out why number input shows up weird on Chromium browsers here
+
 export interface InputOptionsProps {
   inputOptions: InputOptions;
   updateInputOptions: (key: keyof InputOptions, value: any) => void;
@@ -41,14 +41,16 @@ const InputOptionsTable: React.FC<InputOptionsProps> = ({
               />
             </td>
             <td>
-              <select
+              <SelectInput
                 name="molfmt"
                 id="molFmt"
                 value={format}
-                onChange={(e) => updateInputOptions("format", e.target.value)}
-              >
-                <option value="SMILES">SMILES</option>
-              </select>
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  updateInputOptions("format", e.target.value)
+                }
+                optionValues={["SMILES"]}
+                optionNames={["SMILES"]}
+              />
             </td>
           </tr>
           <tr>
@@ -56,18 +58,16 @@ const InputOptionsTable: React.FC<InputOptionsProps> = ({
               <ToolTip name="Delimiter" text="File delimiter" />
             </td>
             <td>
-              <select
+              <SelectInput
                 name="delimiter"
                 id="delimChoice"
                 value={delimiter}
-                onChange={(e) =>
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   updateInputOptions("delimiter", e.target.value)
                 }
-              >
-                <option value=" ">" " - space</option>
-                <option value=",">"," - comma</option>
-                <option value="\t">"\t" - tab</option>
-              </select>
+                optionValues={[" ", ",", "\t"]}
+                optionNames={['" " - space', '"," - comma', '"\t" - tab']}
+              />
             </td>
           </tr>
           <tr>
