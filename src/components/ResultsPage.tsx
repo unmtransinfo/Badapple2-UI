@@ -313,6 +313,81 @@ const getSeparator = (nColumns: number) => {
   );
 };
 
+const getMoleculeRow = (
+  molData: MoleculeInfo,
+  index: number,
+  canGetDrugInfo: boolean,
+  canGetTargetInfo: boolean,
+  nColumns: number
+): React.ReactNode => {
+  const molName = truncateName(molData.name, 16);
+  const molSmilesStr = truncateName(molData.molecule_smiles, 16);
+  const validMol =
+    molData.scaffolds !== undefined && molData.scaffolds !== null;
+  if (validMol && molData.scaffolds.length > 0) {
+    // Sort the scaffolds array by pscore in descending order
+    const scaffoldInfos = molData.scaffolds;
+    const sortedScaffolds = scaffoldInfos.sort((a, b) => {
+      if (b.pscore === undefined || b.pscore === null) return -1;
+      if (a.pscore === undefined || a.pscore === null) return 1;
+      return b.pscore - a.pscore;
+    });
+
+    // Get the highest pscore and its corresponding row class name (for molecule column color)
+    const highestPscore =
+      sortedScaffolds.length > 0 ? sortedScaffolds[0].pscore : -1;
+    const highestPscoreRowClassName = getRowEntryColor(highestPscore);
+    return (
+      <React.Fragment key={index}>
+        {sortedScaffolds.map((scaffold, scaffoldIndex) =>
+          renderTableRow(
+            index,
+            scaffoldIndex,
+            molData,
+            scaffold,
+            highestPscoreRowClassName,
+            molData.scaffolds.length,
+            canGetDrugInfo,
+            canGetTargetInfo
+          )
+        )}
+        {getSeparator(nColumns)}
+      </React.Fragment>
+    );
+  } else if (validMol) {
+    // valid input SMILES given, but mol has no scaffolds (ie ring systems, excluding benzene)
+    return (
+      <React.Fragment key={index}>
+        {renderTableRow(
+          index,
+          0,
+          molData,
+          null,
+          getRowEntryColor(-1),
+          1,
+          false,
+          canGetTargetInfo // helps make the display consistent/not have gaps
+        )}
+        {getSeparator(nColumns)}
+      </React.Fragment>
+    );
+  } else {
+    // invalid SMILES
+    return (
+      <React.Fragment key={index}>
+        <tr>
+          <td colSpan={nColumns} className="py-4 text-center text-red-500">
+            <p className={MOL_COL_TEXT}>Name: {molName}</p>
+            <p className={MOL_COL_TEXT}>Given SMILES: {molSmilesStr}</p>
+            <p>{molData.error_msg}</p>
+          </td>
+        </tr>
+        {getSeparator(nColumns)}
+      </React.Fragment>
+    );
+  }
+};
+
 const getMoleculeRows = (
   moleculeInfos: MoleculeInfo[],
   canGetDrugInfo: boolean,
@@ -321,72 +396,15 @@ const getMoleculeRows = (
 ): React.ReactNode => {
   return (
     <tbody className="bg-white divide-y divide-gray-200">
-      {moleculeInfos.map((molData, index) => {
-        const molName = truncateName(molData.name, 16);
-        const molSmilesStr = truncateName(molData.molecule_smiles, 16);
-        const validMol =
-          molData.scaffolds !== undefined && molData.scaffolds !== null;
-        if (validMol && molData.scaffolds.length > 0) {
-          // Sort the scaffolds array by pscore in descending order
-          const scaffoldInfos = molData.scaffolds;
-          const sortedScaffolds = scaffoldInfos.sort((a, b) => {
-            if (b.pscore === undefined || b.pscore === null) return -1;
-            if (a.pscore === undefined || a.pscore === null) return 1;
-            return b.pscore - a.pscore;
-          });
-
-          // Get the highest pscore and its corresponding row class name (for molecule column color)
-          const highestPscore =
-            sortedScaffolds.length > 0 ? sortedScaffolds[0].pscore : -1;
-          const highestPscoreRowClassName = getRowEntryColor(highestPscore);
-          return (
-            <React.Fragment key={index}>
-              {sortedScaffolds.map((scaffold, scaffoldIndex) =>
-                renderTableRow(
-                  index,
-                  scaffoldIndex,
-                  molData,
-                  scaffold,
-                  highestPscoreRowClassName,
-                  molData.scaffolds.length,
-                  canGetDrugInfo,
-                  canGetTargetInfo
-                )
-              )}
-              {getSeparator(nColumns)}
-            </React.Fragment>
-          );
-        } else if (validMol) {
-          // valid input SMILES given, but mol has no scaffolds (ie ring systems, excluding benzene)
-          return (
-            <React.Fragment key={index}>
-              {renderTableRow(
-                index,
-                0,
-                molData,
-                null,
-                getRowEntryColor(-1),
-                1,
-                false,
-                canGetTargetInfo // helps make the display consistent/not have gaps
-              )}
-              {getSeparator(nColumns)}
-            </React.Fragment>
-          );
-        } else {
-          // invalid SMILES
-          return (
-            <React.Fragment key={index}>
-              <td colSpan={nColumns} className="py-4 text-center text-red-500">
-                <p className={MOL_COL_TEXT}>Name: {molName}</p>
-                <p className={MOL_COL_TEXT}>Given SMILES: {molSmilesStr}</p>
-                <p>{molData.error_msg}</p>
-              </td>
-              {getSeparator(nColumns)}
-            </React.Fragment>
-          );
-        }
-      })}
+      {moleculeInfos.map((molData, index) =>
+        getMoleculeRow(
+          molData,
+          index,
+          canGetDrugInfo,
+          canGetTargetInfo,
+          nColumns
+        )
+      )}
     </tbody>
   );
 };
