@@ -14,13 +14,7 @@ page-wrapper {
     @apply z-50 opacity-100;
 }
 
-.scroll-shadow {
-    @apply relative z-10 w-full max-h-[40vh];
-}
 
-#search-container {
-    @apply relative z-10 md:max-w-screen-lg mx-auto p-8 pt-0;
-}
 
 .page-container {
     @apply mx-auto p-6 pt-4;
@@ -34,21 +28,8 @@ page-wrapper {
     @apply opacity-100;
 }
 
-#btn-theme-mode {
-    @apply min-w-0 absolute top-5 right-5 h-10 w-10 bg-transparent dark:hover:bg-gray-800 light:hover:bg-gray-100 rounded-full;
-}
 
-#search-results-list {
-    @apply p-4;
-}
 
-.search-result {
-    @apply transition-background p-3;
-}
-
-.btn-back {
-    @apply text-medium text-primary hover:text-white transition-colors mb-4;
-}
 
 #chem-page {
     :is(h3) {
@@ -70,9 +51,6 @@ page-wrapper {
     transition: opacity 0.2s ease;
 }
 
-.btn {
-    @apply bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow;
-}
 
 
 /* For results page/table */

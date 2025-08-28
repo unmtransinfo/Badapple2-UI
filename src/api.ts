@@ -44,22 +44,20 @@ export const parseInputData = (
 
 export async function fetchScaffolds(data: ParsedInputData, maxRings: number, database: string) {
     const apiUrl = import.meta.env.VITE_API_FETCH_SCAFFOLDS_URL;
-    const smilesString = data.smilesList.join(',');
-    const namesString = data.nameList.join(',');
+    const smilesString = data.smilesList;
+    const namesString = data.nameList;
 
     try {
-        const response = await axios.get(apiUrl, {
-            params: {
+        const response = await axios.post(apiUrl, {
                 SMILES: smilesString,
                 Names: namesString,
                 max_rings: maxRings,
                 database: database
-            }
         });
         return response.data;
     } catch (error) {
         console.error("Error fetching scaffolds:", error);
-        alert("There was an error when fetching scaffolds. It's likely the input size exceeded the limit of the API; you should try to reduce 'N. Molecules'. \n\nIf you need to make large requests please install Badapple locally by following the instructions from:\nhttps://github.com/unmtransinfo/Badapple2/blob/main/README.md");
+        alert("There was an error when fetching scaffolds. Please check your input format and note that the maximum size of requests is 1MB. \n\nIf you need to make large requests please install Badapple locally by following the instructions from:\nhttps://github.com/unmtransinfo/Badapple2/blob/main/README.md");
         return null;
     }
 }

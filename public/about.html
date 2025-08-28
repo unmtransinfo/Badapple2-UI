@@ -28,6 +28,9 @@ score = ((sActive) / (sTested + median(sTested)) *
         <p>aActive = # assays with active compounds containing this scaffold</p>
         <p>wTested = # wells (samples) containing this scaffold</p>
         <p>wActive = # active wells (samples) containing this scaffold</p>
+        <p>median(sTested) = 2 </p>
+        <p>median(aTested) = 634 </p>
+        <p>median(sTested) = 773 </p>
     </blockquote>
 
     <p>The <b>inDrug</b> flag indicates whether the corresponding scaffold exists in any approved drug<sup>*</sup>. 
@@ -104,7 +107,7 @@ score = ((sActive) / (sTested + median(sTested)) *
                         <li>PubChem is constantly updated. Substances, compounds, and bioassays can be modified/removed over time. 
                             One particular way these updates have impacted <b>badapple2</b> is that some PubChem compounds have been removed since the creation of <b>badapple</b> (e.g., CIDs 6212642, 24761676, and 24762101). 
                             Thus, some scaffolds which are in <b>badapple_classic</b> may no longer be in <b>badapple2</b> (e.g., the scaffold with SMILES 'C1=C2CCCC=C2Nc2ccccc21').</li>
-                        <li><b>badapple</b> & <b>badapple_classsic</b> date cutoff: <i>2017-08-14</i></li>
+                        <li><b>badapple</b> & <b>badapple_classic</b> date cutoff: <i>2017-08-14</i></li>
                         <li><b>badapple2</b> date cutoff: <i>2024-11-26</i></li>
                     </ul>
                 <li>
@@ -112,7 +115,7 @@ score = ((sActive) / (sTested + median(sTested)) *
                     <ul>
                         <li>Omitting this restriction often leads to an artificially reduced sActive/sTested ratio</li>
                         <li>This restriction was not necessary in <b>badapple_classic</b> due to the MLSMR filter</li>
-                        <li>Because of this restriction many scaffolds in badapple2 have a null pScore. However, even for these cases the website still provides inDrug information as well as assays where the scaffold was present in an active substance. Users can download a local version of <b>badapple2</b> (see instructions above) to explore bioactivity data from these cases and can test different NAT restrictions by following the instructions <a href="https://github.com/unmtransinfo/Badapple2/tree/main/snakemake#badapple2-number-of-assays-tested-analysis-nata" target="_blank" rel="noopener noreferrer">here</a>.</li>
+                        <li>Because of this restriction many scaffolds in <b>badapple2</b> have a null pScore. However, even for these cases the website still provides inDrug information as well as assays where the scaffold was present in an active substance. Users can download a local version of <b>badapple2</b> (see instructions above) to explore bioactivity data from these cases and can test different NAT restrictions by following the instructions <a href="https://github.com/unmtransinfo/Badapple2/tree/main/snakemake#badapple2-number-of-assays-tested-analysis-nata" target="_blank" rel="noopener noreferrer">here</a>.</li>
                     </ul>
                 </li>
                 <li><b>badapple2</b> uses the <b>badapple_classic</b> medians to normalize pScores in order to ensure that our criteria for what constitutes a "high" amounts of evidence remains consistent.
