@@ -1,4 +1,5 @@
 import React from "react";
+import { NumberInput } from "../common";
 import handleNumberInputChange from "./OptionsHandler";
 import "./OptionsTable.css";
 import ToolTip from "./ToolTip";
@@ -77,14 +78,13 @@ const InputOptionsTable: React.FC<InputOptionsProps> = ({
               />
             </td>
             <td>
-              <input
-                type="number"
+              <NumberInput
                 name="smiles_col"
                 id="smiles_column"
                 min={0}
-                size={4}
+                max={1e8}
                 value={smilesCol}
-                onChange={(e) =>
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleNumberInputChange(
                     e,
                     updateInputOptions,
@@ -104,14 +104,13 @@ const InputOptionsTable: React.FC<InputOptionsProps> = ({
               />
             </td>
             <td>
-              <input
-                type="number"
+              <NumberInput
                 name="name_col"
                 id="name_column"
                 min={0}
-                size={4}
+                max={1e8}
                 value={nameCol}
-                onChange={(e) =>
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleNumberInputChange(
                     e,
                     updateInputOptions,

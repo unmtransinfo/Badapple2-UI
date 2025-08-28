@@ -1,4 +1,5 @@
 import React from "react";
+import { NumberInput } from "../common";
 import handleNumberInputChange from "./OptionsHandler";
 import "./OptionsTable.css";
 import ToolTip from "./ToolTip";
@@ -61,15 +62,13 @@ const OutputOptionsTable: React.FC<OutputOptionsProps> = ({
               />
             </td>
             <td>
-              <input
-                type="number"
+              <NumberInput
                 name="startIdx"
                 id="startIdx"
                 min={0}
                 max={1e8}
-                size={4}
                 value={startIdx}
-                onChange={(e) =>
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleNumberInputChange(
                     e,
                     updateOutputOptions,
@@ -89,15 +88,13 @@ const OutputOptionsTable: React.FC<OutputOptionsProps> = ({
               />
             </td>
             <td>
-              <input
-                type="number"
+              <NumberInput
                 name="maxMolecules"
                 id="maxMolecules"
                 min={1}
-                size={4}
                 max={100}
                 value={maxMolecules}
-                onChange={(e) =>
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleNumberInputChange(
                     e,
                     updateOutputOptions,
@@ -117,15 +114,13 @@ const OutputOptionsTable: React.FC<OutputOptionsProps> = ({
               />
             </td>
             <td>
-              <input
-                type="number"
+              <NumberInput
                 name="maxRings"
                 id="maxRings"
                 min={1}
-                size={4}
                 max={10}
                 value={maxRings}
-                onChange={(e) =>
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleNumberInputChange(
                     e,
                     updateOutputOptions,
