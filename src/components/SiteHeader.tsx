@@ -8,9 +8,10 @@ const SiteHeader = () => {
           src="/badapple2/badapple_logo.svg"
           title="Badapple Logo"
           alt="Badapple Logo"
-          className="inline-block w-36"
+          className="inline-block h-32"
         />
       </h1>
+      <div className="version-banner">Version: 1.0</div>
       <div className="flex flex-col items-center mt-2 mb-2">
         <Button
           onClick={() => window.open("/badapple2/about.html", "_blank")}
