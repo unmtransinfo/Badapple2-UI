@@ -7,11 +7,12 @@ Page showing the results table.
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import React, { Dispatch, ReactNode, SetStateAction, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { downloadTSV } from "../utils/downloadTSV.ts";
+import ActiveAssayDetails from "./AssayDetails.tsx";
 import { Button } from "./common";
 import DrugDetails from "./DrugDetails.tsx";
 import MoleculeStructure from "./MoleculeStructure.tsx";
 import Pagination from "./Pagination.tsx";
-import ActiveAssayDetails from "./AssayDetails.tsx";
 
 // define interfaces
 interface ScaffoldInfo {
@@ -445,7 +446,7 @@ const getResultsTable = (
   );
 };
 
-const generateTSVData = (moleculeInfos: MoleculeInfo[]) => {
+const getTSVContent = (moleculeInfos: MoleculeInfo[]) => {
   const headers = [
     "molIdx",
     "molSmiles",
@@ -510,19 +511,6 @@ const generateTSVData = (moleculeInfos: MoleculeInfo[]) => {
   return [headers.join("\t"), ...rows].join("\n");
 };
 
-const downloadTSV = (moleculeInfos: MoleculeInfo[]) => {
-  const tsvData = generateTSVData(moleculeInfos);
-  const blob = new Blob([tsvData], { type: "text/tab-separated-values" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "badapple_out.tsv";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-};
-
 export default function ResultsPage(props: ResultsPageProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const moleculesPerPage = 5;
@@ -538,6 +526,12 @@ export default function ResultsPage(props: ResultsPageProps) {
     (currentPage - 1) * moleculesPerPage,
     currentPage * moleculesPerPage
   );
+
+  const generateTSV = () => {
+    const filename = "badapple_out.tsv";
+    const tsvContent = getTSVContent(moleculeInfos);
+    downloadTSV(filename, tsvContent);
+  };
   return (
     <div id="chem-page" className="relative z-10">
       <div className="flex justify-between items-center mb-4">
@@ -552,7 +546,7 @@ export default function ResultsPage(props: ResultsPageProps) {
         >
           <span>Back</span>
         </Button>
-        <Button variant="success" onClick={() => downloadTSV(moleculeInfos)}>
+        <Button variant="success" onClick={() => generateTSV()}>
           Download TSV
         </Button>
       </div>
