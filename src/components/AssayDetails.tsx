@@ -1,12 +1,14 @@
 /*
 @author Jack Ringer
-Date: 12/5/2024
+Date: 9/9/2025
 Description:
-Component which displays table with details on active biological targets
+Component which displays table with details on active assays + targets
 for a given scaffold.
 */
 import React, { ReactNode } from "react";
 import { fetchActiveAssayDetails } from "../api";
+import { generateTSV } from "../utils/downloadTSV";
+import { Button } from "./common";
 
 interface AssayRow {
   aid: number; // PubChem AssayID
@@ -44,12 +46,12 @@ const ActiveAssayDetails: React.FC<AssayDetailsProps> = ({
   scaffoldID,
   scaffoldImage,
 }) => {
-  const [targetRows, setTargetRows] = React.useState<AssayRow[]>([]);
+  const [rows, setRows] = React.useState<AssayRow[]>([]);
 
   React.useEffect(() => {
     const getAssayDetails = async () => {
       const data = await fetchActiveAssayDetails(scaffoldID);
-      setTargetRows(data);
+      setRows(data);
     };
     getAssayDetails();
   }, [scaffoldID]);
@@ -80,6 +82,15 @@ const ActiveAssayDetails: React.FC<AssayDetailsProps> = ({
     "taxonomy_id",
     "protein_family",
   ];
+
+  const handleDownloadTSV = () => {
+    generateTSV(
+      `scaffold_${scaffoldID}_active_assays.tsv`,
+      tableHeaders,
+      rowKeys,
+      rows
+    );
+  };
 
   return (
     <div>
@@ -174,6 +185,13 @@ const ActiveAssayDetails: React.FC<AssayDetailsProps> = ({
           "Note that when determining pScores and related statistics (such as aActive) only data from compounds tested in 50 or more unique assays is considered. In contrast, the information shown on this page considers all compounds/substances in the database. For this reason more assays may be shown in the table below than were counted by aActive. Please see the about page for more information."
         }
       />
+      <Button
+        variant="success"
+        disabled={rows.length === 0}
+        onClick={() => handleDownloadTSV()}
+      >
+        Download TSV
+      </Button>
       <table border={1}>
         <thead>
           <tr>
@@ -183,7 +201,7 @@ const ActiveAssayDetails: React.FC<AssayDetailsProps> = ({
           </tr>
         </thead>
         <tbody>
-          {targetRows.map((row, index) => (
+          {rows.map((row, index) => (
             <tr key={index}>
               {rowKeys.map((key) => (
                 <td key={key}>
