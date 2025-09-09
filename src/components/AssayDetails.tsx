@@ -6,11 +6,13 @@ Component which displays table with details on active biological targets
 for a given scaffold.
 */
 import React, { ReactNode } from "react";
-import { fetchActiveTargetDetails } from "../api";
+import { fetchActiveAssayDetails } from "../api";
 
-// TODO: change this to active assays, add BARD details
-interface TargetRow {
+interface AssayRow {
   aid: number; // PubChem AssayID
+  assay_format: string; // BARD assay format
+  assay_type: string; // BARD assay type
+  detection_method: string; // BARD detection method
   external_id: string;
   external_id_type: string;
   name: string;
@@ -21,7 +23,7 @@ interface TargetRow {
   type: string; // target type (Protein, Gene, etc)
 }
 
-interface TargetDetailsProps {
+interface AssayDetailsProps {
   scaffoldID: number;
   scaffoldImage: ReactNode;
 }
@@ -38,22 +40,25 @@ const SmallNote: React.FC<SmallNoteProps> = ({ text }) => {
   );
 };
 
-const TargetDetails: React.FC<TargetDetailsProps> = ({
+const ActiveAssayDetails: React.FC<AssayDetailsProps> = ({
   scaffoldID,
   scaffoldImage,
 }) => {
-  const [targetRows, setTargetRows] = React.useState<TargetRow[]>([]);
+  const [targetRows, setTargetRows] = React.useState<AssayRow[]>([]);
 
   React.useEffect(() => {
-    const getTargetDetails = async () => {
-      const data = await fetchActiveTargetDetails(scaffoldID);
+    const getAssayDetails = async () => {
+      const data = await fetchActiveAssayDetails(scaffoldID);
       setTargetRows(data);
     };
-    getTargetDetails();
+    getAssayDetails();
   }, [scaffoldID]);
 
   const tableHeaders = [
     "AID",
+    "AssayFormat",
+    "AssayType",
+    "DetectionMethod",
     "TargetType",
     "ID",
     "ID-TYPE",
@@ -62,8 +67,11 @@ const TargetDetails: React.FC<TargetDetailsProps> = ({
     "TaxonomyID",
     "ProteinFamily",
   ];
-  const rowKeys: (keyof TargetRow)[] = [
+  const rowKeys: (keyof AssayRow)[] = [
     "aid",
+    "assay_format",
+    "assay_type",
+    "detection_method",
     "type",
     "external_id",
     "external_id_type",
@@ -83,8 +91,15 @@ const TargetDetails: React.FC<TargetDetailsProps> = ({
       <p>
         The table below provides the specific assay records where scaffold with
         id={scaffoldID} was present in one or more active substances, along with
-        corresponding biological target(s). For each target the following
-        information is provided:
+        corresponding biological target(s) and annotations from the{" "}
+        <a
+          href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4383997/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          BioAssay Research Database (BARD)
+        </a>{" "}
+        . The columns of the table are as follows:
       </p>
       <ul>
         <li>
@@ -97,6 +112,15 @@ const TargetDetails: React.FC<TargetDetailsProps> = ({
             PubChem
           </a>{" "}
           AssayID (AID) the given scaffold was found to be active in.
+        </li>
+        <li>
+          <b>AssayFormat:</b> BARD assay format.
+        </li>
+        <li>
+          <b>AssayType:</b> BARD assay type.
+        </li>
+        <li>
+          <b>DetectionMethod:</b> BARD assay detection method.
         </li>
         <li>
           <b>TargetType:</b> Target type (most commonly "Protein", but can also
@@ -142,7 +166,7 @@ const TargetDetails: React.FC<TargetDetailsProps> = ({
       </ul>
       <SmallNote
         text={
-          "Note that some PubChem assay records do not provide explicit target information. For these cases target information is not provided here, but one can visit the linked assay page to learn more."
+          "Note that not all PubChem assay records provide BARD annotations or explicit target information. One can visit the linked assay page to learn more."
         }
       />
       <SmallNote
@@ -212,4 +236,4 @@ const TargetDetails: React.FC<TargetDetailsProps> = ({
   );
 };
 
-export default TargetDetails;
+export default ActiveAssayDetails;
