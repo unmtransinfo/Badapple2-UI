@@ -1,6 +1,6 @@
 # Badapple2-UI
 
-### (React + TypeScript + Vite)
+![alt text](docs/ui_screenshot.png)
 
 User interface for [Badapple2-API](https://github.com/unmtransinfo/Badapple2-API).
 
