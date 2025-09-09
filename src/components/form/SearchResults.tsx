@@ -105,7 +105,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
       // at time of writing only badapple2 has specific drug and target info
       const canGetDrugInfo =
         outputOptions.database === import.meta.env.VITE_DB2_NAME;
-      const canGetTargetInfo =
+      const canGetActiveAssayInfo =
         outputOptions.database === import.meta.env.VITE_DB2_NAME;
       const data = await fetchScaffolds(
         parsedData,
@@ -116,7 +116,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ setChem }) => {
         setChem({
           result: data,
           canGetDrugInfo: canGetDrugInfo,
-          canGetTargetInfo: canGetTargetInfo,
+          canGetActiveAssayInfo: canGetActiveAssayInfo,
         });
       }
     } catch (error) {

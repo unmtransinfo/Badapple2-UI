@@ -7,11 +7,12 @@ Page showing the results table.
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import React, { Dispatch, ReactNode, SetStateAction, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { downloadTSV } from "../utils/downloadTSV.ts";
+import ActiveAssayDetails from "./AssayDetails.tsx";
 import { Button } from "./common";
 import DrugDetails from "./DrugDetails.tsx";
 import MoleculeStructure from "./MoleculeStructure.tsx";
 import Pagination from "./Pagination.tsx";
-import TargetDetails from "./TargetDetails.tsx";
 
 // define interfaces
 interface ScaffoldInfo {
@@ -39,7 +40,7 @@ export interface MoleculeInfo {
 interface ResultsPageProps {
   result: MoleculeInfo[];
   canGetDrugInfo: boolean;
-  canGetTargetInfo: boolean;
+  canGetActiveAssayInfo: boolean;
   setChem: Dispatch<SetStateAction<any>>;
 }
 
@@ -153,16 +154,16 @@ const displayDrugDetails = async (
   );
 };
 
-const displayTargetDetails = async (
+const displayActiveAssayDetails = async (
   scaffoldID: number,
   scaffoldImage: ReactNode
 ) => {
-  const popupName = `TargetDetailsPopUp_${scaffoldID}`;
-  const popupWindowName = `Target Details scafid=${scaffoldID}`;
+  const popupName = `ActiveAssayDetailsPopUp_${scaffoldID}`;
+  const popupWindowName = `Active Assay Details scafid=${scaffoldID}`;
   displayPopupWindow(
     popupName,
     popupWindowName,
-    <TargetDetails scaffoldID={scaffoldID} scaffoldImage={scaffoldImage} />
+    <ActiveAssayDetails scaffoldID={scaffoldID} scaffoldImage={scaffoldImage} />
   );
 };
 
@@ -174,7 +175,7 @@ const renderTableRow = (
   highestPscoreColor: string,
   nRows: number,
   canGetDrugInfo: boolean,
-  canGetTargetInfo: boolean
+  canGetActiveAssayInfo: boolean
 ) => {
   const {
     scafsmi = "",
@@ -278,14 +279,14 @@ const renderTableRow = (
           <td id="table-results" className={otherColClass}></td>
         </>
       )}
-      {canGetTargetInfo ? (
+      {canGetActiveAssayInfo ? (
         <td className={otherColClass}>
           {scaffold && scaffoldImage && in_db ? (
             <a
               href="#"
               onClick={(event) => {
                 event.preventDefault();
-                displayTargetDetails(scaffold.id, scaffoldImage);
+                displayActiveAssayDetails(scaffold.id, scaffoldImage);
               }}
               className="clickable-link"
             >
@@ -317,7 +318,7 @@ const getMoleculeRow = (
   molData: MoleculeInfo,
   index: number,
   canGetDrugInfo: boolean,
-  canGetTargetInfo: boolean,
+  canGetActiveAssayInfo: boolean,
   nColumns: number
 ): React.ReactNode => {
   const molName = truncateName(molData.name, 16);
@@ -348,7 +349,7 @@ const getMoleculeRow = (
             highestPscoreRowClassName,
             molData.scaffolds.length,
             canGetDrugInfo,
-            canGetTargetInfo
+            canGetActiveAssayInfo
           )
         )}
         {getSeparator(nColumns)}
@@ -366,7 +367,7 @@ const getMoleculeRow = (
           getRowEntryColor(-1),
           1,
           false,
-          canGetTargetInfo // helps make the display consistent/not have gaps
+          canGetActiveAssayInfo // helps make the display consistent/not have gaps
         )}
         {getSeparator(nColumns)}
       </React.Fragment>
@@ -391,7 +392,7 @@ const getMoleculeRow = (
 const getMoleculeRows = (
   moleculeInfos: MoleculeInfo[],
   canGetDrugInfo: boolean,
-  canGetTargetInfo: boolean,
+  canGetActiveAssayInfo: boolean,
   nColumns: number
 ): React.ReactNode => {
   return (
@@ -401,7 +402,7 @@ const getMoleculeRows = (
           molData,
           index,
           canGetDrugInfo,
-          canGetTargetInfo,
+          canGetActiveAssayInfo,
           nColumns
         )
       )}
@@ -412,9 +413,9 @@ const getMoleculeRows = (
 const getResultsTable = (
   moleculeInfos: MoleculeInfo[],
   canGetDrugInfo: boolean,
-  canGetTargetInfo: boolean
+  canGetActiveAssayInfo: boolean
 ): React.ReactNode => {
-  const nColumns = canGetTargetInfo ? 10 : 9;
+  const nColumns = canGetActiveAssayInfo ? 10 : 9;
   return (
     <table id="table-results" className="min-w-full divide-y divide-gray-200">
       <thead className="bg-gray-50">
@@ -428,8 +429,8 @@ const getResultsTable = (
           <th className={COLUMN_HEADER_TEXT}>Substance Details</th>
           <th className={COLUMN_HEADER_TEXT}>Assay Details</th>
           <th className={COLUMN_HEADER_TEXT}>Sample Details</th>
-          {canGetTargetInfo ? (
-            <th className={COLUMN_HEADER_TEXT}>Active Targets</th>
+          {canGetActiveAssayInfo ? (
+            <th className={COLUMN_HEADER_TEXT}>Active Assays</th>
           ) : (
             <></>
           )}
@@ -438,14 +439,14 @@ const getResultsTable = (
       {getMoleculeRows(
         moleculeInfos,
         canGetDrugInfo,
-        canGetTargetInfo,
+        canGetActiveAssayInfo,
         nColumns
       )}
     </table>
   );
 };
 
-const generateTSVData = (moleculeInfos: MoleculeInfo[]) => {
+const getTSVContent = (moleculeInfos: MoleculeInfo[]) => {
   const headers = [
     "molIdx",
     "molSmiles",
@@ -510,19 +511,6 @@ const generateTSVData = (moleculeInfos: MoleculeInfo[]) => {
   return [headers.join("\t"), ...rows].join("\n");
 };
 
-const downloadTSV = (moleculeInfos: MoleculeInfo[]) => {
-  const tsvData = generateTSVData(moleculeInfos);
-  const blob = new Blob([tsvData], { type: "text/tab-separated-values" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "badapple_out.tsv";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-};
-
 export default function ResultsPage(props: ResultsPageProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const moleculesPerPage = 5;
@@ -538,6 +526,12 @@ export default function ResultsPage(props: ResultsPageProps) {
     (currentPage - 1) * moleculesPerPage,
     currentPage * moleculesPerPage
   );
+
+  const generateTSV = () => {
+    const filename = "badapple_out.tsv";
+    const tsvContent = getTSVContent(moleculeInfos);
+    downloadTSV(filename, tsvContent);
+  };
   return (
     <div id="chem-page" className="relative z-10">
       <div className="flex justify-between items-center mb-4">
@@ -552,7 +546,7 @@ export default function ResultsPage(props: ResultsPageProps) {
         >
           <span>Back</span>
         </Button>
-        <Button variant="success" onClick={() => downloadTSV(moleculeInfos)}>
+        <Button variant="success" onClick={() => generateTSV()}>
           Download TSV
         </Button>
       </div>
@@ -560,7 +554,7 @@ export default function ResultsPage(props: ResultsPageProps) {
         {getResultsTable(
           paginatedMoleculeInfos,
           props.canGetDrugInfo,
-          props.canGetTargetInfo
+          props.canGetActiveAssayInfo
         )}
         <Pagination
           currentPage={currentPage}

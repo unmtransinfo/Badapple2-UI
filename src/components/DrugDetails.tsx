@@ -6,6 +6,8 @@ Component which displays the pop-up window with inDrug details for a given scaff
 */
 import React, { ReactNode } from "react";
 import { fetchDrugDetails } from "../api";
+import { generateTSV } from "../utils/downloadTSV";
+import { Button } from "./common";
 
 interface DrugRow {
   drug_id: string;
@@ -21,18 +23,27 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
   scaffoldID,
   scaffoldImage,
 }) => {
-  const [drugRows, setDrugRows] = React.useState<DrugRow[]>([]);
+  const [rows, setRows] = React.useState<DrugRow[]>([]);
 
   React.useEffect(() => {
     const getDrugDetails = async () => {
       const data = await fetchDrugDetails(scaffoldID);
-      setDrugRows(data);
+      setRows(data);
     };
     getDrugDetails();
   }, [scaffoldID]);
 
   const tableHeaders = ["DrugCentralID", "INN"];
   const rowKeys: (keyof DrugRow)[] = ["drug_id", "inn"];
+
+  const handleDownloadTSV = () => {
+    generateTSV(
+      `scaffold_${scaffoldID}_approved_drugs.tsv`,
+      tableHeaders,
+      rowKeys,
+      rows
+    );
+  };
 
   return (
     <div>
@@ -63,6 +74,13 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
           <b>INN:</b> International Nonproprietary Name
         </li>
       </ul>
+      <Button
+        variant="success"
+        disabled={rows.length === 0}
+        onClick={() => handleDownloadTSV()}
+      >
+        Download TSV
+      </Button>
       <table border={1}>
         <thead>
           <tr>
@@ -72,7 +90,7 @@ const DrugDetails: React.FC<DrugDetailsProps> = ({
           </tr>
         </thead>
         <tbody>
-          {drugRows.map((row, index) => (
+          {rows.map((row, index) => (
             <tr key={index}>
               {rowKeys.map((key) => (
                 <td key={key}>

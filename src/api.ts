@@ -80,10 +80,10 @@ export async function fetchDrugDetails(scaffoldID: number) {
 }
 
 
-// related to getting (active) target details
-export async function fetchActiveTargetDetails(scaffoldID: number) {
+// related to getting (active) assay details
+export async function fetchActiveAssayDetails(scaffoldID: number) {
     // Note: this assumes database === "badapple2" (DB2_NAME), as this is currently the only DB compatible with this API call
-    const apiUrl = import.meta.env.VITE_API_FETCH_TARGETS_URL;
+    const apiUrl = import.meta.env.VITE_API_FETCH_ACTIVE_ASSAYS_URL;
     try {
         const response = await axios.get(apiUrl, {
             params: {
@@ -92,7 +92,7 @@ export async function fetchActiveTargetDetails(scaffoldID: number) {
         });
         return response.data;
     } catch (error) {
-        console.error("Error fetching active target details:", error);
+        console.error("Error fetching active assay details:", error);
         return [];
     }
 }
