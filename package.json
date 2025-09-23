@@ -22,7 +22,7 @@
     "@mui/material": "^5.17.1",
     "@mui/x-date-pickers": "^7.29.4",
     "@rdkit/rdkit": "^2023.9.2-1.0.0",
-    "axios": "^1.10.0",
+    "axios": "^1.12.0",
     "framer-motion": "^12.19.1",
     "lodash": "^4.17.21",
     "material-react-table": "^2.13.3",
