@@ -1,8 +1,8 @@
 # Badapple2-UI
 
-![alt text](docs/ui_screenshot.png)
+![Badapple2 User Interface](docs/ui_screenshot.png)
 
-User interface for [Badapple2-API](https://github.com/unmtransinfo/Badapple2-API).
+User interface (UI) for [Badapple2-API](https://github.com/unmtransinfo/Badapple2-API).
 
 ## Installation
 
