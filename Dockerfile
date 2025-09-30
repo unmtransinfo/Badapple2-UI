@@ -1,6 +1,5 @@
 FROM node:22-alpine
-ARG ASSET_ROOT='\/badapple2'
-ENV ASSET_ROOT=$ASSET_ROOT
+
 WORKDIR /app
 COPY . .
 RUN npm install
