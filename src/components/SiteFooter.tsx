@@ -1,4 +1,5 @@
 export default function SiteFooter() {
+  const assetRoot = import.meta.env.VITE_ASSET_ROOT;
   return (
     <footer className="text-center mt-4 mb-0">
       <h1>
@@ -8,7 +9,7 @@ export default function SiteFooter() {
           rel="noopener noreferrer"
         >
           <img
-            src="/badapple2/hsc_logo.png"
+            src={`${assetRoot}/hsc_logo.png`}
             title="UNM School of Medicine, Dept. of Internal Medicine, Translational Informatics Division"
             className="inline-block h-20"
           />

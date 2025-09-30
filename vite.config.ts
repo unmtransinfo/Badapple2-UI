@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const assetRoot = env.VITE_ASSET_ROOT;
   return {
-    base: `/${assetRoot}/`,
+    base: `${assetRoot}/`,
     plugins: [react()],
     server: {
       host: true,
