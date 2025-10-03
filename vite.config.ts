@@ -6,12 +6,13 @@ import react from "@vitejs/plugin-react";
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const assetRoot = env.VITE_ASSET_ROOT;
+  const port = env.UI_PORT;
   return {
     base: `${assetRoot}/`,
     plugins: [react()],
     server: {
       host: true,
-      port: 5001,
+      port: port,
     },
   };
 });
