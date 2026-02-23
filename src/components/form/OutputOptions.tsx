@@ -11,7 +11,7 @@ export interface OutputOptions {
   database: string;
 }
 
-export interface OutputOptionsProps {
+interface OutputOptionsProps {
   outputOptions: OutputOptions;
   updateOutputOptions: (key: keyof OutputOptions, value: any) => void;
 }
@@ -75,7 +75,7 @@ const OutputOptionsTable: React.FC<OutputOptionsProps> = ({
                     updateOutputOptions,
                     "startIdx",
                     0,
-                    1e8
+                    1e8,
                   )
                 }
               />
@@ -101,7 +101,7 @@ const OutputOptionsTable: React.FC<OutputOptionsProps> = ({
                     updateOutputOptions,
                     "maxMolecules",
                     1,
-                    100
+                    100,
                   )
                 }
               />
@@ -127,7 +127,7 @@ const OutputOptionsTable: React.FC<OutputOptionsProps> = ({
                     updateOutputOptions,
                     "maxRings",
                     1,
-                    10
+                    10,
                   )
                 }
               />

@@ -12,7 +12,7 @@ export interface InputOptions {
   hasHeader: boolean;
 }
 
-export interface InputOptionsProps {
+interface InputOptionsProps {
   inputOptions: InputOptions;
   updateInputOptions: (key: keyof InputOptions, value: any) => void;
 }
@@ -90,7 +90,7 @@ const InputOptionsTable: React.FC<InputOptionsProps> = ({
                     updateInputOptions,
                     "smilesCol",
                     0,
-                    1e8
+                    1e8,
                   )
                 }
               />
@@ -116,7 +116,7 @@ const InputOptionsTable: React.FC<InputOptionsProps> = ({
                     updateInputOptions,
                     "nameCol",
                     0,
-                    1e8
+                    1e8,
                   )
                 }
               />
